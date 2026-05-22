@@ -1,0 +1,177 @@
+[
+  {
+    "id": "1",
+    "slug": "premium-iptv-subscription",
+    "name": "Premium IPTV Subscription",
+    "category": "IPTV Subscriptions",
+    "image": "/images/product-iptv-premium.png",
+    "description": "Access 10,000+ live channels and 50,000+ VOD titles in Full HD & 4K. Compatible with all devices including Smart TV, Android, iOS, MAG, and more.",
+    "rating": 4.8,
+    "reviewCount": 342,
+    "priceTiers": [
+      { "duration": "1 Month", "months": 1, "price": 11 },
+      { "duration": "3 Months", "months": 3, "price": 28 },
+      { "duration": "6 Months", "months": 6, "price": 45 },
+      { "duration": "12 Months", "months": 12, "price": 75 }
+    ],
+    "whatsappNumber": "1234567890",
+    "featured": true
+  },
+  {
+    "id": "2",
+    "slug": "standard-iptv-subscription",
+    "name": "Standard IPTV Plan",
+    "category": "IPTV Subscriptions",
+    "image": "/images/product-iptv-standard.png",
+    "description": "Access 5,000+ live channels and 20,000+ VOD in HD quality. Perfect for families and casual viewers.",
+    "rating": 4.5,
+    "reviewCount": 218,
+    "priceTiers": [
+      { "duration": "1 Month", "months": 1, "price": 8 },
+      { "duration": "3 Months", "months": 3, "price": 20 },
+      { "duration": "6 Months", "months": 6, "price": 35 },
+      { "duration": "12 Months", "months": 12, "price": 55 }
+    ],
+    "whatsappNumber": "1234567890",
+    "featured": true
+  },
+  {
+    "id": "3",
+    "slug": "iptv-smarters-pro",
+    "name": "IPTV Smarters Pro",
+    "category": "Media Players",
+    "image": "/images/product-smarters.png",
+    "description": "Professional IPTV player app with multi-screen support, EPG guide, and parental controls.",
+    "rating": 4.7,
+    "reviewCount": 155,
+    "priceTiers": [
+      { "duration": "1 Month", "months": 1, "price": 5 },
+      { "duration": "6 Months", "months": 6, "price": 25 },
+      { "duration": "12 Months", "months": 12, "price": 40 }
+    ],
+    "whatsappNumber": "1234567890",
+    "featured": true
+  },
+  {
+    "id": "4",
+    "slug": "reseller-panel-100-credits",
+    "name": "Reseller Panel – 100 Credits",
+    "category": "Reseller Panels",
+    "image": "/images/product-reseller.png",
+    "description": "Start your own IPTV reselling business. Manage 100 subscriptions with our easy control panel.",
+    "rating": 4.9,
+    "reviewCount": 89,
+    "priceTiers": [
+      { "duration": "1 Month", "months": 1, "price": 30 },
+      { "duration": "6 Months", "months": 6, "price": 150 },
+      { "duration": "12 Months", "months": 12, "price": 280 }
+    ],
+    "whatsappNumber": "1234567890",
+    "featured": true
+  },
+  {
+    "id": "5",
+    "slug": "iptv-4k-ultra-subscription",
+    "name": "IPTV 4K Ultra Subscription",
+    "category": "IPTV Subscriptions",
+    "image": "/images/product-iptv-4k.png",
+    "description": "Experience the best in streaming with 4K Ultra HD channels, Dolby Atmos audio, and zero buffering.",
+    "rating": 4.6,
+    "reviewCount": 201,
+    "priceTiers": [
+      { "duration": "1 Month", "months": 1, "price": 15 },
+      { "duration": "3 Months", "months": 3, "price": 38 },
+      { "duration": "6 Months", "months": 6, "price": 65 },
+      { "duration": "12 Months", "months": 12, "price": 110 }
+    ],
+    "whatsappNumber": "1234567890",
+    "featured": false
+  },
+  {
+    "id": "6",
+    "slug": "tivimate-premium",
+    "name": "TiviMate Premium Player",
+    "category": "Media Players",
+    "image": "/images/product-tivimate.png",
+    "description": "The most feature-rich Android IPTV player with multi-panel support and recording capability.",
+    "rating": 4.8,
+    "reviewCount": 312,
+    "priceTiers": [
+      { "duration": "1 Month", "months": 1, "price": 6 },
+      { "duration": "6 Months", "months": 6, "price": 28 },
+      { "duration": "12 Months", "months": 12, "price": 45 }
+    ],
+    "whatsappNumber": "1234567890",
+    "featured": false
+  },
+  {
+    "id": "7",
+    "slug": "smart-tv-iptv-app",
+    "name": "Smart TV IPTV App",
+    "category": "Smart TV Apps",
+    "image": "/images/product-smarttv.png",
+    "description": "Native Samsung & LG Smart TV app. No extra device needed. Install directly on your TV.",
+    "rating": 4.3,
+    "reviewCount": 98,
+    "priceTiers": [
+      { "duration": "1 Month", "months": 1, "price": 9 },
+      { "duration": "6 Months", "months": 6, "price": 40 },
+      { "duration": "12 Months", "months": 12, "price": 70 }
+    ],
+    "whatsappNumber": "1234567890",
+    "featured": false
+  },
+  {
+    "id": "8",
+    "slug": "reseller-panel-500-credits",
+    "name": "Reseller Panel – 500 Credits",
+    "category": "Reseller Panels",
+    "image": "/images/product-reseller-500.png",
+    "description": "Scale your IPTV business with 500 subscription credits. Full white-label solution available.",
+    "rating": 5.0,
+    "reviewCount": 43,
+    "priceTiers": [
+      { "duration": "1 Month", "months": 1, "price": 120 },
+      { "duration": "6 Months", "months": 6, "price": 600 },
+      { "duration": "12 Months", "months": 12, "price": 1100 }
+    ],
+    "whatsappNumber": "1234567890",
+    "featured": false
+  },
+  {
+    "id": "9",
+    "slug": "bein-sports-premium",
+    "name": "BEIN SPORTS Premium",
+    "category": "Bein Sports",
+    "image": "",
+    "description": "Watch all BeIN SPORTS channels in stunning HD quality. Full coverage of La Liga, Champions League, Premier League, and exclusive sports events worldwide.",
+    "rating": 4.9,
+    "reviewCount": 187,
+    "priceTiers": [
+      { "duration": "1 Month", "months": 1, "price": 12 },
+      { "duration": "3 Months", "months": 3, "price": 30 },
+      { "duration": "6 Months", "months": 6, "price": 55 },
+      { "duration": "12 Months", "months": 12, "price": 90 }
+    ],
+    "whatsappNumber": "1234567890",
+    "featured": true
+  },
+  {
+    "id": "10",
+    "slug": "bein-sports-cup-africa",
+    "name": "BeIN Sports Cup Africa",
+    "category": "Bein Sports",
+    "image": "",
+    "description": "Exclusive African football cup coverage on BeIN SPORTS. Stream AFCON, CAF Champions League, and all major African tournaments in HD.",
+    "rating": 4.7,
+    "reviewCount": 94,
+    "priceTiers": [
+      { "duration": "1 Month", "months": 1, "price": 10 },
+      { "duration": "3 Months", "months": 3, "price": 25 },
+      { "duration": "6 Months", "months": 6, "price": 45 },
+      { "duration": "12 Months", "months": 12, "price": 75 }
+    ],
+    "whatsappNumber": "1234567890",
+    "featured": false
+  }
+]
