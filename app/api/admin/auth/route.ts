@@ -21,7 +21,8 @@ export async function POST(request: Request) {
 
     await createSession('admin');
     return NextResponse.json({ success: true });
-  } catch {
+  } catch (error) {
+    console.error('Auth POST error:', error);
     return NextResponse.json({ error: 'Internal server error.' }, { status: 500 });
   }
 }
@@ -30,7 +31,8 @@ export async function DELETE() {
   try {
     await deleteSession();
     return NextResponse.json({ success: true });
-  } catch {
+  } catch (error) {
+    console.error('Auth DELETE error:', error);
     return NextResponse.json({ error: 'Internal server error.' }, { status: 500 });
   }
 }
