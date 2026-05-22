@@ -76,7 +76,7 @@ export async function decrypt(token: string | undefined): Promise<SessionPayload
     const signingInput = `${header}.${body}`;
 
     const key = await importKey(getSecretKey());
-    const expectedSig = base64urlDecode(signature);
+    const expectedSig = new Uint8Array(base64urlDecode(signature));
 
     const valid = await crypto.subtle.verify(
       'HMAC',
