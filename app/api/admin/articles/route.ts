@@ -1,3 +1,4 @@
+export const dynamic = 'force-dynamic';
 import { NextResponse } from 'next/server';
 import { readArticles, addArticle, updateArticle, deleteArticle } from '@/lib/articles';
 import type { NewArticleInput } from '@/lib/articles';
