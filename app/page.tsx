@@ -4,9 +4,9 @@ import CategoryCard from '@/components/ui/CategoryCard';
 import ProductCard from '@/components/ui/ProductCard';
 import { categories, getFeaturedProducts } from '@/lib/data';
 
-const featuredProducts = getFeaturedProducts();
+export default async function Home() {
+  const featuredProducts = await getFeaturedProducts();
 
-export default function Home() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* ── HERO SECTION ── */}

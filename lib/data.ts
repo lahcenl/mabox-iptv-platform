@@ -1,9 +1,9 @@
-import fs from 'fs';
-import path from 'path';
+import { prisma } from './prisma';
 
 export interface PriceTier {
+  id?: string;
   duration: string;
-  months?: number;
+  months?: number | null;
   price: number;
 }
 
@@ -16,9 +16,11 @@ export interface Product {
   description: string;
   rating: number;
   reviewCount: number;
-  priceTiers: PriceTier[];
   whatsappNumber: string;
   featured: boolean;
+  priceTiers: PriceTier[];
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 export interface Category {
@@ -65,29 +67,50 @@ export const categories: Category[] = [
   },
 ];
 
-/** Read products synchronously from data/products.json at module load time.
- *  This is safe for server components and build-time rendering.
- *  For admin mutations, use lib/products.ts which uses async fs/promises. */
-function loadProducts(): Product[] {
+export async function getProducts(): Promise<Product[]> {
   try {
-    const filePath = path.join(process.cwd(), 'data', 'products.json');
-    const raw = fs.readFileSync(filePath, 'utf-8');
-    return JSON.parse(raw) as Product[];
-  } catch {
+    return await prisma.product.findMany({
+      include: { priceTiers: true },
+      orderBy: { createdAt: 'desc' }
+    });
+  } catch (error) {
+    console.error('Error fetching products:', error);
     return [];
   }
 }
 
-export const products: Product[] = loadProducts();
-
-export function getProductBySlug(slug: string): Product | undefined {
-  return products.find((p) => p.slug === slug);
+export async function getProductBySlug(slug: string): Promise<Product | null> {
+  try {
+    return await prisma.product.findUnique({
+      where: { slug },
+      include: { priceTiers: true }
+    });
+  } catch (error) {
+    console.error('Error fetching product by slug:', error);
+    return null;
+  }
 }
 
-export function getFeaturedProducts(): Product[] {
-  return products.filter((p) => p.featured);
+export async function getFeaturedProducts(): Promise<Product[]> {
+  try {
+    return await prisma.product.findMany({
+      where: { featured: true },
+      include: { priceTiers: true }
+    });
+  } catch (error) {
+    console.error('Error fetching featured products:', error);
+    return [];
+  }
 }
 
-export function getProductsByCategory(category: string): Product[] {
-  return products.filter((p) => p.category === category);
+export async function getProductsByCategory(category: string): Promise<Product[]> {
+  try {
+    return await prisma.product.findMany({
+      where: { category },
+      include: { priceTiers: true }
+    });
+  } catch (error) {
+    console.error('Error fetching products by category:', error);
+    return [];
+  }
 }

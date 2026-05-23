@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 import ProductCard from '@/components/ui/ProductCard';
 import CategoryCard from '@/components/ui/CategoryCard';
-import { products, categories } from '@/lib/data';
+import { getProducts, categories } from '@/lib/data';
 import { Grid3X3, SlidersHorizontal } from 'lucide-react';
 
 export const metadata: Metadata = {
@@ -9,7 +9,9 @@ export const metadata: Metadata = {
   description: 'Browse all IPTV subscriptions, media players, and reseller panels. Best prices guaranteed.',
 };
 
-export default function ProductsPage() {
+export default async function ProductsPage() {
+  const products = await getProducts();
+
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
       {/* Page header */}

@@ -2,20 +2,21 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { ChevronRight } from 'lucide-react';
-import { getProductBySlug, products } from '@/lib/data';
+import { getProductBySlug, getProducts } from '@/lib/data';
 import ProductDetails from '@/components/product/ProductDetails';
 import ProductCard from '@/components/ui/ProductCard';
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://iptvstore.com';
 
 // This tells Next.js which slugs to pre-render at build time
-export function generateStaticParams() {
+export async function generateStaticParams() {
+  const products = await getProducts();
   return products.map((p) => ({ slug: p.slug }));
 }
 
 export async function generateMetadata(props: PageProps<'/products/[slug]'>): Promise<Metadata> {
   const { slug } = await props.params;
-  const product = getProductBySlug(slug);
+  const product = await getProductBySlug(slug);
   if (!product) return { title: 'Product Not Found' };
 
   const lowestPrice = Math.min(...product.priceTiers.map((t) => t.price));
@@ -55,13 +56,14 @@ export async function generateMetadata(props: PageProps<'/products/[slug]'>): Pr
 
 export default async function ProductPage(props: PageProps<'/products/[slug]'>) {
   const { slug } = await props.params;
-  const product = getProductBySlug(slug);
+  const product = await getProductBySlug(slug);
 
   if (!product) {
     notFound();
   }
 
   // Related products (same category, exclude current)
+  const products = await getProducts();
   const related = products
     .filter((p) => p.category === product.category && p.id !== product.id)
     .slice(0, 4);

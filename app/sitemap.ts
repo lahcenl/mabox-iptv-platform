@@ -1,19 +1,10 @@
 import type { MetadataRoute } from 'next';
 import fs from 'fs';
 import path from 'path';
-import type { Product } from '@/lib/data';
+import { getProducts } from '@/lib/data';
 import type { Article } from '@/lib/articles';
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://iptvstore.com';
-
-function readProducts(): Product[] {
-  try {
-    const raw = fs.readFileSync(path.join(process.cwd(), 'data', 'products.json'), 'utf-8');
-    return JSON.parse(raw) as Product[];
-  } catch {
-    return [];
-  }
-}
 
 async function readArticles(): Promise<Article[]> {
   try {
@@ -25,7 +16,7 @@ async function readArticles(): Promise<Article[]> {
 }
 
 export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const products = readProducts();
+  const products = await getProducts();
   const articles = await readArticles();
 
   // Static routes
