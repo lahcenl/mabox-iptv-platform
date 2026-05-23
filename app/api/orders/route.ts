@@ -1,8 +1,8 @@
-export const runtime = 'nodejs';
+export const runtime = 'edge';
+export const dynamic = 'force-dynamic';
+
 import { NextResponse } from 'next/server';
-import fs from 'fs/promises';
-import path from 'path';
-import crypto from 'crypto';
+import { createOrder } from '@/lib/orders';
 
 export async function POST(request: Request) {
   try {
@@ -13,29 +13,8 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Invalid request data' }, { status: 400 });
     }
 
-    const orderId = crypto.randomUUID();
-    const newOrder = {
-      orderId,
-      items,
-      total,
-      status: 'Pending',
-      createdAt: new Date().toISOString(),
-    };
-
-    const filePath = path.join(process.cwd(), 'data', 'orders.json');
-    let orders = [];
-
-    try {
-      const data = await fs.readFile(filePath, 'utf-8');
-      orders = JSON.parse(data);
-    } catch (err) {
-      // If file doesn't exist or is empty, we keep orders as []
-    }
-
-    orders.push(newOrder);
-    await fs.writeFile(filePath, JSON.stringify(orders, null, 2));
-
-    return NextResponse.json({ success: true, orderId });
+    const order = await createOrder(items, total);
+    return NextResponse.json({ success: true, orderId: order.orderId });
   } catch (error) {
     console.error('Error saving order:', error);
     return NextResponse.json({ error: 'Internal Server Error' }, { status: 500 });

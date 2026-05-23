@@ -1,40 +1,22 @@
-import fs from 'fs/promises';
-import path from 'path';
-import crypto from 'crypto';
+import { prisma } from '@/lib/prisma';
 
 export interface Article {
   id: string;
   slug: string;
   title: string;
-  content: string; // Markdown / plain text content
+  content: string;
   coverImage: string;
-  excerpt: string; // Auto-generated from first 160 chars of content
-  date: string; // ISO date string
+  excerpt: string;
+  date: string;
   author: string;
 }
 
 export interface NewArticleInput {
   title: string;
   content: string;
-  coverImage: string;
+  coverImage?: string;
   date?: string;
   author?: string;
-}
-
-const ARTICLES_FILE = path.join(process.cwd(), 'data', 'articles.json');
-
-export async function readArticles(): Promise<Article[]> {
-  try {
-    const data = await fs.readFile(ARTICLES_FILE, 'utf-8');
-    const parsed = JSON.parse(data);
-    return Array.isArray(parsed) ? parsed : [];
-  } catch {
-    return [];
-  }
-}
-
-export async function writeArticles(articles: Article[]): Promise<void> {
-  await fs.writeFile(ARTICLES_FILE, JSON.stringify(articles, null, 2), 'utf-8');
 }
 
 function slugify(title: string): string {
@@ -45,68 +27,80 @@ function slugify(title: string): string {
 }
 
 function generateExcerpt(content: string): string {
-  // Strip simple markdown symbols and take first 160 chars
   const plain = content.replace(/[#*_`~\[\]]/g, '').trim();
   return plain.length > 160 ? plain.slice(0, 157) + '…' : plain;
 }
 
-export async function addArticle(input: NewArticleInput): Promise<Article> {
-  const articles = await readArticles();
+function toSerializable(article: any): Article {
+  return {
+    id: article.id,
+    slug: article.slug,
+    title: article.title,
+    content: article.content,
+    coverImage: article.coverImage,
+    excerpt: article.excerpt,
+    date: article.date instanceof Date ? article.date.toISOString() : article.date,
+    author: article.author,
+  };
+}
 
+export async function readArticles(): Promise<Article[]> {
+  const articles = await prisma.article.findMany({ orderBy: { date: 'desc' } });
+  return articles.map(toSerializable);
+}
+
+export async function addArticle(input: NewArticleInput): Promise<Article> {
   const baseSlug = slugify(input.title);
-  // Ensure slug uniqueness
   let slug = baseSlug;
   let counter = 1;
-  while (articles.some((a) => a.slug === slug)) {
+  while (await prisma.article.findUnique({ where: { slug } })) {
     slug = `${baseSlug}-${counter++}`;
   }
 
-  const newArticle: Article = {
-    id: crypto.randomUUID(),
-    slug,
-    title: input.title,
-    content: input.content,
-    coverImage: input.coverImage || '',
-    excerpt: generateExcerpt(input.content),
-    date: input.date ?? new Date().toISOString(),
-    author: input.author ?? 'Admin',
-  };
-
-  articles.unshift(newArticle); // newest first
-  await writeArticles(articles);
-  return newArticle;
+  const article = await prisma.article.create({
+    data: {
+      slug,
+      title: input.title,
+      content: input.content,
+      coverImage: input.coverImage ?? '',
+      excerpt: generateExcerpt(input.content),
+      date: input.date ? new Date(input.date) : new Date(),
+      author: input.author ?? 'Admin',
+    },
+  });
+  return toSerializable(article);
 }
 
 export async function updateArticle(
   id: string,
   updates: Partial<NewArticleInput>,
 ): Promise<Article | null> {
-  const articles = await readArticles();
-  const idx = articles.findIndex((a) => a.id === id);
-  if (idx === -1) return null;
+  const existing = await prisma.article.findUnique({ where: { id } });
+  if (!existing) return null;
 
-  if (updates.content) {
-    articles[idx].excerpt = generateExcerpt(updates.content);
-  }
-  if (updates.title) {
-    // Don't re-slug existing articles to preserve public URLs
-    articles[idx].title = updates.title;
-  }
-
-  articles[idx] = { ...articles[idx], ...updates } as Article;
-  await writeArticles(articles);
-  return articles[idx];
+  const article = await prisma.article.update({
+    where: { id },
+    data: {
+      ...(updates.title ? { title: updates.title } : {}),
+      ...(updates.content ? { content: updates.content, excerpt: generateExcerpt(updates.content) } : {}),
+      ...(updates.coverImage !== undefined ? { coverImage: updates.coverImage } : {}),
+      ...(updates.author ? { author: updates.author } : {}),
+      ...(updates.date ? { date: new Date(updates.date) } : {}),
+    },
+  });
+  return toSerializable(article);
 }
 
 export async function deleteArticle(id: string): Promise<boolean> {
-  const articles = await readArticles();
-  const filtered = articles.filter((a) => a.id !== id);
-  if (filtered.length === articles.length) return false;
-  await writeArticles(filtered);
-  return true;
+  try {
+    await prisma.article.delete({ where: { id } });
+    return true;
+  } catch {
+    return false;
+  }
 }
 
 export async function getArticleBySlug(slug: string): Promise<Article | null> {
-  const articles = await readArticles();
-  return articles.find((a) => a.slug === slug) ?? null;
+  const article = await prisma.article.findUnique({ where: { slug } });
+  return article ? toSerializable(article) : null;
 }

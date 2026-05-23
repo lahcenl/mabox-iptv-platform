@@ -1,5 +1,4 @@
-import fs from 'fs/promises';
-import path from 'path';
+import { prisma } from '@/lib/prisma';
 
 export interface OrderItem {
   productName: string;
@@ -16,30 +15,39 @@ export interface Order {
   createdAt: string;
 }
 
-const ORDERS_FILE = path.join(process.cwd(), 'data', 'orders.json');
-
-export async function readOrders(): Promise<Order[]> {
-  try {
-    const data = await fs.readFile(ORDERS_FILE, 'utf-8');
-    const parsed = JSON.parse(data);
-    return Array.isArray(parsed) ? parsed : [];
-  } catch {
-    return [];
-  }
+function toSerializable(order: any): Order {
+  return {
+    orderId: order.id,
+    items: order.items as OrderItem[],
+    total: order.total,
+    status: order.status as 'Pending' | 'Completed',
+    createdAt: order.createdAt instanceof Date ? order.createdAt.toISOString() : order.createdAt,
+  };
 }
 
-export async function writeOrders(orders: Order[]): Promise<void> {
-  await fs.writeFile(ORDERS_FILE, JSON.stringify(orders, null, 2), 'utf-8');
+export async function readOrders(): Promise<Order[]> {
+  const orders = await prisma.order.findMany({ orderBy: { createdAt: 'desc' } });
+  return orders.map(toSerializable);
+}
+
+export async function createOrder(items: OrderItem[], total: number): Promise<Order> {
+  const order = await prisma.order.create({
+    data: { items, total, status: 'Pending' },
+  });
+  return toSerializable(order);
 }
 
 export async function updateOrderStatus(
   orderId: string,
   status: 'Pending' | 'Completed',
 ): Promise<Order | null> {
-  const orders = await readOrders();
-  const idx = orders.findIndex((o) => o.orderId === orderId);
-  if (idx === -1) return null;
-  orders[idx].status = status;
-  await writeOrders(orders);
-  return orders[idx];
+  try {
+    const order = await prisma.order.update({
+      where: { id: orderId },
+      data: { status },
+    });
+    return toSerializable(order);
+  } catch {
+    return null;
+  }
 }
