@@ -1,61 +1,10 @@
-import type { MetadataRoute } from 'next';
-import fs from 'fs';
-import path from 'path';
-import { getProducts } from '@/lib/data';
-import type { Article } from '@/lib/articles';
+import { MetadataRoute } from 'next';
 
-const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://iptvstore.com';
-
-async function readArticles(): Promise<Article[]> {
-  try {
-    const { readArticles: read } = await import('@/lib/articles');
-    return await read();
-  } catch {
-    return [];
-  }
-}
-
-export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
-  const products = await getProducts();
-  const articles = await readArticles();
-
-  // Static routes
-  const staticRoutes: MetadataRoute.Sitemap = [
-    {
-      url: BASE_URL,
-      lastModified: new Date(),
-      changeFrequency: 'daily',
-      priority: 1.0,
-    },
-    {
-      url: `${BASE_URL}/products`,
-      lastModified: new Date(),
-      changeFrequency: 'daily',
-      priority: 0.9,
-    },
-    {
-      url: `${BASE_URL}/blog`,
-      lastModified: new Date(),
-      changeFrequency: 'daily',
-      priority: 0.8,
-    },
+export default function sitemap(): MetadataRoute.Sitemap {
+  const baseUrl = 'https://www.ondexy.com';
+  return [
+    { url: baseUrl, lastModified: new Date() },
+    { url: `${baseUrl}/products`, lastModified: new Date() },
+    { url: `${baseUrl}/blog`, lastModified: new Date() }
   ];
-
-  // Dynamic product routes
-  const productRoutes: MetadataRoute.Sitemap = products.map((product) => ({
-    url: `${BASE_URL}/products/${product.slug}`,
-    lastModified: new Date(),
-    changeFrequency: 'weekly' as const,
-    priority: 0.7,
-  }));
-
-  // Dynamic article/blog routes
-  const articleRoutes: MetadataRoute.Sitemap = articles.map((article) => ({
-    url: `${BASE_URL}/blog/${article.slug}`,
-    lastModified: new Date(article.date),
-    changeFrequency: 'monthly' as const,
-    priority: 0.6,
-  }));
-
-  return [...staticRoutes, ...productRoutes, ...articleRoutes];
 }
