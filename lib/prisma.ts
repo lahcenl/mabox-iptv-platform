@@ -11,21 +11,17 @@ const globalForPrisma = globalThis as unknown as {
   prisma: PrismaClient | undefined;
 };
 
-const connectionString = process.env.DATABASE_URL;
+const connectionString = process.env.DATABASE_URL || '';
 
-// Let's log this to Vercel runtime logs so we can see if it's missing!
+// Keep the log to verify Vercel passes the env variable correctly
 console.log("RUNTIME DB URL CHECK:", connectionString ? "✅ IT EXISTS" : "❌ IT IS MISSING/UNDEFINED");
 
-const pool = new Pool({ connectionString: connectionString || '' });
+const pool = new Pool({ connectionString });
 const adapter = new PrismaNeon(pool as any);
 
 export const prisma =
   globalForPrisma.prisma ||
-  new PrismaClient({ 
-    adapter,
-    // Forcefully inject the URL directly into the client
-    datasourceUrl: connectionString 
-  });
+  new PrismaClient({ adapter });
 
 if (process.env.NODE_ENV !== 'production') {
   globalForPrisma.prisma = prisma;
