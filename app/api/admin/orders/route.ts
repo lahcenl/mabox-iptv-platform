@@ -2,7 +2,7 @@ export const dynamic = 'force-dynamic';
 import { NextResponse } from 'next/server';
 import { readOrders, updateOrderStatus } from '@/lib/orders';
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
     const orders = await readOrders();
     return NextResponse.json({ orders });

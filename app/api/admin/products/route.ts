@@ -9,7 +9,7 @@ function slugify(name: string): string {
     .replace(/^-+|-+$/g, '');
 }
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
     const products = await prisma.product.findMany({
       include: { priceTiers: true },

@@ -3,7 +3,7 @@ import { NextResponse } from 'next/server';
 import { readArticles, addArticle, updateArticle, deleteArticle } from '@/lib/articles';
 import type { NewArticleInput } from '@/lib/articles';
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
     const articles = await readArticles();
     return NextResponse.json({ articles });
