@@ -12,7 +12,7 @@ function slugify(name: string): string {
   return name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
 }
 
-export async function GET() {
+export async function GET(request: Request) {
   try {
     const prisma = await getPrisma();
     const products = await prisma.product.findMany({
