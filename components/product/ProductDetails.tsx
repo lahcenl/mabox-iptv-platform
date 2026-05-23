@@ -133,9 +133,6 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
           </div>
         </div>
 
-        {/* Description */}
-        <p className="text-gray-600 leading-relaxed">{product.description}</p>
-
         {/* Duration selector */}
         <div>
           <label

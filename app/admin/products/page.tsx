@@ -1,6 +1,9 @@
 'use client';
 
 import { useEffect, useState, useCallback } from 'react';
+import dynamic from 'next/dynamic';
+import '@uiw/react-md-editor/markdown-editor.css';
+import '@uiw/react-markdown-preview/markdown.css';
 import {
   Package,
   Plus,
@@ -14,6 +17,9 @@ import {
   Info,
   DollarSign,
 } from 'lucide-react';
+
+// Dynamic import disables SSR for the Markdown editor (it's a browser-only component)
+const MDEditor = dynamic(() => import('@uiw/react-md-editor'), { ssr: false });
 
 interface PriceTier {
   duration: string;
@@ -233,13 +239,28 @@ function ProductFormFields({
       {field('pf-name', 'Product Name', form.name, (v) => onChange({ ...form, name: v }), {
         placeholder: 'e.g. Premium IPTV – 4K Package',
       })}
-      {field(
-        'pf-desc',
-        'Description',
-        form.description,
-        (v) => onChange({ ...form, description: v }),
-        { textarea: true, placeholder: 'Describe what the customer gets…' },
-      )}
+
+      {/* Rich Text / Markdown Editor for Description */}
+      <div>
+        <label htmlFor="pf-desc" className="block text-sm font-medium text-gray-700 mb-1.5">
+          Description <span className="text-gray-400 font-normal">(supports Markdown — H2, bold, lists…)</span>
+        </label>
+        <div data-color-mode="light" id="pf-desc">
+          <MDEditor
+            value={form.description}
+            onChange={(v) => onChange({ ...form, description: v ?? '' })}
+            height={240}
+            preview="edit"
+            visibleDragbar={false}
+            textareaProps={{ placeholder: 'Describe what the customer gets… Use ## for headings, **bold**, - for bullets' }}
+          />
+        </div>
+        <p className="mt-1.5 text-xs text-gray-400 flex items-center gap-1">
+          <Info className="w-3.5 h-3.5 text-violet-400 flex-shrink-0" />
+          Use <code className="bg-gray-100 px-1 rounded">##</code> for H2, <code className="bg-gray-100 px-1 rounded">###</code> for H3,
+          <code className="bg-gray-100 px-1 rounded">**bold**</code>, <code className="bg-gray-100 px-1 rounded">- item</code> for bullets.
+        </p>
+      </div>
 
       {/* Image URL with hint */}
       <div>
