@@ -15,13 +15,19 @@ if (typeof window === 'undefined') {
   if (process.env.NODE_ENV === 'production') {
     const pool = new Pool({ connectionString: process.env.DATABASE_URL });
     const adapter = new PrismaNeon(pool as any);
-    prisma = new PrismaClient({ adapter });
+    prisma = new PrismaClient({
+      adapter,
+      // @ts-ignore - explicitly passing datasources for vercel build
+      datasources: { db: { url: process.env.DATABASE_URL } },
+    });
   } else {
     if (!globalForPrisma.prisma) {
       const pool = new Pool({ connectionString: process.env.DATABASE_URL });
       const adapter = new PrismaNeon(pool as any);
       globalForPrisma.prisma = new PrismaClient({
         adapter,
+        // @ts-ignore - explicitly passing datasources for vercel build
+        datasources: { db: { url: process.env.DATABASE_URL } },
         log: ['query', 'error', 'warn'],
       });
     }
