@@ -16,18 +16,17 @@ function slugify(name: string): string {
     .replace(/^-+|-+$/g, '');
 }
 
-export async function GET(request: Request) {
-  if (process.env.CI) return NextResponse.json({ products: [] }); // Bypass Vercel build
-  const prisma = await getPrisma();
+export async function GET() {
   try {
-    const products = await prisma.product.findMany({
-      include: { priceTiers: true },
-      orderBy: { createdAt: 'desc' },
-    });
-    return NextResponse.json({ products });
-  } catch (error) {
-    console.error('Failed to fetch products:', error);
-    return NextResponse.json({ error: 'Failed to fetch products' }, { status: 500 });
+    console.log('API HIT')
+    const prisma = await getPrisma()
+    console.log('PRISMA CONNECTED')
+    const products = await prisma.product.findMany()
+    console.log(products)
+    return NextResponse.json(products)
+  } catch (error: any) {
+    console.error('FULL ERROR:', error)
+    return NextResponse.json({ error: true, message: error.message, stack: error.stack }, { status: 500 })
   }
 }
 
