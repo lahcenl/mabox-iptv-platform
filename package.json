@@ -4,14 +4,12 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "prisma generate && next build",
+    "build": "next build",
     "start": "next start",
-    "lint": "eslint",
-    "postinstall": "prisma generate"
+    "lint": "eslint"
   },
   "dependencies": {
-    "@neondatabase/serverless": "^1.1.0",
-    "@prisma/adapter-neon": "^7.8.0",
+    "@supabase/supabase-js": "^2.106.1",
     "@uiw/react-md-editor": "^4.1.1",
     "lucide-react": "^1.16.0",
     "next": "16.2.6",
@@ -21,7 +19,6 @@
     "zustand": "^5.0.13"
   },
   "devDependencies": {
-    "@prisma/client": "^7.8.0",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^20",
     "@types/react": "^19",
@@ -29,7 +26,6 @@
     "@types/ws": "^8.18.1",
     "eslint": "^9",
     "eslint-config-next": "16.2.6",
-    "prisma": "^7.8.0",
     "tailwindcss": "^4",
     "typescript": "^5"
   }

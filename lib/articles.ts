@@ -1,4 +1,4 @@
-import { prisma } from '@/lib/prisma';
+import { supabase } from '@/lib/supabase';
 
 export interface Article {
   id: string;
@@ -37,70 +37,86 @@ function toSerializable(article: any): Article {
     slug: article.slug,
     title: article.title,
     content: article.content,
-    coverImage: article.coverImage,
-    excerpt: article.excerpt,
-    date: article.date instanceof Date ? article.date.toISOString() : article.date,
-    author: article.author,
+    coverImage: article.cover_image ?? '',
+    excerpt: article.excerpt ?? '',
+    date: article.date ?? article.created_at,
+    author: article.author ?? 'Admin',
   };
 }
 
 export async function readArticles(): Promise<Article[]> {
-  const articles = await prisma.article.findMany({ orderBy: { date: 'desc' } });
-  return articles.map(toSerializable);
+  const { data, error } = await supabase
+    .from('articles')
+    .select('*')
+    .order('date', { ascending: false });
+  if (error) throw error;
+  return (data || []).map(toSerializable);
 }
 
 export async function addArticle(input: NewArticleInput): Promise<Article> {
   const baseSlug = slugify(input.title);
   let slug = baseSlug;
   let counter = 1;
-  while (await prisma.article.findUnique({ where: { slug } })) {
+  while (true) {
+    const { data } = await supabase.from('articles').select('id').eq('slug', slug).single();
+    if (!data) break;
     slug = `${baseSlug}-${counter++}`;
   }
 
-  const article = await prisma.article.create({
-    data: {
+  const { data, error } = await supabase
+    .from('articles')
+    .insert([{
       slug,
       title: input.title,
       content: input.content,
-      coverImage: input.coverImage ?? '',
+      cover_image: input.coverImage ?? '',
       excerpt: generateExcerpt(input.content),
-      date: input.date ? new Date(input.date) : new Date(),
+      date: input.date ?? new Date().toISOString(),
       author: input.author ?? 'Admin',
-    },
-  });
-  return toSerializable(article);
+    }])
+    .select()
+    .single();
+
+  if (error) throw error;
+  return toSerializable(data);
 }
 
 export async function updateArticle(
   id: string,
   updates: Partial<NewArticleInput>,
 ): Promise<Article | null> {
-  const existing = await prisma.article.findUnique({ where: { id } });
-  if (!existing) return null;
+  const updateData: any = {};
+  if (updates.title) updateData.title = updates.title;
+  if (updates.content) {
+    updateData.content = updates.content;
+    updateData.excerpt = generateExcerpt(updates.content);
+  }
+  if (updates.coverImage !== undefined) updateData.cover_image = updates.coverImage;
+  if (updates.author) updateData.author = updates.author;
+  if (updates.date) updateData.date = updates.date;
 
-  const article = await prisma.article.update({
-    where: { id },
-    data: {
-      ...(updates.title ? { title: updates.title } : {}),
-      ...(updates.content ? { content: updates.content, excerpt: generateExcerpt(updates.content) } : {}),
-      ...(updates.coverImage !== undefined ? { coverImage: updates.coverImage } : {}),
-      ...(updates.author ? { author: updates.author } : {}),
-      ...(updates.date ? { date: new Date(updates.date) } : {}),
-    },
-  });
-  return toSerializable(article);
+  const { data, error } = await supabase
+    .from('articles')
+    .update(updateData)
+    .eq('id', id)
+    .select()
+    .single();
+
+  if (error) return null;
+  return toSerializable(data);
 }
 
 export async function deleteArticle(id: string): Promise<boolean> {
-  try {
-    await prisma.article.delete({ where: { id } });
-    return true;
-  } catch {
-    return false;
-  }
+  const { error } = await supabase.from('articles').delete().eq('id', id);
+  return !error;
 }
 
 export async function getArticleBySlug(slug: string): Promise<Article | null> {
-  const article = await prisma.article.findUnique({ where: { slug } });
-  return article ? toSerializable(article) : null;
+  const { data, error } = await supabase
+    .from('articles')
+    .select('*')
+    .eq('slug', slug)
+    .single();
+  if (error || !data) return null;
+  return toSerializable(data);
 }

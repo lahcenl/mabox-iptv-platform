@@ -1,12 +1,8 @@
-import { NextResponse } from 'next/server';
-
 export const runtime = 'edge';
 export const dynamic = 'force-dynamic';
 
-async function getPrisma() {
-  const { prisma } = await import('@/lib/prisma');
-  return prisma;
-}
+import { NextResponse } from 'next/server';
+import { supabase } from '@/lib/supabase';
 
 function slugify(name: string): string {
   return name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
@@ -14,11 +10,12 @@ function slugify(name: string): string {
 
 export async function GET(request: Request) {
   try {
-    const prisma = await getPrisma();
-    const products = await prisma.product.findMany({
-      include: { priceTiers: true },
-      orderBy: { createdAt: 'desc' },
-    });
+    const { data: products, error } = await supabase
+      .from('products')
+      .select('*, price_tiers(*)')
+      .order('created_at', { ascending: false });
+
+    if (error) throw error;
     return NextResponse.json({ products });
   } catch (error) {
     console.error('Failed to fetch products:', error);
@@ -33,31 +30,49 @@ export async function POST(request: Request) {
       return NextResponse.json({ error: 'Missing required fields' }, { status: 400 });
     }
 
-    const prisma = await getPrisma();
+    // Generate unique slug
     let baseSlug = slugify(body.name);
     let slug = baseSlug;
     let counter = 1;
-    while (await prisma.product.findUnique({ where: { slug } })) {
+    while (true) {
+      const { data } = await supabase.from('products').select('id').eq('slug', slug).single();
+      if (!data) break;
       slug = `${baseSlug}-${counter++}`;
     }
 
-    const product = await prisma.product.create({
-      data: {
+    const { data: product, error } = await supabase
+      .from('products')
+      .insert([{
         slug,
         name: body.name,
         category: body.category,
         image: body.image || '/images/placeholder.png',
-        description: body.description,
-        priceTiers: {
-          create: body.priceTiers.map((t: any) => ({
-            duration: t.duration,
-            price: Number(t.price)
-          }))
-        }
-      },
-      include: { priceTiers: true }
-    });
-    return NextResponse.json({ success: true, product }, { status: 201 });
+        description: body.description || '',
+      }])
+      .select()
+      .single();
+
+    if (error) throw error;
+
+    // Insert price tiers
+    if (body.priceTiers?.length) {
+      const { error: tiersError } = await supabase.from('price_tiers').insert(
+        body.priceTiers.map((t: any) => ({
+          product_id: product.id,
+          duration: t.duration,
+          price: Number(t.price),
+        }))
+      );
+      if (tiersError) throw tiersError;
+    }
+
+    const { data: fullProduct } = await supabase
+      .from('products')
+      .select('*, price_tiers(*)')
+      .eq('id', product.id)
+      .single();
+
+    return NextResponse.json({ success: true, product: fullProduct }, { status: 201 });
   } catch (error) {
     console.error('Failed to create product:', error);
     return NextResponse.json({ error: 'Failed to create product' }, { status: 500 });
@@ -70,23 +85,30 @@ export async function PUT(request: Request) {
     const { id, priceTiers, ...updates } = body;
     if (!id) return NextResponse.json({ error: 'Missing product id' }, { status: 400 });
 
-    const prisma = await getPrisma();
-    const product = await prisma.product.update({
-      where: { id },
-      data: {
-        ...updates,
-        ...(priceTiers ? {
-          priceTiers: {
-            deleteMany: {},
-            create: priceTiers.map((t: any) => ({
-              duration: t.duration,
-              price: Number(t.price)
-            }))
-          }
-        } : {})
-      },
-      include: { priceTiers: true }
-    });
+    const { error } = await supabase.from('products').update(updates).eq('id', id);
+    if (error) throw error;
+
+    // Replace price tiers if provided
+    if (priceTiers) {
+      await supabase.from('price_tiers').delete().eq('product_id', id);
+      if (priceTiers.length > 0) {
+        const { error: tiersError } = await supabase.from('price_tiers').insert(
+          priceTiers.map((t: any) => ({
+            product_id: id,
+            duration: t.duration,
+            price: Number(t.price),
+          }))
+        );
+        if (tiersError) throw tiersError;
+      }
+    }
+
+    const { data: product } = await supabase
+      .from('products')
+      .select('*, price_tiers(*)')
+      .eq('id', id)
+      .single();
+
     return NextResponse.json({ success: true, product });
   } catch (error) {
     console.error('Failed to update product:', error);
@@ -99,8 +121,9 @@ export async function DELETE(request: Request) {
     const { id } = await request.json();
     if (!id) return NextResponse.json({ error: 'Missing product id' }, { status: 400 });
 
-    const prisma = await getPrisma();
-    await prisma.product.delete({ where: { id } });
+    const { error } = await supabase.from('products').delete().eq('id', id);
+    if (error) throw error;
+
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error('Failed to delete product:', error);

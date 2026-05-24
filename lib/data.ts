@@ -1,4 +1,4 @@
-import { prisma } from './prisma';
+import { supabase } from './supabase';
 
 export interface PriceTier {
   id?: string;
@@ -19,8 +19,8 @@ export interface Product {
   whatsappNumber: string;
   featured: boolean;
   priceTiers: PriceTier[];
-  createdAt?: Date;
-  updatedAt?: Date;
+  createdAt?: string;
+  updatedAt?: string;
 }
 
 export interface Category {
@@ -67,12 +67,37 @@ export const categories: Category[] = [
   },
 ];
 
+function toProduct(row: any): Product {
+  return {
+    id: row.id,
+    slug: row.slug,
+    name: row.name,
+    category: row.category,
+    image: row.image,
+    description: row.description ?? '',
+    rating: row.rating ?? 5.0,
+    reviewCount: row.review_count ?? 0,
+    whatsappNumber: row.whatsapp_number ?? '1234567890',
+    featured: row.featured ?? false,
+    priceTiers: (row.price_tiers || []).map((t: any) => ({
+      id: t.id,
+      duration: t.duration,
+      months: t.months ?? null,
+      price: t.price,
+    })),
+    createdAt: row.created_at,
+    updatedAt: row.updated_at,
+  };
+}
+
 export async function getProducts(): Promise<Product[]> {
   try {
-    return await prisma.product.findMany({
-      include: { priceTiers: true },
-      orderBy: { createdAt: 'desc' }
-    });
+    const { data, error } = await supabase
+      .from('products')
+      .select('*, price_tiers(*)')
+      .order('created_at', { ascending: false });
+    if (error) throw error;
+    return (data || []).map(toProduct);
   } catch (error) {
     console.error('Error fetching products:', error);
     return [];
@@ -81,10 +106,13 @@ export async function getProducts(): Promise<Product[]> {
 
 export async function getProductBySlug(slug: string): Promise<Product | null> {
   try {
-    return await prisma.product.findUnique({
-      where: { slug },
-      include: { priceTiers: true }
-    });
+    const { data, error } = await supabase
+      .from('products')
+      .select('*, price_tiers(*)')
+      .eq('slug', slug)
+      .single();
+    if (error || !data) return null;
+    return toProduct(data);
   } catch (error) {
     console.error('Error fetching product by slug:', error);
     return null;
@@ -93,10 +121,12 @@ export async function getProductBySlug(slug: string): Promise<Product | null> {
 
 export async function getFeaturedProducts(): Promise<Product[]> {
   try {
-    return await prisma.product.findMany({
-      where: { featured: true },
-      include: { priceTiers: true }
-    });
+    const { data, error } = await supabase
+      .from('products')
+      .select('*, price_tiers(*)')
+      .eq('featured', true);
+    if (error) throw error;
+    return (data || []).map(toProduct);
   } catch (error) {
     console.error('Error fetching featured products:', error);
     return [];
@@ -105,10 +135,12 @@ export async function getFeaturedProducts(): Promise<Product[]> {
 
 export async function getProductsByCategory(category: string): Promise<Product[]> {
   try {
-    return await prisma.product.findMany({
-      where: { category },
-      include: { priceTiers: true }
-    });
+    const { data, error } = await supabase
+      .from('products')
+      .select('*, price_tiers(*)')
+      .eq('category', category);
+    if (error) throw error;
+    return (data || []).map(toProduct);
   } catch (error) {
     console.error('Error fetching products by category:', error);
     return [];

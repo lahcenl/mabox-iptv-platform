@@ -1,4 +1,4 @@
-import { prisma } from '@/lib/prisma';
+import { supabase } from '@/lib/supabase';
 
 export interface OrderItem {
   productName: string;
@@ -21,33 +21,39 @@ function toSerializable(order: any): Order {
     items: order.items as OrderItem[],
     total: order.total,
     status: order.status as 'Pending' | 'Completed',
-    createdAt: order.createdAt instanceof Date ? order.createdAt.toISOString() : order.createdAt,
+    createdAt: order.created_at,
   };
 }
 
 export async function readOrders(): Promise<Order[]> {
-  const orders = await prisma.order.findMany({ orderBy: { createdAt: 'desc' } });
-  return orders.map(toSerializable);
+  const { data, error } = await supabase
+    .from('orders')
+    .select('*')
+    .order('created_at', { ascending: false });
+  if (error) throw error;
+  return (data || []).map(toSerializable);
 }
 
 export async function createOrder(items: OrderItem[], total: number): Promise<Order> {
-  const order = await prisma.order.create({
-    data: { items, total, status: 'Pending' },
-  });
-  return toSerializable(order);
+  const { data, error } = await supabase
+    .from('orders')
+    .insert([{ items, total, status: 'Pending' }])
+    .select()
+    .single();
+  if (error) throw error;
+  return toSerializable(data);
 }
 
 export async function updateOrderStatus(
   orderId: string,
   status: 'Pending' | 'Completed',
 ): Promise<Order | null> {
-  try {
-    const order = await prisma.order.update({
-      where: { id: orderId },
-      data: { status },
-    });
-    return toSerializable(order);
-  } catch {
-    return null;
-  }
+  const { data, error } = await supabase
+    .from('orders')
+    .update({ status })
+    .eq('id', orderId)
+    .select()
+    .single();
+  if (error) return null;
+  return toSerializable(data);
 }
