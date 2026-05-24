@@ -39,7 +39,7 @@ function toSerializable(article: any): Article {
     content: article.content,
     coverImage: article.cover_image ?? '',
     excerpt: article.excerpt ?? '',
-    date: article.date ?? article.created_at,
+    date: article.created_at,
     author: article.author ?? 'Admin',
   };
 }
@@ -48,7 +48,7 @@ export async function readArticles(): Promise<Article[]> {
   const { data, error } = await supabase
     .from('articles')
     .select('*')
-    .order('date', { ascending: false });
+    .order('created_at', { ascending: false });
   if (error) throw error;
   return (data || []).map(toSerializable);
 }
@@ -71,7 +71,7 @@ export async function addArticle(input: NewArticleInput): Promise<Article> {
       content: input.content,
       cover_image: input.coverImage ?? '',
       excerpt: generateExcerpt(input.content),
-      date: input.date ?? new Date().toISOString(),
+      created_at: input.date ?? new Date().toISOString(),
       author: input.author ?? 'Admin',
     }])
     .select()
@@ -93,7 +93,7 @@ export async function updateArticle(
   }
   if (updates.coverImage !== undefined) updateData.cover_image = updates.coverImage;
   if (updates.author) updateData.author = updates.author;
-  if (updates.date) updateData.date = updates.date;
+  if (updates.date) updateData.created_at = updates.date;
 
   const { data, error } = await supabase
     .from('articles')
