@@ -36,7 +36,8 @@ export async function generateMetadata(props: PageProps<'/products/[slug]'>): Pr
   if (!product) return { title: 'Product Not Found' };
 
   const plainDescription = stripMarkdown(product.description);
-  const lowestPrice = Math.min(...product.priceTiers.map((t) => t.price));
+  const tiers = product.priceTiers || (product as any).price_tiers || [];
+  const lowestPrice = tiers.length > 0 ? Math.min(...tiers.map((t: any) => t.price)) : 0;
   const imageUrl = product.image
     ? `${BASE_URL}${product.image}`
     : `${BASE_URL}/og-default.png`;
@@ -86,7 +87,8 @@ export default async function ProductPage(props: PageProps<'/products/[slug]'>) 
     .slice(0, 4);
 
   // Lowest price tier for schema
-  const lowestPrice = Math.min(...product.priceTiers.map((t) => t.price));
+  const tiers = product.priceTiers || (product as any).price_tiers || [];
+  const lowestPrice = tiers.length > 0 ? Math.min(...tiers.map((t: any) => t.price)) : 0;
   const imageUrl = product.image
     ? `${BASE_URL}${product.image}`
     : `${BASE_URL}/og-default.png`;

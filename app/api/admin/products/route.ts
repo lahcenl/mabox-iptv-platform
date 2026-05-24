@@ -8,6 +8,16 @@ function slugify(name: string): string {
   return name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/^-+|-+$/g, '');
 }
 
+/** Normalize Supabase snake_case join to the camelCase shape the frontend expects. */
+function mapProduct(product: any) {
+  if (!product) return product;
+  const { price_tiers, ...rest } = product;
+  return {
+    ...rest,
+    priceTiers: price_tiers ?? [],
+  };
+}
+
 export async function GET(request: Request) {
   try {
     const { data: products, error } = await supabase
@@ -16,7 +26,7 @@ export async function GET(request: Request) {
       .order('created_at', { ascending: false });
 
     if (error) throw error;
-    return NextResponse.json({ products });
+    return NextResponse.json({ products: products.map(mapProduct) });
   } catch (error) {
     console.error('Failed to fetch products:', error);
     return NextResponse.json({ error: 'Failed to fetch products' }, { status: 500 });
@@ -73,7 +83,7 @@ export async function POST(request: Request) {
       .eq('id', product.id)
       .single();
 
-    return NextResponse.json({ success: true, product: fullProduct }, { status: 201 });
+    return NextResponse.json({ success: true, product: mapProduct(fullProduct) }, { status: 201 });
   } catch (error) {
     console.error('Failed to create product:', error);
     return NextResponse.json({ error: 'Failed to create product' }, { status: 500 });
@@ -111,7 +121,7 @@ export async function PUT(request: Request) {
       .eq('id', id)
       .single();
 
-    return NextResponse.json({ success: true, product });
+    return NextResponse.json({ success: true, product: mapProduct(product) });
   } catch (error) {
     console.error('Failed to update product:', error);
     return NextResponse.json({ error: 'Failed to update product' }, { status: 500 });
