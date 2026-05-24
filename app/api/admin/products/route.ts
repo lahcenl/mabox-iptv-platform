@@ -59,6 +59,7 @@ export async function POST(request: Request) {
       const { error: tiersError } = await supabase.from('price_tiers').insert(
         body.priceTiers.map((t: any) => ({
           product_id: product.id,
+          name: t.duration,
           duration: t.duration,
           price: Number(t.price),
         }))
@@ -95,6 +96,7 @@ export async function PUT(request: Request) {
         const { error: tiersError } = await supabase.from('price_tiers').insert(
           priceTiers.map((t: any) => ({
             product_id: id,
+            name: t.duration,
             duration: t.duration,
             price: Number(t.price),
           }))
