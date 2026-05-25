@@ -24,7 +24,8 @@ export async function POST(request: Request) {
     }
     const article = await addArticle(body);
     return NextResponse.json({ success: true, article }, { status: 201 });
-  } catch {
+  } catch (error) {
+    console.error('Supabase Insert Error:', error);
     return NextResponse.json({ error: 'Failed to create article' }, { status: 500 });
   }
 }

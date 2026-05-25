@@ -1,6 +1,7 @@
 import { supabase } from '@/lib/supabase';
 
 export interface Article {
+
   id: string;
   slug: string;
   title: string;
@@ -59,36 +60,43 @@ export async function readArticles(): Promise<Article[]> {
 }
 
 export async function addArticle(input: NewArticleInput): Promise<Article> {
-  const baseSlug = slugify(input.title);
-  let slug = baseSlug;
-  let counter = 1;
-  while (true) {
-    const { data } = await supabase.from('articles').select('id').eq('slug', slug).single();
-    if (!data) break;
-    slug = `${baseSlug}-${counter++}`;
+  try {
+    const baseSlug = slugify(input.title);
+    let slug = baseSlug;
+    let counter = 1;
+    while (true) {
+      const { data } = await supabase.from('articles').select('id').eq('slug', slug).single();
+      if (!data) break;
+      slug = `${baseSlug}-${counter++}`;
+    }
+
+    const dateValue = input.date || new Date().toISOString();
+
+    const { data, error } = await supabase
+      .from('articles')
+      .insert([{
+        id: crypto.randomUUID(),
+        slug,
+        title: input.title,
+        content: input.content,
+        cover_image: input.coverImage || '',
+        excerpt: generateExcerpt(input.content),
+        created_at: dateValue,
+        author: input.author ?? 'Admin',
+      }])
+      .select()
+      .single();
+
+    if (error) throw error;
+    return toSerializable(data);
+  } catch (error) {
+    console.error('Supabase Insert Error:', error);
+    throw error;
   }
-
-  const dateValue = (input.date && input.date.trim() !== '') ? input.date : new Date().toISOString();
-
-  const { data, error } = await supabase
-    .from('articles')
-    .insert([{
-      slug,
-      title: input.title,
-      content: input.content,
-      cover_image: input.coverImage ?? '',
-      excerpt: generateExcerpt(input.content),
-      created_at: dateValue,
-      author: input.author ?? 'Admin',
-    }])
-    .select()
-    .single();
-
-  if (error) throw error;
-  return toSerializable(data);
 }
 
 export const createArticle = addArticle;
+
 
 export async function updateArticle(
   id: string,
