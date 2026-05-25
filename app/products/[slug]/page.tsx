@@ -183,7 +183,7 @@ export default async function ProductPage(props: PageProps<'/products/[slug]'>) 
           <h2 className="text-2xl font-extrabold text-gray-900 mb-6">
             Related Products
           </h2>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6">
             {related.map((p) => (
               <ProductCard key={p.id} product={p} />
             ))}
@@ -202,7 +202,7 @@ export default async function ProductPage(props: PageProps<'/products/[slug]'>) 
               From the <span className="font-semibold text-violet-600">{crossCategory}</span> category
             </p>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6">
             {crossSell.map((p) => (
               <ProductCard key={p.id} product={p} />
             ))}

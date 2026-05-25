@@ -9,7 +9,7 @@ export default function CategoryCard({ category }: CategoryCardProps) {
   return (
     <Link
       href={`/products?category=${category.slug}`}
-      className="group flex flex-col items-center text-center transition-all duration-300 w-28 md:w-full flex-shrink-0"
+      className="group flex flex-col items-center text-center transition-all duration-300 w-full"
       aria-label={`Browse ${category.name}`}
     >
       {/* Sleek, circular avatar badge */}

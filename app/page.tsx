@@ -52,7 +52,7 @@ export default async function Home() {
           </h2>
           <p className="text-gray-500 mt-2 text-xs md:text-sm">Explore our premium plans and software licenses</p>
         </div>
-        <div className="flex overflow-x-auto scrollbar-hide gap-6 pb-4 md:pb-0 md:grid md:grid-cols-3 justify-start md:justify-items-center max-w-3xl mx-auto px-2">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6 justify-items-center max-w-3xl mx-auto px-2">
           {coreCategories.map((category) => (
             <CategoryCard key={category.id} category={category} />
           ))}
@@ -79,7 +79,7 @@ export default async function Home() {
             </Link>
           </div>
           {iptvProducts.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6">
               {iptvProducts.map((product) => (
                 <ProductCard key={product.id} product={product} />
               ))}
@@ -106,7 +106,7 @@ export default async function Home() {
             </Link>
           </div>
           {mediaPlayers.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6">
               {mediaPlayers.map((product) => (
                 <ProductCard key={product.id} product={product} />
               ))}
@@ -133,7 +133,7 @@ export default async function Home() {
             </Link>
           </div>
           {beinSports.length > 0 ? (
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6">
               {beinSports.map((product) => (
                 <ProductCard key={product.id} product={product} />
               ))}
