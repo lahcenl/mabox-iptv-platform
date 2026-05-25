@@ -52,6 +52,14 @@
   .nav-link {
     @apply text-gray-600 hover:text-violet-600 font-medium transition-colors duration-200 text-sm relative after:absolute after:bottom-0 after:left-0 after:w-0 after:h-0.5 after:bg-violet-600 after:transition-all hover:after:w-full;
   }
+
+  .scrollbar-hide {
+    -ms-overflow-style: none;
+    scrollbar-width: none;
+  }
+  .scrollbar-hide::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 /* =========================================================

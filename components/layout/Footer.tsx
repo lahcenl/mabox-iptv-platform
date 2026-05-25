@@ -53,11 +53,11 @@ const quickLinks = [
 ];
 
 const socialLinks: SocialLink[] = [
-  { label: 'Facebook', href: 'https://facebook.com', Icon: FacebookIcon, color: 'hover:bg-blue-600' },
-  { label: 'Twitter / X', href: 'https://twitter.com', Icon: TwitterIcon, color: 'hover:bg-sky-500' },
-  { label: 'Instagram', href: 'https://instagram.com', Icon: InstagramIcon, color: 'hover:bg-pink-600' },
-  { label: 'WhatsApp', href: 'https://wa.me/1234567890', Icon: MessageCircle, color: 'hover:bg-green-500' },
-  { label: 'YouTube', href: 'https://youtube.com', Icon: YoutubeIcon, color: 'hover:bg-red-600' },
+  { label: 'Facebook', href: '/#', Icon: FacebookIcon, color: 'hover:bg-blue-600' },
+  { label: 'Twitter / X', href: '/#', Icon: TwitterIcon, color: 'hover:bg-sky-500' },
+  { label: 'Instagram', href: '/#', Icon: InstagramIcon, color: 'hover:bg-pink-600' },
+  { label: 'WhatsApp', href: '/#', Icon: MessageCircle, color: 'hover:bg-green-500' },
+  { label: 'YouTube', href: '/#', Icon: YoutubeIcon, color: 'hover:bg-red-600' },
 ];
 
 export default function Footer() {
@@ -184,7 +184,7 @@ export default function Footer() {
             </h4>
             <ul className="space-y-3">
               {quickLinks.map((link) => (
-                <li key={link.href}>
+                <li key={link.label}>
                   <Link
                     href={link.href}
                     className="text-sm text-gray-400 hover:text-violet-400 transition-colors flex items-center gap-2 group"

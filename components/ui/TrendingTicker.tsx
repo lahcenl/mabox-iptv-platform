@@ -10,9 +10,9 @@ export default function TrendingTicker() {
     <div className="bg-gradient-to-r from-gray-900 via-violet-950 to-gray-900 border-t border-violet-900/40 overflow-hidden">
       <div className="flex items-center">
         {/* Fixed label */}
-        <div className="flex items-center gap-2 px-4 py-3 bg-violet-700 flex-shrink-0 z-10 shadow-[4px_0_12px_rgba(0,0,0,0.4)]">
-          <ShieldCheck className="w-4 h-4 text-white" />
-          <span className="text-xs font-bold text-white uppercase tracking-wider whitespace-nowrap">
+        <div className="flex items-center gap-1.5 px-3 py-2.5 md:px-4 md:py-3 bg-violet-700 flex-shrink-0 z-10 shadow-[4px_0_12px_rgba(0,0,0,0.4)]">
+          <ShieldCheck className="w-3.5 h-3.5 md:w-4 md:h-4 text-white" />
+          <span className="text-[10px] md:text-xs font-bold text-white uppercase tracking-wider whitespace-nowrap">
             Ondexy Promise ⭐
           </span>
         </div>
@@ -28,13 +28,13 @@ export default function TrendingTicker() {
               {items.map((text, idx) => (
                 <div
                   key={idx}
-                  className="flex items-center gap-4 px-6 flex-shrink-0"
+                  className="flex items-center gap-6 px-10 md:px-6 flex-shrink-0"
                 >
-                  <span className="text-sm font-semibold text-white/95 whitespace-nowrap">
+                  <span className="text-[11px] md:text-sm font-semibold text-white/95 whitespace-nowrap">
                     {text}
                   </span>
                   {/* Divider dot */}
-                  <span className="w-1.5 h-1.5 rounded-full bg-violet-400/40 flex-shrink-0 ml-4" />
+                  <span className="w-1.5 h-1.5 rounded-full bg-violet-400/40 flex-shrink-0 ml-6 md:ml-4" />
                 </div>
               ))}
             </div>
@@ -51,9 +51,6 @@ export default function TrendingTicker() {
         .ticker-track {
           animation: ticker-scroll 35s linear infinite;
           will-change: transform;
-        }
-        .ticker-track:hover {
-          animation-play-state: paused;
         }
         @keyframes ticker-scroll {
           0%   { transform: translateX(0); }
