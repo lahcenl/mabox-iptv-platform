@@ -5,6 +5,8 @@ import './globals.css';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import TrendingTicker from '@/components/ui/TrendingTicker';
+import WhatsAppWidget from '@/components/ui/WhatsAppWidget';
+import CommunityBanner from '@/components/layout/CommunityBanner';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -88,7 +90,9 @@ export default function RootLayout({
         <Header />
         <main className="flex-1">{children}</main>
         <TrendingTicker />
+        <CommunityBanner />
         <Footer />
+        <WhatsAppWidget />
       </body>
     </html>
   );

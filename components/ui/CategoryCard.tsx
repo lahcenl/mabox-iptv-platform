@@ -1,5 +1,4 @@
 import Link from 'next/link';
-import Image from 'next/image';
 import { Category } from '@/lib/data';
 
 interface CategoryCardProps {
@@ -39,13 +38,11 @@ export default function CategoryCard({ category }: CategoryCardProps) {
         `}
       >
         {/* Background image — always visible */}
-        <Image
+        {/* eslint-disable-next-line @next/next/no-img-element */}
+        <img
           src={category.image}
           alt={category.name}
-          fill
-          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
-          className="object-cover transition-transform duration-500 group-hover:scale-105"
-          priority={false}
+          className="absolute inset-0 w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
         />
 
         {/* Dark gradient overlay — hidden by default, slides up on hover */}

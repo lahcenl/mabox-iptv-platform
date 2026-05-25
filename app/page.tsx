@@ -1,11 +1,12 @@
 import Link from 'next/link';
 import { ArrowRight, MessageCircle } from 'lucide-react';
-import CategoryCard from '@/components/ui/CategoryCard';
 import ProductCard from '@/components/ui/ProductCard';
-import { categories, getFeaturedProducts } from '@/lib/data';
+import { getProductsByCategory } from '@/lib/data';
 
 export default async function Home() {
-  const featuredProducts = await getFeaturedProducts();
+  const iptvProducts = (await getProductsByCategory('IPTV Subscriptions')).slice(0, 4);
+  const mediaPlayers = (await getProductsByCategory('Media Players')).slice(0, 4);
+  const beinSports = (await getProductsByCategory('Bein Sports')).slice(0, 4);
 
   return (
     <div className="min-h-screen bg-gray-50">
@@ -38,59 +39,91 @@ export default async function Home() {
         </div>
       </section>
 
-      {/* ── CATEGORIES ── */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="mb-10 text-center">
-          <h2 className="text-3xl font-extrabold text-gray-900">
-            Browse by Category
-          </h2>
-        </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {categories.map((category) => (
-            <CategoryCard key={category.id} category={category} />
-          ))}
-        </div>
-      </section>
-
-      {/* ── FEATURED PRODUCTS ── */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pb-24">
-        <div className="mb-10 text-center">
-          <h2 className="text-3xl font-extrabold text-gray-900">
-            Featured Plans
-          </h2>
-          <p className="text-gray-500 mt-2 text-base">Hand-picked plans our customers love most</p>
-        </div>
-
-        {featuredProducts.length > 0 ? (
-          <>
+      {/* ── CATEGORIZED ROWS ── */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-16">
+        
+        {/* Row 1: IPTV Subscriptions */}
+        <div>
+          <div className="flex items-end justify-between mb-8 pb-3 border-b border-gray-200/60">
+            <div>
+              <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900 tracking-tight">
+                IPTV Subscriptions
+              </h2>
+              <p className="text-xs sm:text-sm text-gray-500 mt-1">Premium channels, instant activation, and crystal-clear quality</p>
+            </div>
+            <Link
+              href="/products?category=iptv-subscriptions"
+              className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-violet-600 hover:text-violet-700 transition-colors whitespace-nowrap group"
+            >
+              View All <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
+            </Link>
+          </div>
+          {iptvProducts.length > 0 ? (
             <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-              {featuredProducts.map((product) => (
+              {iptvProducts.map((product) => (
                 <ProductCard key={product.id} product={product} />
               ))}
             </div>
+          ) : (
+            <p className="text-gray-400 italic text-sm">No products found in this category.</p>
+          )}
+        </div>
 
-            <div className="text-center mt-12">
-              <Link
-                href="/products"
-                className="inline-flex items-center justify-center gap-2 bg-white border border-gray-300 hover:border-gray-400 text-gray-700 font-semibold px-6 py-3 rounded-xl transition-all shadow-sm"
-              >
-                View All Plans <ArrowRight className="w-4 h-4" />
-              </Link>
+        {/* Row 2: Media Players */}
+        <div>
+          <div className="flex items-end justify-between mb-8 pb-3 border-b border-gray-200/60">
+            <div>
+              <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900 tracking-tight">
+                Media Players
+              </h2>
+              <p className="text-xs sm:text-sm text-gray-500 mt-1">Enhance your streaming experience with top-tier player licenses</p>
             </div>
-          </>
-        ) : (
-          <div className="text-center py-16 bg-white rounded-2xl border border-gray-100 shadow-sm">
-            <p className="text-gray-400 text-base">No featured plans available right now.</p>
             <Link
-              href="/products"
-              className="mt-4 inline-flex items-center justify-center gap-2 bg-violet-600 hover:bg-violet-700 text-white font-semibold px-6 py-3 rounded-xl transition-all shadow-sm"
+              href="/products?category=media-players"
+              className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-violet-600 hover:text-violet-700 transition-colors whitespace-nowrap group"
             >
-              Browse All Plans <ArrowRight className="w-4 h-4" />
+              View All <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
             </Link>
           </div>
-        )}
-      </section>
+          {mediaPlayers.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              {mediaPlayers.map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))}
+            </div>
+          ) : (
+            <p className="text-gray-400 italic text-sm">No products found in this category.</p>
+          )}
+        </div>
 
+        {/* Row 3: Bein Sports */}
+        <div>
+          <div className="flex items-end justify-between mb-8 pb-3 border-b border-gray-200/60">
+            <div>
+              <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900 tracking-tight">
+                Bein Sports
+              </h2>
+              <p className="text-xs sm:text-sm text-gray-500 mt-1">Live coverage of premium worldwide sports and tournaments</p>
+            </div>
+            <Link
+              href="/products?category=bein-sports"
+              className="inline-flex items-center gap-1.5 text-xs sm:text-sm font-semibold text-violet-600 hover:text-violet-700 transition-colors whitespace-nowrap group"
+            >
+              View All <ArrowRight className="w-4 h-4 transition-transform group-hover:translate-x-0.5" />
+            </Link>
+          </div>
+          {beinSports.length > 0 ? (
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              {beinSports.map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))}
+            </div>
+          ) : (
+            <p className="text-gray-400 italic text-sm">No products found in this category.</p>
+          )}
+        </div>
+
+      </section>
     </div>
   );
 }

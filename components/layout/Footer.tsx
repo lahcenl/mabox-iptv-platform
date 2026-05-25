@@ -45,9 +45,9 @@ type SocialLink = {
 
 const quickLinks = [
   { label: 'My Account', href: '/account' },
-  { label: 'Refund Policy', href: '/refund-policy' },
-  { label: 'Privacy Policy', href: '/privacy-policy' },
-  { label: 'Terms of Service', href: '/terms' },
+  { label: 'Refund Policy', href: '/#' },
+  { label: 'Privacy Policy', href: '/#' },
+  { label: 'Terms of Service', href: '/#' },
   { label: 'FAQ', href: '/faq' },
 ];
 
@@ -68,7 +68,7 @@ export default function Footer() {
           <div>
             <h3 className="text-white text-2xl font-bold">Start Streaming Today</h3>
             <p className="text-violet-200 text-sm mt-1">
-              7-day free trial on all IPTV plans. No credit card required.
+              24 to 48 Hours Trial on all IPTV plans. No credit card required.
             </p>
           </div>
           <Link
@@ -91,8 +91,8 @@ export default function Footer() {
                 <Tv className="w-5 h-5 text-white" />
               </div>
               <div>
-                <span className="text-xl font-extrabold text-white">IPTV</span>
-                <span className="text-xl font-extrabold text-violet-400">Store</span>
+                <span className="text-xl font-extrabold text-white">Ondexy</span>
+                <span className="text-xl font-extrabold text-violet-400">.com</span>
               </div>
             </Link>
             <p className="text-sm text-gray-400 leading-relaxed mb-6">
@@ -123,7 +123,7 @@ export default function Footer() {
             <ul className="space-y-4">
               <li>
                 <a
-                  href="mailto:support@iptvstore.com"
+                  href="mailto:support@ondexy.com"
                   className="flex items-start gap-3 group"
                 >
                   <div className="w-8 h-8 bg-gray-800 group-hover:bg-violet-600 rounded-lg flex items-center justify-center flex-shrink-0 transition-colors">
@@ -132,7 +132,7 @@ export default function Footer() {
                   <div>
                     <div className="text-xs text-gray-500 mb-0.5">Email Support</div>
                     <span className="text-sm text-gray-300 group-hover:text-violet-400 transition-colors">
-                      support@iptvstore.com
+                      support@ondexy.com
                     </span>
                   </div>
                 </a>
@@ -225,16 +225,16 @@ export default function Footer() {
       <div className="border-t border-gray-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 flex flex-col sm:flex-row items-center justify-between gap-3">
           <p className="text-xs text-gray-500">
-            © {new Date().getFullYear()} IPTVStore. All rights reserved.
+            © {new Date().getFullYear()} Ondexy.com. All rights reserved.
           </p>
           <div className="flex items-center gap-4">
-            <Link href="/terms" className="text-xs text-gray-500 hover:text-violet-400 transition-colors">
+            <Link href="/#" className="text-xs text-gray-500 hover:text-violet-400 transition-colors">
               Terms
             </Link>
-            <Link href="/privacy-policy" className="text-xs text-gray-500 hover:text-violet-400 transition-colors">
+            <Link href="/#" className="text-xs text-gray-500 hover:text-violet-400 transition-colors">
               Privacy
             </Link>
-            <Link href="/refund-policy" className="text-xs text-gray-500 hover:text-violet-400 transition-colors">
+            <Link href="/#" className="text-xs text-gray-500 hover:text-violet-400 transition-colors">
               Refund Policy
             </Link>
           </div>
