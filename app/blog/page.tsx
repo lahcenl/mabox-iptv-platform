@@ -6,7 +6,7 @@ import { BookOpen, Calendar, ArrowRight, Rss } from 'lucide-react';
 export const metadata: Metadata = {
   title: 'Blog – IPTV Guides, Tips & News',
   description:
-    'Expert articles on IPTV setup, streaming tips, device guides, and the latest news from IPTVStore.',
+    'Expert articles on IPTV setup, streaming tips, device guides, and the latest news from Ondexy.',
   openGraph: {
     title: 'Blog – IPTV Guides, Tips & News',
     description: 'Expert articles on IPTV setup, streaming tips, and more.',

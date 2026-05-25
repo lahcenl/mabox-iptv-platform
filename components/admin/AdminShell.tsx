@@ -35,7 +35,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
                 <ShieldCheck className="w-4 h-4 text-white" />
               </div>
               <span className="font-bold text-gray-900 text-sm">
-                IPTVStore <span className="text-violet-600">Admin</span>
+                Ondexy <span className="text-violet-600">Admin</span>
               </span>
             </div>
 

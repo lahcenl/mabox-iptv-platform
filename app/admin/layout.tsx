@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import AdminShell from '@/components/admin/AdminShell';
 
 export const metadata: Metadata = {
-  title: 'Admin Dashboard | IPTVStore',
+  title: 'Admin Dashboard | Ondexy',
   description: 'Manage orders, products, and blog articles.',
   robots: { index: false, follow: false },
 };

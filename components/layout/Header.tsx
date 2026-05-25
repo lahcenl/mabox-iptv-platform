@@ -59,10 +59,10 @@ export default function Header() {
               </div>
               <div className="hidden sm:block">
                 <span className="text-xl font-extrabold text-gray-900 leading-none">
-                  IPTV
+                  Ondexy
                 </span>
                 <span className="text-xl font-extrabold text-violet-600 leading-none">
-                  Store
+                  .com
                 </span>
                 <div className="text-[10px] text-gray-400 font-medium leading-none mt-0.5">
                   Premium Streaming
@@ -85,44 +85,47 @@ export default function Header() {
               </div>
             </div>
 
-            {/* Right nav */}
-            <nav className="hidden lg:flex items-center gap-6">
-              {navLinks.map((link) => (
-                <Link key={link.href} href={link.href} className="nav-link pb-1">
-                  {link.label}
-                </Link>
-              ))}
-            </nav>
+            {/* Right side controls grouped together */}
+            <div className="flex items-center gap-4 flex-shrink-0 ml-auto">
+              {/* Right nav */}
+              <nav className="hidden lg:flex items-center gap-6 mr-2">
+                {navLinks.map((link) => (
+                  <Link key={link.href} href={link.href} className="nav-link pb-1">
+                    {link.label}
+                  </Link>
+                ))}
+              </nav>
 
-            {/* Cart button */}
-            <button
-              id="cart-toggle-btn"
-              onClick={toggleCart}
-              className="flex items-center gap-2 bg-violet-50 hover:bg-violet-100 border border-violet-200 text-violet-700 font-semibold px-3 py-2 rounded-xl transition-all duration-200 flex-shrink-0 relative group"
-              aria-label="Toggle cart"
-            >
-              <div className="relative">
-                <ShoppingCart className="w-5 h-5" />
-                {count > 0 && (
-                  <span className="absolute -top-2 -right-2 bg-violet-600 text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
-                    {count}
-                  </span>
-                )}
-              </div>
-              <span className="text-sm hidden sm:block">
-                ${total.toFixed(2)}
-              </span>
-            </button>
+              {/* Cart button */}
+              <button
+                id="cart-toggle-btn"
+                onClick={toggleCart}
+                className="flex items-center gap-2 bg-violet-50 hover:bg-violet-100 border border-violet-200 text-violet-700 font-semibold px-3 py-2 rounded-xl transition-all duration-200 relative group"
+                aria-label="Toggle cart"
+              >
+                <div className="relative">
+                  <ShoppingCart className="w-5 h-5" />
+                  {count > 0 && (
+                    <span className="absolute -top-2 -right-2 bg-violet-600 text-white text-[10px] font-bold w-4 h-4 rounded-full flex items-center justify-center">
+                      {count}
+                    </span>
+                  )}
+                </div>
+                <span className="text-sm hidden sm:block">
+                  ${total.toFixed(2)}
+                </span>
+              </button>
 
-            {/* Mobile menu toggle */}
-            <button
-              id="mobile-menu-toggle"
-              className="lg:hidden text-gray-600 hover:text-violet-600 transition-colors"
-              onClick={() => setMobileOpen(!mobileOpen)}
-              aria-label="Toggle mobile menu"
-            >
-              {mobileOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
-            </button>
+              {/* Mobile menu toggle */}
+              <button
+                id="mobile-menu-toggle"
+                className="lg:hidden text-gray-600 hover:text-violet-600 transition-colors"
+                onClick={() => setMobileOpen(!mobileOpen)}
+                aria-label="Toggle mobile menu"
+              >
+                {mobileOpen ? <X className="w-6 h-6" /> : <Menu className="w-6 h-6" />}
+              </button>
+            </div>
           </div>
 
           {/* Mobile search */}

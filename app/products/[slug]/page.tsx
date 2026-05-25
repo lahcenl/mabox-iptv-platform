@@ -7,7 +7,7 @@ import ProductDetails from '@/components/product/ProductDetails';
 import ProductDescription from '@/components/product/ProductDescription';
 import ProductCard from '@/components/ui/ProductCard';
 
-const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://iptvstore.com';
+const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.ondexy.com';
 
 /** Strip Markdown syntax so meta descriptions are clean plain text for SEO */
 function stripMarkdown(md: string | null | undefined): string {
@@ -55,7 +55,7 @@ export async function generateMetadata(props: PageProps<'/products/[slug]'>): Pr
       canonical: `${BASE_URL}/products/${product.slug}`,
     },
     openGraph: {
-      title: `${product.name} | IPTVStore`,
+      title: `${product.name} | Ondexy`,
       description: plainDescription,
       type: 'website',
       url: `${BASE_URL}/products/${product.slug}`,
@@ -70,7 +70,7 @@ export async function generateMetadata(props: PageProps<'/products/[slug]'>): Pr
     },
     twitter: {
       card: 'summary_large_image',
-      title: `${product.name} | IPTVStore`,
+      title: `${product.name} | Ondexy`,
       description: plainDescription,
       images: [imageUrl],
     },
@@ -123,7 +123,7 @@ export default async function ProductPage(props: PageProps<'/products/[slug]'>) 
     sku: product.id,
     brand: {
       '@type': 'Brand',
-      name: 'IPTVStore',
+      name: 'Ondexy',
     },
     offers: {
       '@type': 'Offer',
@@ -136,7 +136,7 @@ export default async function ProductPage(props: PageProps<'/products/[slug]'>) 
       availability: 'https://schema.org/InStock',
       seller: {
         '@type': 'Organization',
-        name: 'IPTVStore',
+        name: 'Ondexy',
       },
     },
     aggregateRating: {

@@ -14,13 +14,13 @@ const inter = Inter({
   display: 'swap',
 });
 
-const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://iptvstore.com';
+const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.ondexy.com';
 
 export const metadata: Metadata = {
   metadataBase: new URL(BASE_URL),
   title: {
-    default: 'IPTVStore – Premium IPTV Subscriptions & Streaming Plans',
-    template: '%s | IPTVStore',
+    default: 'Ondexy – Premium IPTV Subscriptions & Streaming Plans',
+    template: '%s | Ondexy',
   },
   description:
     'Shop the best IPTV subscription plans. 10,000+ channels, Full HD & 4K quality, instant activation. Best prices on IPTV, media players, and reseller panels.',
@@ -37,9 +37,9 @@ export const metadata: Metadata = {
     'TiviMate',
     'BEIN sports IPTV',
   ],
-  authors: [{ name: 'IPTVStore' }],
-  creator: 'IPTVStore',
-  publisher: 'IPTVStore',
+  authors: [{ name: 'Ondexy' }],
+  creator: 'Ondexy',
+  publisher: 'Ondexy',
   robots: {
     index: true,
     follow: true,
@@ -51,11 +51,11 @@ export const metadata: Metadata = {
     },
   },
   openGraph: {
-    siteName: 'IPTVStore',
+    siteName: 'Ondexy',
     type: 'website',
     locale: 'en_US',
     url: BASE_URL,
-    title: 'IPTVStore – Premium IPTV Subscriptions & Streaming Plans',
+    title: 'Ondexy – Premium IPTV Subscriptions & Streaming Plans',
     description:
       'Shop the best IPTV subscription plans. 10,000+ channels, Full HD & 4K quality, instant activation.',
     images: [
@@ -63,13 +63,13 @@ export const metadata: Metadata = {
         url: '/og-default.png',
         width: 1200,
         height: 630,
-        alt: 'IPTVStore – Premium IPTV Subscriptions',
+        alt: 'Ondexy – Premium IPTV Subscriptions',
       },
     ],
   },
   twitter: {
     card: 'summary_large_image',
-    title: 'IPTVStore – Premium IPTV Subscriptions & Streaming Plans',
+    title: 'Ondexy – Premium IPTV Subscriptions & Streaming Plans',
     description:
       'Shop the best IPTV subscription plans. 10,000+ channels, Full HD & 4K quality, instant activation.',
     images: ['/og-default.png'],

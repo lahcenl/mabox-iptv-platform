@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { getArticleBySlug, readArticles } from '@/lib/articles';
 import { Calendar, ArrowLeft, User } from 'lucide-react';
 
-const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://iptvstore.com';
+const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.ondexy.com';
 
 interface Props {
   params: Promise<{ slug: string }>;
@@ -123,7 +123,7 @@ export default async function ArticlePage({ params }: Props) {
     },
     publisher: {
       '@type': 'Organization',
-      name: 'IPTVStore',
+      name: 'Ondexy',
       logo: {
         '@type': 'ImageObject',
         url: `${BASE_URL}/og-default.png`,

@@ -44,12 +44,11 @@ type SocialLink = {
 };
 
 const quickLinks = [
-  { label: 'My Account', href: '/#' },
-  { label: 'Refund Policy', href: '/#' },
-  { label: 'Privacy Policy', href: '/#' },
-  { label: 'Terms of Service', href: '/#' },
-  { label: 'About Us', href: '/#' },
-  { label: 'FAQ', href: '/#' },
+  { label: 'Refund Policy', href: '/refund-policy' },
+  { label: 'Privacy Policy', href: '/privacy-policy' },
+  { label: 'Terms of Service', href: '/terms' },
+  { label: 'About Us', href: '/about' },
+  { label: 'FAQ', href: '/faq' },
 ];
 
 const socialLinks: SocialLink[] = [
@@ -229,13 +228,13 @@ export default function Footer() {
             © {new Date().getFullYear()} Ondexy.com. All rights reserved.
           </p>
           <div className="flex items-center gap-4">
-            <Link href="/#" className="text-xs text-gray-500 hover:text-violet-400 transition-colors">
+            <Link href="/terms" className="text-xs text-gray-500 hover:text-violet-400 transition-colors">
               Terms
             </Link>
-            <Link href="/#" className="text-xs text-gray-500 hover:text-violet-400 transition-colors">
+            <Link href="/privacy-policy" className="text-xs text-gray-500 hover:text-violet-400 transition-colors">
               Privacy
             </Link>
-            <Link href="/#" className="text-xs text-gray-500 hover:text-violet-400 transition-colors">
+            <Link href="/refund-policy" className="text-xs text-gray-500 hover:text-violet-400 transition-colors">
               Refund Policy
             </Link>
           </div>

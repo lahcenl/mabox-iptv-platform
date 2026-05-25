@@ -61,7 +61,7 @@ function LoginForm() {
               <ShieldCheck className="w-8 h-8 text-white" />
             </div>
             <h1 className="text-2xl font-bold text-white">Admin Portal</h1>
-            <p className="text-gray-400 text-sm mt-1">IPTVStore Control Panel</p>
+            <p className="text-gray-400 text-sm mt-1">Ondexy Control Panel</p>
           </div>
 
           {/* Error Banner */}

@@ -1,7 +1,7 @@
 import type { Metadata } from 'next';
 
 export const metadata: Metadata = {
-  title: 'Admin Login | IPTVStore',
+  title: 'Admin Login | Ondexy',
   robots: { index: false, follow: false },
 };
 

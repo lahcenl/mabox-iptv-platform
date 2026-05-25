@@ -45,14 +45,14 @@ export default async function Home() {
       </section>
 
       {/* ── CATEGORIES ── */}
-      <section className="max-w-4xl mx-auto px-4 py-10 md:py-16 border-b border-gray-100">
-        <div className="mb-8 text-center">
-          <h2 className="text-2xl md:text-3xl font-extrabold text-gray-900 tracking-tight">
+      <section className="max-w-4xl mx-auto px-4 py-6 md:py-8 border-b border-gray-100">
+        <div className="mb-4 text-center">
+          <h2 className="text-xl md:text-2xl font-extrabold text-gray-900 tracking-tight">
             Browse by Category
           </h2>
-          <p className="text-gray-500 mt-2 text-xs md:text-sm">Explore our premium plans and software licenses</p>
+          <p className="text-gray-500 mt-1 text-xs">Explore our premium plans and software licenses</p>
         </div>
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 md:gap-6 justify-items-center max-w-3xl mx-auto px-2">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-4 justify-items-center max-w-3xl mx-auto px-2">
           {coreCategories.map((category) => (
             <CategoryCard key={category.id} category={category} />
           ))}
