@@ -68,6 +68,8 @@ export async function addArticle(input: NewArticleInput): Promise<Article> {
     slug = `${baseSlug}-${counter++}`;
   }
 
+  const dateValue = (input.date && input.date.trim() !== '') ? input.date : new Date().toISOString();
+
   const { data, error } = await supabase
     .from('articles')
     .insert([{
@@ -76,7 +78,7 @@ export async function addArticle(input: NewArticleInput): Promise<Article> {
       content: input.content,
       cover_image: input.coverImage ?? '',
       excerpt: generateExcerpt(input.content),
-      created_at: input.date ?? new Date().toISOString(),
+      created_at: dateValue,
       author: input.author ?? 'Admin',
     }])
     .select()
@@ -85,6 +87,8 @@ export async function addArticle(input: NewArticleInput): Promise<Article> {
   if (error) throw error;
   return toSerializable(data);
 }
+
+export const createArticle = addArticle;
 
 export async function updateArticle(
   id: string,
@@ -98,7 +102,9 @@ export async function updateArticle(
   }
   if (updates.coverImage !== undefined) updateData.cover_image = updates.coverImage;
   if (updates.author) updateData.author = updates.author;
-  if (updates.date) updateData.created_at = updates.date;
+  if (updates.date && updates.date.trim() !== '') {
+    updateData.created_at = updates.date;
+  }
 
   const { data, error } = await supabase
     .from('articles')

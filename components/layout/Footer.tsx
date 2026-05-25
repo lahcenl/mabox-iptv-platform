@@ -44,11 +44,12 @@ type SocialLink = {
 };
 
 const quickLinks = [
-  { label: 'My Account', href: '/account' },
+  { label: 'My Account', href: '/#' },
   { label: 'Refund Policy', href: '/#' },
   { label: 'Privacy Policy', href: '/#' },
   { label: 'Terms of Service', href: '/#' },
-  { label: 'FAQ', href: '/faq' },
+  { label: 'About Us', href: '/#' },
+  { label: 'FAQ', href: '/#' },
 ];
 
 const socialLinks: SocialLink[] = [

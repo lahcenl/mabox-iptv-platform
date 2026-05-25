@@ -16,9 +16,22 @@ export interface Order {
 }
 
 function toSerializable(order: any): Order {
+  let parsedItems: OrderItem[] = [];
+  if (order.items) {
+    if (typeof order.items === 'string') {
+      try {
+        parsedItems = JSON.parse(order.items);
+      } catch {
+        parsedItems = [];
+      }
+    } else if (Array.isArray(order.items)) {
+      parsedItems = order.items;
+    }
+  }
+
   return {
     orderId: order.id,
-    items: order.items as OrderItem[],
+    items: parsedItems,
     total: order.total,
     status: order.status as 'Pending' | 'Completed',
     createdAt: order.created_at,

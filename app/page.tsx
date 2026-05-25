@@ -1,7 +1,8 @@
 import Link from 'next/link';
 import { ArrowRight, MessageCircle } from 'lucide-react';
 import ProductCard from '@/components/ui/ProductCard';
-import { getProductsByCategory } from '@/lib/data';
+import CategoryCard from '@/components/ui/CategoryCard';
+import { categories, getProductsByCategory } from '@/lib/data';
 
 export default async function Home() {
   const iptvProducts = (await getProductsByCategory('IPTV Subscriptions')).slice(0, 4);
@@ -36,6 +37,21 @@ export default async function Home() {
               Contact on WhatsApp
             </a>
           </div>
+        </div>
+      </section>
+
+      {/* ── CATEGORIES ── */}
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 border-b border-gray-200/55">
+        <div className="mb-10 text-center">
+          <h2 className="text-3xl font-extrabold text-gray-900 tracking-tight">
+            Browse by Category
+          </h2>
+          <p className="text-gray-500 mt-2 text-sm">Explore our premium plans and software licenses</p>
+        </div>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+          {categories.map((category) => (
+            <CategoryCard key={category.id} category={category} />
+          ))}
         </div>
       </section>
 
