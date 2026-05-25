@@ -48,8 +48,12 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
   const [addedToCart, setAddedToCart] = useState(false);
   const { addToCart } = useCartStore();
 
-  const selectedTier = product.priceTiers[selectedTierIndex];
-  const emoji = categoryEmojis[product.category] || '📦';
+  const validTiers = product?.priceTiers || [];
+  const minPrice = validTiers.length > 0 ? Math.min(...validTiers.map((t) => t.price)) : 0;
+  const maxPrice = validTiers.length > 0 ? Math.max(...validTiers.map((t) => t.price)) : 0;
+  
+  const selectedTier = validTiers[selectedTierIndex] || { duration: 'No Plan', price: 0, months: 0 };
+  const emoji = categoryEmojis[product?.category] || '📦';
 
   const whatsappMessage = `Hi! I want to buy *${product.name}* for *${selectedTier.duration}* at $${selectedTier.price.toFixed(2)}. Please assist me.`;
   const whatsappUrl = `https://wa.me/${product.whatsappNumber}?text=${encodeURIComponent(whatsappMessage)}`;
