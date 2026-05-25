@@ -2,7 +2,7 @@ import type { Metadata } from 'next';
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { ChevronRight } from 'lucide-react';
-import { getProductBySlug, getProducts } from '@/lib/data';
+import { getProductBySlug, getProducts, getProductsByCategory } from '@/lib/data';
 import ProductDetails from '@/components/product/ProductDetails';
 import ProductDescription from '@/components/product/ProductDescription';
 import ProductCard from '@/components/ui/ProductCard';
@@ -10,18 +10,23 @@ import ProductCard from '@/components/ui/ProductCard';
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://iptvstore.com';
 
 /** Strip Markdown syntax so meta descriptions are clean plain text for SEO */
-function stripMarkdown(md: string): string {
-  return md
-    .replace(/#{1,6}\s*/g, '')        // headings
-    .replace(/\*\*(.+?)\*\*/g, '$1')  // bold
-    .replace(/\*(.+?)\*/g, '$1')      // italic
-    .replace(/`(.+?)`/g, '$1')        // inline code
-    .replace(/\[(.+?)\]\(.+?\)/g, '$1') // links
-    .replace(/^[-*+]\s+/gm, '')       // bullets
-    .replace(/^\d+\.\s+/gm, '')       // numbered lists
-    .replace(/\n{2,}/g, ' ')          // blank lines -> space
-    .replace(/\n/g, ' ')              // newlines -> space
-    .trim();
+function stripMarkdown(md: string | null | undefined): string {
+  if (!md || typeof md !== 'string') return '';
+  try {
+    return md
+      .replace(/#{1,6}\s*/g, '')           // headings
+      .replace(/\*\*(.+?)\*\*/g, '$1')    // bold
+      .replace(/\*(.+?)\*/g, '$1')        // italic
+      .replace(/`(.+?)`/g, '$1')          // inline code
+      .replace(/\[(.+?)\]\(.+?\)/g, '$1') // links
+      .replace(/^[-*+]\s+/gm, '')          // bullets
+      .replace(/^\d+\.\s+/gm, '')          // numbered lists
+      .replace(/\n{2,}/g, ' ')             // blank lines -> space
+      .replace(/\n/g, ' ')                 // newlines -> space
+      .trim();
+  } catch {
+    return '';
+  }
 }
 
 // This tells Next.js which slugs to pre-render at build time
@@ -35,7 +40,7 @@ export async function generateMetadata(props: PageProps<'/products/[slug]'>): Pr
   const product = await getProductBySlug(slug);
   if (!product) return { title: 'Product Not Found' };
 
-  const plainDescription = stripMarkdown(product.description);
+  const plainDescription = stripMarkdown(product?.description || '');
   const tiers = product.priceTiers || (product as any).price_tiers || [];
   const lowestPrice = tiers.length > 0 ? Math.min(...tiers.map((t: any) => t.price)) : 0;
   const imageUrl = product.image
@@ -86,6 +91,20 @@ export default async function ProductPage(props: PageProps<'/products/[slug]'>) 
     .filter((p) => p.category === product.category && p.id !== product.id)
     .slice(0, 4);
 
+  // Cross-selling: pick a complementary category
+  const crossCategory =
+    product.category === 'IPTV Subscriptions'
+      ? 'Media Players'
+      : product.category === 'Media Players'
+      ? 'IPTV Subscriptions'
+      : products.find((p) => p.category !== product.category)?.category ?? null;
+
+  const crossSell = crossCategory
+    ? (await getProductsByCategory(crossCategory))
+        .filter((p) => p.id !== product.id)
+        .slice(0, 4)
+    : [];
+
   // Lowest price tier for schema
   const tiers = product.priceTiers || (product as any).price_tiers || [];
   const lowestPrice = tiers.length > 0 ? Math.min(...tiers.map((t: any) => t.price)) : 0;
@@ -94,7 +113,7 @@ export default async function ProductPage(props: PageProps<'/products/[slug]'>) 
     : `${BASE_URL}/og-default.png`;
 
   // JSON-LD Product schema
-  const plainDesc = stripMarkdown(product.description);
+  const plainDesc = stripMarkdown(product?.description || '');
   const productSchema = {
     '@context': 'https://schema.org',
     '@type': 'Product',
@@ -160,12 +179,31 @@ export default async function ProductPage(props: PageProps<'/products/[slug]'>) 
 
       {/* Related products */}
       {related.length > 0 && (
-        <section>
+        <section className="mt-10">
           <h2 className="text-2xl font-extrabold text-gray-900 mb-6">
             Related Products
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
             {related.map((p) => (
+              <ProductCard key={p.id} product={p} />
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* Cross-selling: Customers who bought this also bought */}
+      {crossSell.length > 0 && (
+        <section className="mt-12">
+          <div className="mb-6">
+            <h2 className="text-2xl font-extrabold text-gray-900">
+              Customers who bought this also bought
+            </h2>
+            <p className="text-sm text-gray-400 mt-1">
+              From the <span className="font-semibold text-violet-600">{crossCategory}</span> category
+            </p>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+            {crossSell.map((p) => (
               <ProductCard key={p.id} product={p} />
             ))}
           </div>

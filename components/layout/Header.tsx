@@ -25,17 +25,19 @@ export default function Header() {
   const total = subtotal();
 
   const promoMessages = [
-    "🎁 كنقصو ليكم على شراء تاني شراء أو الشراء المتكرر!",
-    "🔥 إبو بلاير هدية لسنة الأولى منين كيشريو سنة من الإشتراك!"
+    "🎁 Get a discount on your second purchase or recurring subscriptions",
+    "🎬 Get a free IPTV Player for the first year with an annual subscription",
+    "⏱ Enjoy a 24 to 48 hours trial before committing to any plan",
   ];
   const [promoIndex, setPromoIndex] = useState(0);
 
   useEffect(() => {
     const timer = setInterval(() => {
       setPromoIndex((prev) => (prev + 1) % promoMessages.length);
-    }, 4000);
+    }, 5000);
     return () => clearInterval(timer);
   }, []);
+
 
   return (
     <>

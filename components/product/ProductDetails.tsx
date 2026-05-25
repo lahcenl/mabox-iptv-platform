@@ -49,6 +49,9 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
   const { addToCart } = useCartStore();
 
   const validTiers = product?.priceTiers || [];
+  const isFlatPrice =
+    validTiers.length === 1 &&
+    (validTiers[0].duration === 'One-time' || validTiers[0].duration === 'Lifetime');
   const minPrice = validTiers.length > 0 ? Math.min(...validTiers.map((t) => t.price)) : 0;
   const maxPrice = validTiers.length > 0 ? Math.max(...validTiers.map((t) => t.price)) : 0;
   
@@ -115,16 +118,19 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
 
         {/* Price display */}
         <div className="bg-violet-50 border border-violet-100 rounded-xl p-4">
-          <div className="text-sm text-gray-500 mb-1">Selected plan price</div>
+          <div className="text-sm text-gray-500 mb-1">Price</div>
           <div className="text-4xl font-extrabold text-violet-700">
             ${selectedTier.price.toFixed(2)}
           </div>
-          <div className="text-sm text-gray-500 mt-1">
-            for {selectedTier.duration}
-          </div>
+          {!isFlatPrice && (
+            <div className="text-sm text-gray-500 mt-1">
+              for {selectedTier.duration}
+            </div>
+          )}
         </div>
 
-        {/* Duration selector */}
+        {/* Duration selector — hidden for flat-price products */}
+        {!isFlatPrice && (
         <div>
           <label
             htmlFor="duration-select"
@@ -165,6 +171,7 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
             ))}
           </div>
         </div>
+        )}
 
         {/* What's included */}
         <div className="space-y-2">

@@ -45,12 +45,17 @@ function toSerializable(article: any): Article {
 }
 
 export async function readArticles(): Promise<Article[]> {
-  const { data, error } = await supabase
-    .from('articles')
-    .select('*')
-    .order('created_at', { ascending: false });
-  if (error) throw error;
-  return (data || []).map(toSerializable);
+  try {
+    const { data, error } = await supabase
+      .from('articles')
+      .select('*')
+      .order('created_at', { ascending: false });
+    if (error) throw error;
+    return (data || []).map(toSerializable);
+  } catch (error) {
+    console.error('Error fetching articles:', error);
+    return [];
+  }
 }
 
 export async function addArticle(input: NewArticleInput): Promise<Article> {

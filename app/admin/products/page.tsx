@@ -46,6 +46,7 @@ interface ProductForm {
   description: string;
   image: string;
   category: string;
+  pricingMode: 'subscription' | 'flat';
   priceTiers: { duration: string; price: string }[];
 }
 
@@ -56,13 +57,14 @@ const EMPTY_FORM: ProductForm = {
   description: '',
   image: '',
   category: 'IPTV Subscriptions',
+  pricingMode: 'subscription',
   priceTiers: [{ ...EMPTY_TIER }],
 };
 
 const CATEGORIES = ['IPTV Subscriptions', 'Media Players', 'Smart TV Apps', 'Bein Sports'];
 
 const DURATION_SUGGESTIONS = [
-  '1 Month', '3 Months', '6 Months', '12 Months',
+  'One-time', '1 Month', '3 Months', '6 Months', '12 Months',
   '1 Year', '2 Years', 'Lifetime',
 ];
 
@@ -319,16 +321,107 @@ function ProductFormFields({
         </select>
       </div>
 
+      {/* Pricing Mode Toggle */}
+      <div>
+        <label className="block text-sm font-medium text-gray-700 mb-2">
+          Pricing Mode <span className="text-red-400">*</span>
+        </label>
+        <div className="flex gap-3">
+          <label
+            className={`flex-1 flex items-center gap-2.5 p-3 rounded-xl border-2 cursor-pointer transition-colors ${
+              form.pricingMode === 'subscription'
+                ? 'border-violet-500 bg-violet-50 text-violet-700'
+                : 'border-gray-200 text-gray-600 hover:border-gray-300'
+            }`}
+          >
+            <input
+              type="radio"
+              name="pf-pricing-mode"
+              value="subscription"
+              checked={form.pricingMode === 'subscription'}
+              onChange={() =>
+                onChange({
+                  ...form,
+                  pricingMode: 'subscription',
+                  priceTiers: form.priceTiers.length > 0 ? form.priceTiers : [{ ...EMPTY_TIER }],
+                })
+              }
+              className="accent-violet-600"
+            />
+            <span className="text-sm font-semibold">Subscription</span>
+            <span className="text-xs text-gray-400 hidden sm:inline">Multiple durations</span>
+          </label>
+          <label
+            className={`flex-1 flex items-center gap-2.5 p-3 rounded-xl border-2 cursor-pointer transition-colors ${
+              form.pricingMode === 'flat'
+                ? 'border-violet-500 bg-violet-50 text-violet-700'
+                : 'border-gray-200 text-gray-600 hover:border-gray-300'
+            }`}
+          >
+            <input
+              type="radio"
+              name="pf-pricing-mode"
+              value="flat"
+              checked={form.pricingMode === 'flat'}
+              onChange={() =>
+                onChange({
+                  ...form,
+                  pricingMode: 'flat',
+                  priceTiers: [{ duration: 'One-time', price: form.priceTiers[0]?.price ?? '' }],
+                })
+              }
+              className="accent-violet-600"
+            />
+            <span className="text-sm font-semibold">One-time / Flat Price</span>
+            <span className="text-xs text-gray-400 hidden sm:inline">Single price</span>
+          </label>
+        </div>
+      </div>
+
       {/* Dynamic Pricing Tiers */}
       <div className="border border-gray-100 rounded-xl p-4 bg-gray-50/60">
-        <PricingTierBuilder
-          tiers={form.priceTiers}
-          onChange={(tiers) => onChange({ ...form, priceTiers: tiers })}
-        />
-        <div className="mt-2.5 flex items-start gap-1.5 text-xs text-gray-400">
-          <Info className="w-3.5 h-3.5 mt-0.5 flex-shrink-0 text-violet-400" />
-          Use any duration label: &quot;1 Month&quot;, &quot;6 Months&quot;, &quot;1 Year&quot;, &quot;Lifetime&quot;, etc.
-        </div>
+        {form.pricingMode === 'flat' ? (
+          /* Flat price: single price input, duration auto-locked to One-time */
+          <div>
+            <label className="block text-sm font-medium text-gray-700 mb-2">
+              Flat Price <span className="text-red-400">*</span>
+            </label>
+            <div className="relative w-40">
+              <DollarSign className="absolute left-2.5 top-1/2 -translate-y-1/2 w-3.5 h-3.5 text-gray-400" />
+              <input
+                id="pf-flat-price"
+                type="number"
+                min="0"
+                step="0.01"
+                value={form.priceTiers[0]?.price ?? ''}
+                onChange={(e) =>
+                  onChange({
+                    ...form,
+                    priceTiers: [{ duration: 'One-time', price: e.target.value }],
+                  })
+                }
+                placeholder="0.00"
+                className="w-full border border-gray-200 rounded-xl pl-7 pr-2.5 py-2.5 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-violet-400 focus:border-transparent"
+              />
+            </div>
+            <p className="mt-2 text-xs text-gray-400 flex items-center gap-1">
+              <Info className="w-3.5 h-3.5 text-violet-400 flex-shrink-0" />
+              Will be saved as a single &quot;One-time&quot; price tier.
+            </p>
+          </div>
+        ) : (
+          /* Subscription: full tier builder */
+          <>
+            <PricingTierBuilder
+              tiers={form.priceTiers}
+              onChange={(tiers) => onChange({ ...form, priceTiers: tiers })}
+            />
+            <div className="mt-2.5 flex items-start gap-1.5 text-xs text-gray-400">
+              <Info className="w-3.5 h-3.5 mt-0.5 flex-shrink-0 text-violet-400" />
+              Use any duration label: &quot;1 Month&quot;, &quot;6 Months&quot;, &quot;1 Year&quot;, &quot;Lifetime&quot;, etc.
+            </div>
+          </>
+        )}
       </div>
 
       <button
@@ -379,11 +472,15 @@ export default function AdminProductsPage() {
   }
 
   function openEdit(p: Product) {
+    const isFlat =
+      p.priceTiers.length === 1 &&
+      (p.priceTiers[0].duration === 'One-time' || p.priceTiers[0].duration === 'Lifetime');
     setForm({
       name: p.name,
       description: p.description,
       image: p.image,
       category: p.category,
+      pricingMode: isFlat ? 'flat' : 'subscription',
       // Convert stored PriceTier[] to the form's string-based format
       priceTiers: p.priceTiers.map((t) => ({
         duration: t.duration,

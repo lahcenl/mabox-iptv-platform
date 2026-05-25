@@ -1,7 +1,34 @@
+'use client';
+
+import { Component, type ErrorInfo, type ReactNode } from 'react';
 import MarkdownPreview from '@uiw/react-markdown-preview';
 
 interface ProductDescriptionProps {
-  description: string;
+  description?: string | null;
+}
+
+/** Catches any exception thrown by the Markdown renderer and renders nothing instead of crashing. */
+class MarkdownErrorBoundary extends Component<
+  { children: ReactNode },
+  { hasError: boolean }
+> {
+  constructor(props: { children: ReactNode }) {
+    super(props);
+    this.state = { hasError: false };
+  }
+
+  static getDerivedStateFromError(_: Error) {
+    return { hasError: true };
+  }
+
+  componentDidCatch(error: Error, info: ErrorInfo) {
+    console.warn('[ProductDescription] Markdown render error:', error, info);
+  }
+
+  render() {
+    if (this.state.hasError) return null;
+    return this.props.children;
+  }
 }
 
 /**
@@ -13,9 +40,12 @@ interface ProductDescriptionProps {
  * @uiw/react-markdown-preview safely escapes raw HTML by default,
  * preventing XSS while correctly rendering H2/H3 headings, bold text,
  * and bullet/numbered lists for both users and search engines.
+ *
+ * Wrapped in an ErrorBoundary so invalid Markdown syntax never crashes the page.
  */
 export default function ProductDescription({ description }: ProductDescriptionProps) {
-  if (!description?.trim()) return null;
+  const safeDesc = description?.trim() || '';
+  if (!safeDesc) return null;
 
   return (
     <section
@@ -31,20 +61,22 @@ export default function ProductDescription({ description }: ProductDescriptionPr
       </h2>
 
       {/* data-color-mode="light" forces the preview to always use light theme */}
-      <div data-color-mode="light" className="markdown-body-custom">
-        <MarkdownPreview
-          source={description}
-          style={{
-            backgroundColor: 'transparent',
-            color: 'inherit',
-            fontFamily: 'inherit',
-            fontSize: 'inherit',
-          }}
-          wrapperElement={
-            { 'data-color-mode': 'light' } as React.HTMLAttributes<HTMLDivElement>
-          }
-        />
-      </div>
+      <MarkdownErrorBoundary>
+        <div data-color-mode="light" className="markdown-body-custom">
+          <MarkdownPreview
+            source={safeDesc}
+            style={{
+              backgroundColor: 'transparent',
+              color: 'inherit',
+              fontFamily: 'inherit',
+              fontSize: 'inherit',
+            }}
+            wrapperElement={
+              { 'data-color-mode': 'light' } as React.HTMLAttributes<HTMLDivElement>
+            }
+          />
+        </div>
+      </MarkdownErrorBoundary>
     </section>
   );
 }

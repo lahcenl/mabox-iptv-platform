@@ -58,23 +58,39 @@ export default async function Home() {
           <h2 className="text-3xl font-extrabold text-gray-900">
             Featured Plans
           </h2>
+          <p className="text-gray-500 mt-2 text-base">Hand-picked plans our customers love most</p>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
-          {featuredProducts.map((product) => (
-            <ProductCard key={product.id} product={product} />
-          ))}
-        </div>
+        {featuredProducts.length > 0 ? (
+          <>
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6">
+              {featuredProducts.map((product) => (
+                <ProductCard key={product.id} product={product} />
+              ))}
+            </div>
 
-        <div className="text-center mt-12">
-          <Link
-            href="/products"
-            className="inline-flex items-center justify-center gap-2 bg-white border border-gray-300 hover:border-gray-400 text-gray-700 font-semibold px-6 py-3 rounded-xl transition-all shadow-sm"
-          >
-            View All Plans <ArrowRight className="w-4 h-4" />
-          </Link>
-        </div>
+            <div className="text-center mt-12">
+              <Link
+                href="/products"
+                className="inline-flex items-center justify-center gap-2 bg-white border border-gray-300 hover:border-gray-400 text-gray-700 font-semibold px-6 py-3 rounded-xl transition-all shadow-sm"
+              >
+                View All Plans <ArrowRight className="w-4 h-4" />
+              </Link>
+            </div>
+          </>
+        ) : (
+          <div className="text-center py-16 bg-white rounded-2xl border border-gray-100 shadow-sm">
+            <p className="text-gray-400 text-base">No featured plans available right now.</p>
+            <Link
+              href="/products"
+              className="mt-4 inline-flex items-center justify-center gap-2 bg-violet-600 hover:bg-violet-700 text-white font-semibold px-6 py-3 rounded-xl transition-all shadow-sm"
+            >
+              Browse All Plans <ArrowRight className="w-4 h-4" />
+            </Link>
+          </div>
+        )}
       </section>
+
     </div>
   );
 }

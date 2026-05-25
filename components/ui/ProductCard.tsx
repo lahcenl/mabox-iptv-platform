@@ -37,6 +37,9 @@ const categoryEmojis: Record<string, string> = {
 
 export default function ProductCard({ product }: ProductCardProps) {
   const validTiers = product?.priceTiers || [];
+  const isFlatPrice =
+    validTiers.length === 1 &&
+    (validTiers[0].duration === 'One-time' || validTiers[0].duration === 'Lifetime');
   const [selectedTier, setSelectedTier] = useState(validTiers.length > 0 ? validTiers[0] : null);
   
   const whatsappMessage = `Hi! I'm interested in ${product.name} (${selectedTier?.duration || ''}). Can you provide more details?`;
@@ -79,23 +82,28 @@ export default function ProductCard({ product }: ProductCardProps) {
         <div className="mb-4 flex-1">
           {validTiers.length > 0 ? (
             <div className="flex flex-col gap-2">
-              <select
-                value={selectedTier?.duration}
-                onChange={(e) => {
-                  const tier = validTiers.find((t) => t.duration === e.target.value);
-                  if (tier) setSelectedTier(tier);
-                }}
-                className="w-full bg-gray-50 border border-gray-200 text-gray-800 text-sm rounded-xl focus:ring-violet-500 focus:border-violet-500 block p-2.5 transition-colors cursor-pointer"
-              >
-                {validTiers.map((tier) => (
-                  <option key={tier.duration} value={tier.duration}>
-                    {tier.duration}
-                  </option>
-                ))}
-              </select>
+              {/* Flat-price mode: no dropdown, just show the price */}
+              {!isFlatPrice && (
+                <select
+                  value={selectedTier?.duration}
+                  onChange={(e) => {
+                    const tier = validTiers.find((t) => t.duration === e.target.value);
+                    if (tier) setSelectedTier(tier);
+                  }}
+                  className="w-full bg-gray-50 border border-gray-200 text-gray-800 text-sm rounded-xl focus:ring-violet-500 focus:border-violet-500 block p-2.5 transition-colors cursor-pointer"
+                >
+                  {validTiers.map((tier) => (
+                    <option key={tier.duration} value={tier.duration}>
+                      {tier.duration}
+                    </option>
+                  ))}
+                </select>
+              )}
               <div className="flex items-end gap-1">
                 <span className="text-xl font-extrabold text-violet-700">${selectedTier?.price.toFixed(2)}</span>
-                <span className="text-xs text-gray-400 font-medium mb-1">/ {selectedTier?.duration}</span>
+                {!isFlatPrice && (
+                  <span className="text-xs text-gray-400 font-medium mb-1">/ {selectedTier?.duration}</span>
+                )}
               </div>
             </div>
           ) : (

@@ -1,60 +1,92 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { Category } from '@/lib/data';
 
 interface CategoryCardProps {
   category: Category;
 }
 
-const colorMap = {
-  purple: {
-    border: 'border-violet-600',
-    bg: 'bg-violet-600',
-    emoji: '📡',
-    label: 'IPTV',
-  },
-  yellow: {
-    border: 'border-yellow-500',
-    bg: 'bg-yellow-500',
-    emoji: '📺',
-    label: 'Players',
-  },
-  blue: {
-    border: 'border-blue-600',
-    bg: 'bg-blue-600',
-    emoji: '📱',
-    label: 'Smart TV',
-  },
-  green: {
-    border: 'border-green-600',
-    bg: 'bg-green-600',
-    emoji: '⚽️',
-    label: 'Bein Sports',
-  },
+const accentColors: Record<Category['color'], string> = {
+  purple: 'from-violet-600/90 to-violet-900/95',
+  yellow: 'from-amber-500/90 to-amber-800/95',
+  blue:   'from-blue-600/90 to-blue-900/95',
+  green:  'from-emerald-600/90 to-emerald-900/95',
+};
+
+const borderColors: Record<Category['color'], string> = {
+  purple: 'ring-violet-500',
+  yellow: 'ring-amber-400',
+  blue:   'ring-blue-500',
+  green:  'ring-emerald-500',
 };
 
 export default function CategoryCard({ category }: CategoryCardProps) {
-  const style = colorMap[category.color];
+  const gradient = accentColors[category.color];
+  const ring     = borderColors[category.color];
 
   return (
-    <Link href={`/products?category=${category.slug}`} className="group block h-full">
+    <Link
+      href={`/products?category=${category.slug}`}
+      className="group block h-full"
+      aria-label={`Browse ${category.name}`}
+    >
       <div
-        className={`bg-white rounded-2xl border-4 ${style.border} h-72 flex flex-col justify-between overflow-hidden relative shadow-sm hover:shadow-lg transition-all duration-300 hover:-translate-y-1 cursor-pointer`}
+        className={`
+          relative h-64 rounded-2xl overflow-hidden shadow-md
+          ring-2 ring-transparent hover:${ring}
+          transition-all duration-400 hover:-translate-y-1 hover:shadow-xl
+          cursor-pointer
+        `}
       >
-        {/* Center content: Emoji on white background */}
-        <div className="flex-1 flex items-center justify-center bg-white p-6">
-          <div className="text-6xl group-hover:scale-110 transition-transform duration-300 select-none">
-            {style.emoji}
-          </div>
-        </div>
+        {/* Background image — always visible */}
+        <Image
+          src={category.image}
+          alt={category.name}
+          fill
+          sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
+          className="object-cover transition-transform duration-500 group-hover:scale-105"
+          priority={false}
+        />
 
-        {/* Bottom solid colored block */}
+        {/* Dark gradient overlay — hidden by default, slides up on hover */}
         <div
-          className={`w-full ${style.bg} py-4 text-center font-bold text-white text-lg tracking-wide uppercase`}
-        >
-          {style.label}
+          className={`
+            absolute inset-0 bg-gradient-to-t ${gradient}
+            opacity-0 group-hover:opacity-100
+            transition-opacity duration-350
+          `}
+        />
+
+        {/* Product count badge — always visible */}
+        <span className="absolute top-3 right-3 bg-black/40 backdrop-blur-sm text-white text-[11px] font-semibold px-2.5 py-1 rounded-full">
+          {category.productCount} products
+        </span>
+
+        {/* Category name — revealed on hover with slide-up effect */}
+        <div className="absolute inset-0 flex flex-col items-center justify-end p-6">
+          <p
+            className={`
+              text-white text-xl font-extrabold tracking-wide text-center leading-tight
+              translate-y-4 opacity-0
+              group-hover:translate-y-0 group-hover:opacity-100
+              transition-all duration-350 delay-75
+              drop-shadow-lg
+            `}
+          >
+            {category.name}
+          </p>
+          <p
+            className={`
+              text-white/80 text-sm font-medium mt-1
+              translate-y-4 opacity-0
+              group-hover:translate-y-0 group-hover:opacity-100
+              transition-all duration-350 delay-100
+            `}
+          >
+            Shop now →
+          </p>
         </div>
       </div>
     </Link>
   );
 }
-
