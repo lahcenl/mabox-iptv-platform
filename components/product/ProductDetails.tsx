@@ -77,25 +77,12 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
       {/* Left: Product Visual */}
       <div className="space-y-4">
         {/* Main image / illustration */}
-        <div className="relative rounded-2xl overflow-hidden bg-gradient-to-br from-violet-50 via-indigo-50 to-purple-100 aspect-square flex items-center justify-center shadow-lg">
-          {/* Background pattern */}
-          <div className="absolute inset-0 opacity-10">
-            <div className="absolute top-8 right-8 w-48 h-48 rounded-full bg-violet-400" />
-            <div className="absolute bottom-8 left-8 w-32 h-32 rounded-full bg-indigo-400" />
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-64 h-64 rounded-full bg-purple-300" />
-          </div>
-
-          <div className="relative z-10 flex flex-col items-center gap-6">
-            <div className="text-9xl">{emoji}</div>
-            <div className="bg-white/80 backdrop-blur-sm rounded-xl px-6 py-3 shadow-md text-center">
-              <div className="text-sm text-gray-500 font-medium">Selected Plan</div>
-              <div className="text-2xl font-extrabold text-violet-700">
-                ${selectedTier.price.toFixed(2)}
-              </div>
-              <div className="text-sm text-gray-600 font-medium">{selectedTier.duration}</div>
-            </div>
-          </div>
-
+        <div className="relative rounded-2xl overflow-hidden bg-gray-100 aspect-square flex items-center justify-center shadow-lg border border-gray-100">
+          <img 
+            src={product.image || '/images/placeholder.png'} 
+            alt={product.name} 
+            className="w-full h-full object-cover"
+          />
           {/* Category badge */}
           <span className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm text-violet-700 text-xs font-bold px-3 py-1.5 rounded-full shadow-sm">
             {product.category}

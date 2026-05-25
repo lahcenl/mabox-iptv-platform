@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import { useState } from 'react';
 import { Star, MessageCircle, Settings2 } from 'lucide-react';
 import { Product } from '@/lib/data';
 
@@ -36,21 +37,23 @@ const categoryEmojis: Record<string, string> = {
 
 export default function ProductCard({ product }: ProductCardProps) {
   const validTiers = product?.priceTiers || [];
-  const minPrice = validTiers.length > 0 ? Math.min(...validTiers.map((t) => t.price)) : 0;
-  const whatsappMessage = `Hi! I'm interested in ${product.name}. Can you provide more details?`;
+  const [selectedTier, setSelectedTier] = useState(validTiers.length > 0 ? validTiers[0] : null);
+  
+  const whatsappMessage = `Hi! I'm interested in ${product.name} (${selectedTier?.duration || ''}). Can you provide more details?`;
   const whatsappUrl = `https://wa.me/${product.whatsappNumber}?text=${encodeURIComponent(whatsappMessage)}`;
-  const emoji = categoryEmojis[product.category] || '📦';
 
   return (
     <div className="bg-white rounded-2xl border border-gray-100 shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 flex flex-col overflow-hidden group">
       {/* Image area */}
       <Link href={`/products/${product.slug}`} className="block relative">
-        <div className="relative h-48 bg-white flex items-center justify-center overflow-hidden border-b border-gray-100">
-          <div className="relative z-10 text-6xl group-hover:scale-110 transition-transform duration-500">
-            {emoji}
-          </div>
+        <div className="relative h-48 bg-gray-100 flex items-center justify-center overflow-hidden border-b border-gray-100">
+          <img 
+            src={product.image || '/images/placeholder.png'} 
+            alt={product.name} 
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+          />
           {/* Category badge */}
-          <span className="absolute top-3 left-3 bg-gray-50 text-violet-700 text-[10px] font-bold px-2 py-1 rounded-full shadow-sm border border-gray-200">
+          <span className="absolute top-3 left-3 bg-white/90 backdrop-blur-sm text-violet-700 text-[10px] font-bold px-2 py-1 rounded-full shadow-sm border border-gray-200">
             {product.category}
           </span>
         </div>
@@ -72,11 +75,32 @@ export default function ProductCard({ product }: ProductCardProps) {
           </span>
         </div>
 
-        {/* Price range */}
+        {/* Price range / Plan Selector */}
         <div className="mb-4 flex-1">
-          <div className="text-xs text-gray-400 font-medium uppercase tracking-wide mb-0.5">Starts from</div>
-          <span className="text-lg font-extrabold text-violet-700">${minPrice.toFixed(2)}</span>
-          <div className="text-xs text-gray-400 mt-0.5">{validTiers.length} plan(s) available</div>
+          {validTiers.length > 0 ? (
+            <div className="flex flex-col gap-2">
+              <select
+                value={selectedTier?.duration}
+                onChange={(e) => {
+                  const tier = validTiers.find((t) => t.duration === e.target.value);
+                  if (tier) setSelectedTier(tier);
+                }}
+                className="w-full bg-gray-50 border border-gray-200 text-gray-800 text-sm rounded-xl focus:ring-violet-500 focus:border-violet-500 block p-2.5 transition-colors cursor-pointer"
+              >
+                {validTiers.map((tier) => (
+                  <option key={tier.duration} value={tier.duration}>
+                    {tier.duration}
+                  </option>
+                ))}
+              </select>
+              <div className="flex items-end gap-1">
+                <span className="text-xl font-extrabold text-violet-700">${selectedTier?.price.toFixed(2)}</span>
+                <span className="text-xs text-gray-400 font-medium mb-1">/ {selectedTier?.duration}</span>
+              </div>
+            </div>
+          ) : (
+            <span className="text-sm text-gray-400">No plans available</span>
+          )}
         </div>
 
         {/* Action buttons */}

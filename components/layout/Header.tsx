@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Search, ShoppingCart, Menu, X, Tv, ChevronDown } from 'lucide-react';
 import { useCartStore } from '@/store/cartStore';
 import CartDrawer from '@/components/ui/CartDrawer';
@@ -13,7 +13,6 @@ const navLinks = [
     label: 'IPTV Subscriptions',
     href: '/products?category=iptv-subscriptions',
   },
-  { label: 'Reseller Panel', href: '/products?category=reseller-panels' },
   { label: 'BEIN SPORTS', href: '/products?category=bein-sports' },
   { label: 'Blog', href: '/blog' },
 ];
@@ -25,13 +24,27 @@ export default function Header() {
   const count = itemCount();
   const total = subtotal();
 
+  const promoMessages = [
+    "🎁 كنقصو ليكم على شراء تاني شراء أو الشراء المتكرر!",
+    "🔥 إبو بلاير هدية لسنة الأولى منين كيشريو سنة من الإشتراك!"
+  ];
+  const [promoIndex, setPromoIndex] = useState(0);
+
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setPromoIndex((prev) => (prev + 1) % promoMessages.length);
+    }, 4000);
+    return () => clearInterval(timer);
+  }, []);
+
   return (
     <>
       <header className="sticky top-0 z-40 bg-white/95 backdrop-blur-md border-b border-gray-100 shadow-sm">
         {/* Top bar */}
-        <div className="bg-violet-700 text-white text-xs text-center py-1.5 px-4 font-medium tracking-wide">
-          🎉 Special Offer: Get 20% off on 12-Month plans! Use code{' '}
-          <span className="font-bold underline">IPTV20</span>
+        <div className="bg-violet-700 text-white text-xs text-center py-2 px-4 font-bold tracking-wide transition-opacity duration-500 overflow-hidden h-8 flex items-center justify-center">
+          <div key={promoIndex} className="animate-fade-in-up">
+            {promoMessages[promoIndex]}
+          </div>
         </div>
 
         {/* Main header */}

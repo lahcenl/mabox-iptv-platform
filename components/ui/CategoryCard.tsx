@@ -27,8 +27,8 @@ const colorMap = {
   green: {
     border: 'border-green-600',
     bg: 'bg-green-600',
-    emoji: '🏪',
-    label: 'Reseller',
+    emoji: '⚽️',
+    label: 'Bein Sports',
   },
 };
 

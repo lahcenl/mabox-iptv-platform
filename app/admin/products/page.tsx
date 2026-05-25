@@ -59,7 +59,7 @@ const EMPTY_FORM: ProductForm = {
   priceTiers: [{ ...EMPTY_TIER }],
 };
 
-const CATEGORIES = ['IPTV Subscriptions', 'Media Players', 'Smart TV Apps', 'Reseller Panels'];
+const CATEGORIES = ['IPTV Subscriptions', 'Media Players', 'Smart TV Apps', 'Bein Sports'];
 
 const DURATION_SUGGESTIONS = [
   '1 Month', '3 Months', '6 Months', '12 Months',

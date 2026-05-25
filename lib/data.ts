@@ -59,9 +59,9 @@ export const categories: Category[] = [
   },
   {
     id: '4',
-    name: 'Reseller Panels',
-    slug: 'reseller-panels',
-    image: '/images/reseller-category.png',
+    name: 'Bein Sports',
+    slug: 'bein-sports',
+    image: '/images/bein-sports-category.png',
     color: 'green',
     productCount: 4,
   },

@@ -9,8 +9,20 @@ export const metadata: Metadata = {
   description: 'Browse all IPTV subscriptions, media players, and reseller panels. Best prices guaranteed.',
 };
 
-export default async function ProductsPage() {
-  const products = await getProducts();
+export default async function ProductsPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ category?: string }>;
+}) {
+  const { category } = await searchParams;
+  let products = await getProducts();
+
+  if (category) {
+    const matchedCategory = categories.find((c) => c.slug === category);
+    if (matchedCategory) {
+      products = products.filter((p) => p.category === matchedCategory.name);
+    }
+  }
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">

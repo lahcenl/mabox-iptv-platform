@@ -85,10 +85,8 @@ export default function CartDrawer() {
                 className="flex gap-4 p-4 bg-gray-50 rounded-xl border border-gray-100 group hover:border-violet-200 transition-colors"
               >
                 {/* Product image */}
-                <div className="w-16 h-16 bg-violet-100 rounded-lg flex-shrink-0 overflow-hidden">
-                  <div className="w-full h-full flex items-center justify-center text-violet-400">
-                    <ShoppingBag className="w-6 h-6" />
-                  </div>
+                <div className="w-16 h-16 bg-gray-100 rounded-lg flex-shrink-0 overflow-hidden border border-gray-200">
+                  <img src={item.image || '/images/placeholder.png'} alt={item.name} className="w-full h-full object-cover" />
                 </div>
 
                 {/* Details */}
