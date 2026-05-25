@@ -35,8 +35,7 @@ const categoryEmojis: Record<string, string> = {
 };
 
 export default function ProductCard({ product }: ProductCardProps) {
-  const minPrice = Math.min(...product.priceTiers.map((t) => t.price));
-  const maxPrice = Math.max(...product.priceTiers.map((t) => t.price));
+  const firstTier = product.priceTiers.length > 0 ? product.priceTiers[0] : null;
   const whatsappMessage = `Hi! I'm interested in ${product.name}. Can you provide more details?`;
   const whatsappUrl = `https://wa.me/${product.whatsappNumber}?text=${encodeURIComponent(whatsappMessage)}`;
   const emoji = categoryEmojis[product.category] || '📦';
@@ -72,15 +71,15 @@ export default function ProductCard({ product }: ProductCardProps) {
           </span>
         </div>
 
-        {/* Price range */}
+        {/* Price — first available tier */}
         <div className="mb-4 flex-1">
-          <div className="text-xs text-gray-400 font-medium uppercase tracking-wide mb-0.5">Starts from</div>
-          <span className="text-lg font-extrabold text-violet-700">
-            ${minPrice.toFixed(2)}
-          </span>
-          <div className="text-xs text-gray-400 mt-0.5">
-            {product.priceTiers.length} plan{product.priceTiers.length > 1 ? 's' : ''} available
-          </div>
+          {firstTier ? (
+            <span className="text-lg font-extrabold text-violet-700">
+              {firstTier.duration} - ${firstTier.price}
+            </span>
+          ) : (
+            <span className="text-sm text-gray-400">No plans available</span>
+          )}
         </div>
 
         {/* Action buttons */}
