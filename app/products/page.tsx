@@ -12,9 +12,9 @@ export const metadata: Metadata = {
 export default async function ProductsPage({
   searchParams,
 }: {
-  searchParams: Promise<{ category?: string }>;
+  searchParams: Promise<{ category?: string; search?: string }>;
 }) {
-  const { category } = await searchParams;
+  const { category, search } = await searchParams;
   let products = await getProducts();
 
   if (category) {
@@ -22,6 +22,16 @@ export default async function ProductsPage({
     if (matchedCategory) {
       products = products.filter((p) => p.category === matchedCategory.name);
     }
+  }
+
+  if (search) {
+    const query = search.toLowerCase().trim();
+    products = products.filter(
+      (p) =>
+        p.name.toLowerCase().includes(query) ||
+        p.description.toLowerCase().includes(query) ||
+        p.category.toLowerCase().includes(query)
+    );
   }
 
   return (

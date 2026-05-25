@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
+import { useRouter } from 'next/navigation';
 import { Search, ShoppingCart, Menu, X, Tv, ChevronDown } from 'lucide-react';
 import { useCartStore } from '@/store/cartStore';
 import CartDrawer from '@/components/ui/CartDrawer';
@@ -18,9 +19,19 @@ const navLinks = [
 ];
 
 export default function Header() {
+  const router = useRouter();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const { itemCount, subtotal, toggleCart } = useCartStore();
+
+  const handleSearchSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      router.push(`/products?search=${encodeURIComponent(searchQuery.trim())}`);
+    } else {
+      router.push('/products');
+    }
+  };
   const count = itemCount();
   const total = subtotal();
 
@@ -57,7 +68,7 @@ export default function Header() {
               <div className="w-9 h-9 bg-violet-600 rounded-lg flex items-center justify-center shadow-md group-hover:bg-violet-700 transition-colors">
                 <Tv className="w-5 h-5 text-white" />
               </div>
-              <div className="hidden sm:block">
+              <div>
                 <span className="text-xl font-extrabold text-gray-900 leading-none">
                   Ondexy
                 </span>
@@ -71,7 +82,7 @@ export default function Header() {
             </Link>
 
             {/* Search bar */}
-            <div className="flex-1 max-w-xl relative hidden md:block">
+            <form onSubmit={handleSearchSubmit} className="flex-1 max-w-xl relative hidden md:block">
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                 <input
@@ -83,7 +94,7 @@ export default function Header() {
                   className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-400 focus:border-transparent transition-all"
                 />
               </div>
-            </div>
+            </form>
 
             {/* Right side controls grouped together */}
             <div className="flex items-center gap-4 flex-shrink-0 ml-auto">
@@ -129,16 +140,18 @@ export default function Header() {
           </div>
 
           {/* Mobile search */}
-          <div className="md:hidden pb-3">
+          <form onSubmit={handleSearchSubmit} className="md:hidden pb-3">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
               <input
                 type="text"
                 placeholder="Search products..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
                 className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-violet-400 focus:border-transparent"
               />
             </div>
-          </div>
+          </form>
         </div>
 
         {/* Mobile nav menu */}

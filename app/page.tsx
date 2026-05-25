@@ -16,7 +16,7 @@ export default async function Home() {
   return (
     <div className="min-h-screen bg-gray-50">
       {/* ── HERO SECTION ── */}
-      <section className="bg-gradient-to-b from-gray-50 to-white py-20 lg:py-32 border-b border-gray-100">
+      <section className="bg-gradient-to-b from-gray-50 to-white py-10 lg:py-14 border-b border-gray-100">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-gray-900 leading-tight mb-6">
             Premium Digital Subscriptions & IPTV Activations
