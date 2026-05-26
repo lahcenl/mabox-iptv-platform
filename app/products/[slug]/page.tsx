@@ -94,8 +94,8 @@ export default async function ProductPage(props: PageProps<'/products/[slug]'>) 
   // Cross-selling: pick a complementary category
   const crossCategory =
     product.category === 'IPTV Subscriptions'
-      ? 'Media Players'
-      : product.category === 'Media Players'
+      ? 'Players IPTV'
+      : product.category === 'Players IPTV'
       ? 'IPTV Subscriptions'
       : products.find((p) => p.category !== product.category)?.category ?? null;
 

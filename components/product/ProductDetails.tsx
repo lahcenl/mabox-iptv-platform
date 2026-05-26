@@ -38,8 +38,8 @@ const features = [
 
 const categoryEmojis: Record<string, string> = {
   'IPTV Subscriptions': '📡',
-  'Media Players': '📺',
-  'Smart TV Apps': '📱',
+  'Players IPTV': '📺',
+  'beIN SPORTS': '⚽',
   'Reseller Panels': '🏪',
 };
 

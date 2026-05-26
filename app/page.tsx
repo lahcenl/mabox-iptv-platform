@@ -6,17 +6,15 @@ import { categories, getProductsByCategory } from '@/lib/data';
 
 export default async function Home() {
   const iptvProducts = (await getProductsByCategory('IPTV Subscriptions')).slice(0, 4);
-  const mediaPlayers = (await getProductsByCategory('Media Players')).slice(0, 4);
-  const beinSports = (await getProductsByCategory('Bein Sports')).slice(0, 4);
+  const mediaPlayers = (await getProductsByCategory('Players IPTV')).slice(0, 4);
+  const beinSports = (await getProductsByCategory('beIN SPORTS')).slice(0, 4);
 
-  const coreCategories = categories.filter(
-    (c) => c.slug === 'iptv-subscriptions' || c.slug === 'media-players' || c.slug === 'bein-sports'
-  );
+  const coreCategories = categories;
 
   return (
     <div className="min-h-screen bg-gray-50">
       {/* ── HERO SECTION ── */}
-      <section className="bg-gradient-to-b from-gray-50 to-white py-10 lg:py-14 border-b border-gray-100">
+      <section className="bg-gradient-to-b from-gray-50 to-white pt-6 pb-6 md:pt-12 md:pb-14 border-b border-gray-100">
         <div className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
           <h1 className="text-4xl sm:text-5xl lg:text-6xl font-extrabold text-gray-900 leading-tight mb-6">
             Premium Digital Subscriptions & IPTV Activations
@@ -89,12 +87,12 @@ export default async function Home() {
           )}
         </div>
 
-        {/* Row 2: Media Players */}
+        {/* Row 2: Players IPTV */}
         <div>
           <div className="flex items-end justify-between mb-8 pb-3 border-b border-gray-200/60">
             <div>
               <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900 tracking-tight">
-                Media Players
+                Players IPTV
               </h2>
               <p className="text-xs sm:text-sm text-gray-500 mt-1">Enhance your streaming experience with top-tier player licenses</p>
             </div>
@@ -121,7 +119,7 @@ export default async function Home() {
           <div className="flex items-end justify-between mb-8 pb-3 border-b border-gray-200/60">
             <div>
               <h2 className="text-2xl sm:text-3xl font-extrabold text-gray-900 tracking-tight">
-                Bein Sports
+                beIN SPORTS
               </h2>
               <p className="text-xs sm:text-sm text-gray-500 mt-1">Live coverage of premium worldwide sports and tournaments</p>
             </div>

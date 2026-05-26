@@ -1,6 +1,6 @@
 import { ShieldCheck } from 'lucide-react';
 
-const TICKER_TEXT = '🚀 Instant Delivery via WhatsApp | 💎 Premium Anti-Buffer Servers | 🛠️ 24/7 Technical Support';
+const TICKER_TEXT = '🚀 Instant Delivery via WhatsApp | 💎 Premium Anti-Buffer Servers | 🛠️ 24/7 Technical Support | 📺 Players IPTV';
 
 export default function TrendingTicker() {
   // Duplicate the text to ensure the scrolling is continuous and fills the width

@@ -52,7 +52,7 @@ export default async function ProductsPage({
           <Grid3X3 className="w-5 h-5 text-violet-600" />
           Browse by Category
         </h2>
-        <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+        <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 max-w-2xl mx-auto">
           {categories.map((cat) => (
             <CategoryCard key={cat.id} category={cat} />
           ))}

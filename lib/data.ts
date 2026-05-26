@@ -37,42 +37,40 @@ export const categories: Category[] = [
     id: '1',
     name: 'IPTV Subscriptions',
     slug: 'iptv-subscriptions',
-    image: 'https://images.unsplash.com/photo-1600121848594-d8644e57abab?w=800&auto=format&fit=crop&q=80',
+    image: 'https://i.postimg.cc/3xWZsHfd/Untitled-design-(6).jpg',
     color: 'purple',
     productCount: 12,
   },
   {
     id: '2',
-    name: 'Media Players',
+    name: 'Players IPTV',
     slug: 'media-players',
-    image: 'https://images.unsplash.com/photo-1593508512255-86ab42a8e620?w=800&auto=format&fit=crop&q=80',
+    image: 'https://i.postimg.cc/x1qPwSpX/Untitled-design-(4).jpg',
     color: 'yellow',
     productCount: 8,
   },
   {
-    id: '3',
-    name: 'Smart TV Apps',
-    slug: 'smart-tv-apps',
-    image: 'https://images.unsplash.com/photo-1567690187548-f07b1d7bf5a9?w=800&auto=format&fit=crop&q=80',
-    color: 'blue',
-    productCount: 5,
-  },
-  {
     id: '4',
-    name: 'Bein Sports',
+    name: 'beIN SPORTS',
     slug: 'bein-sports',
-    image: 'https://images.unsplash.com/photo-1508098682722-e99c43a406b2?w=800&auto=format&fit=crop&q=80',
+    image: 'https://i.postimg.cc/mghSvGpk/Untitled-design-(5).jpg',
     color: 'green',
     productCount: 4,
   },
 ];
 
 function toProduct(row: any): Product {
+  let category = row.category;
+  if (category === 'Media Players' || category === 'Smart TV Apps') {
+    category = 'Players IPTV';
+  } else if (category === 'Bein Sports') {
+    category = 'beIN SPORTS';
+  }
   return {
     id: row.id,
     slug: row.slug,
     name: row.name,
-    category: row.category,
+    category: category,
     image: row.image,
     description: row.description ?? '',
     rating: row.rating ?? 5.0,
@@ -135,10 +133,24 @@ export async function getFeaturedProducts(): Promise<Product[]> {
 
 export async function getProductsByCategory(category: string): Promise<Product[]> {
   try {
-    const { data, error } = await supabase
-      .from('products')
-      .select('*, price_tiers(*)')
-      .eq('category', category);
+    let query;
+    if (category === 'Players IPTV') {
+      query = supabase
+        .from('products')
+        .select('*, price_tiers(*)')
+        .or('category.eq."Players IPTV",category.eq."Media Players",category.eq."Smart TV Apps"');
+    } else if (category === 'beIN SPORTS') {
+      query = supabase
+        .from('products')
+        .select('*, price_tiers(*)')
+        .or('category.eq."beIN SPORTS",category.eq."Bein Sports"');
+    } else {
+      query = supabase
+        .from('products')
+        .select('*, price_tiers(*)')
+        .eq('category', category);
+    }
+    const { data, error } = await query;
     if (error) throw error;
     return (data || []).map(toProduct);
   } catch (error) {
