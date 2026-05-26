@@ -5,10 +5,12 @@ import { X, Trash2, Plus, Minus, ShoppingBag, ArrowRight, Package, Loader2 } fro
 import Image from 'next/image';
 import Link from 'next/link';
 import { processCheckout } from '@/lib/checkout';
+import { useTranslations } from '@/components/providers/I18nProvider';
 
 export default function CartDrawer() {
   const { items, isOpen, closeCart, removeFromCart, updateQuantity, subtotal, itemCount, clearCart } =
     useCartStore();
+  const { t, localize, locale } = useTranslations();
   const total = subtotal();
   const count = itemCount();
   const [isCheckingOut, setIsCheckingOut] = useState(false);
@@ -33,19 +35,19 @@ export default function CartDrawer() {
       {/* Drawer */}
       <aside
         id="cart-drawer"
-        className={`fixed top-0 right-0 h-full w-full max-w-md bg-white z-50 shadow-2xl flex flex-col transition-transform duration-300 ease-in-out ${
-          isOpen ? 'translate-x-0' : 'translate-x-full'
+        className={`fixed top-0 right-0 rtl:right-auto rtl:left-0 h-full w-full max-w-md bg-white z-50 shadow-2xl flex flex-col transition-transform duration-300 ease-in-out ${
+          isOpen ? 'translate-x-0' : 'translate-x-full rtl:-translate-x-full'
         }`}
-        aria-label="Shopping Cart"
+        aria-label={t('cart.title')}
       >
         {/* Header */}
         <div className="flex items-center justify-between px-5 py-4 border-b border-gray-100 bg-gray-50">
           <div className="flex items-center gap-2">
             <ShoppingBag className="w-5 h-5 text-violet-600" />
-            <h2 className="text-lg font-bold text-gray-900">Your Cart</h2>
+            <h2 className="text-lg font-bold text-gray-900">{t('cart.title')}</h2>
             {count > 0 && (
               <span className="bg-violet-100 text-violet-700 text-xs font-semibold px-2 py-0.5 rounded-full">
-                {count} {count === 1 ? 'item' : 'items'}
+                {count} {count === 1 ? t('cart.item') : t('cart.items')}
               </span>
             )}
           </div>
@@ -66,16 +68,16 @@ export default function CartDrawer() {
               <div className="w-20 h-20 bg-violet-50 rounded-full flex items-center justify-center mb-4">
                 <Package className="w-10 h-10 text-violet-300" />
               </div>
-              <h3 className="text-gray-700 font-semibold text-lg mb-2">Your cart is empty</h3>
+              <h3 className="text-gray-700 font-semibold text-lg mb-2">{t('cart.empty')}</h3>
               <p className="text-gray-400 text-sm mb-6 max-w-xs">
-                Browse our IPTV subscriptions and add your favorite plans.
+                {t('cart.emptyDesc')}
               </p>
               <Link
-                href="/products"
+                href={localize('/products')}
                 onClick={closeCart}
                 className="btn-primary text-sm"
               >
-                Browse Products
+                {t('cart.browse')}
               </Link>
             </div>
           ) : (
@@ -94,7 +96,9 @@ export default function CartDrawer() {
                   <h4 className="text-sm font-semibold text-gray-900 truncate mb-0.5">
                     {item.name}
                   </h4>
-                  <p className="text-xs text-violet-600 font-medium mb-2">{item.duration}</p>
+                  <p className="text-xs text-violet-600 font-medium mb-2">
+                    {t('products.duration.' + item.duration)}
+                  </p>
 
                   {/* Quantity controls */}
                   <div className="flex items-center justify-between">
@@ -141,11 +145,11 @@ export default function CartDrawer() {
           <div className="border-t border-gray-100 px-5 py-5 bg-gray-50 space-y-4">
             {/* Subtotal */}
             <div className="flex items-center justify-between">
-               <span className="text-gray-600 font-medium">Subtotal</span>
+              <span className="text-gray-600 font-medium">{t('cart.subtotal')}</span>
               <span className="text-xl font-bold text-gray-900">${total.toFixed(2)}</span>
             </div>
             <p className="text-xs text-gray-400">
-              Shipping and taxes calculated at checkout.
+              {t('cart.taxesDesc')}
             </p>
 
             {/* Checkout button */}
@@ -158,21 +162,21 @@ export default function CartDrawer() {
               {isCheckingOut ? (
                 <>
                   <Loader2 className="w-4 h-4 animate-spin" />
-                  Processing...
+                  {t('cart.processing')}
                 </>
               ) : (
                 <>
-                  Proceed to Checkout <ArrowRight className="w-4 h-4" />
+                  {t('cart.checkout')} <ArrowRight className="w-4 h-4 rtl:rotate-180" />
                 </>
               )}
             </button>
 
             <Link
-              href="/cart"
+              href={localize('/cart')}
               onClick={closeCart}
               className="block w-full text-center text-sm text-gray-500 hover:text-violet-600 transition-colors py-1 font-semibold"
             >
-              View Cart Details
+              {t('cart.viewDetails')}
             </Link>
           </div>
         )}

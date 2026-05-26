@@ -1,0 +1,142 @@
+{
+  "common": {
+    "viewAll": "View All",
+    "whatsappNumber": "1234567890",
+    "contactWhatsApp": "Contact on WhatsApp",
+    "resellerPanels": "Reseller Panels"
+  },
+  "header": {
+    "searchPlaceholder": "Search subscriptions, players, reseller plans...",
+    "searchPlaceholderMobile": "Search products...",
+    "cart": "Cart",
+    "nav": {
+      "home": "Home",
+      "allProducts": "All Products",
+      "iptv": "IPTV Subscriptions",
+      "bein": "BEIN SPORTS",
+      "blog": "Blog"
+    },
+    "promos": [
+      "🎁 Get a discount on your second purchase or recurring subscriptions",
+      "🎬 Get a free IPTV Player for the first year with an annual subscription",
+      "⏱ Enjoy a 24 to 48 hours trial before committing to any plan"
+    ]
+  },
+  "ticker": {
+    "promise": "Ondexy Promise ⭐",
+    "delivery": "🚀 Instant Delivery via WhatsApp",
+    "servers": "💎 Premium Anti-Buffer Servers",
+    "support": "🛠️ 24/7 Technical Support",
+    "players": "📺 Players IPTV"
+  },
+  "hero": {
+    "title": "Premium Digital Subscriptions & IPTV Activations",
+    "subtitle": "Fast delivery, stable servers, and 24/7 support.",
+    "ctaBrowse": "Browse Plans",
+    "ctaWhatsApp": "Contact on WhatsApp"
+  },
+  "categories": {
+    "title": "Browse by Category",
+    "subtitle": "Explore our premium plans and software licenses"
+  },
+  "footer": {
+    "desc": "Your trusted source for premium IPTV subscriptions, media players, and reseller solutions. Stream smarter.",
+    "quickLinks": "Quick Links",
+    "support": "Support",
+    "contact": "Contact",
+    "allRightsReserved": "All rights reserved.",
+    "ctaTitle": "Start Streaming Today",
+    "ctaSubtitle": "24 to 48 Hours Trial on all IPTV plans. No credit card required.",
+    "ctaButton": "Browse Plans",
+    "contactUs": "Contact Us",
+    "emailSupport": "Email Support",
+    "whatsappPhone": "WhatsApp / Phone",
+    "supportHours": "Support Hours",
+    "supportHoursVal": "24/7 Live Chat",
+    "openingHours": "Opening Hours",
+    "openingHoursVal": "9AM – 23:00 GMT",
+    "stayUpdated": "Stay Updated",
+    "stayUpdatedDesc": "Subscribe for exclusive deals, new channel packages, and streaming tips.",
+    "emailPlaceholder": "your@email.com",
+    "subscribe": "Subscribe",
+    "links": {
+      "terms": "Terms of Service",
+      "privacy": "Privacy Policy",
+      "refund": "Refund Policy",
+      "faq": "FAQ",
+      "about": "About Us"
+    }
+  },
+  "products": {
+    "noProducts": "No products found in this category.",
+    "lowestPrice": "from",
+    "selectOptions": "Select options",
+    "whatsappUs": "WhatsApp us",
+    "noPlans": "No plans available",
+    "per": "per",
+    "whatsappMessage": "Hi! I'm interested in {name} ({duration}). Can you provide more details?",
+    "buyWhatsappMessage": "Hi! I want to buy *{name}* for *{duration}* at ${price}. Please assist me.",
+    "reviewsCount": "({count} reviews)",
+    "priceLabel": "Price",
+    "durationTag": "for {duration}",
+    "selectDuration": "Select Duration",
+    "features": {
+      "activation": "Instant Activation",
+      "antifreeze": "Anti-freeze Technology",
+      "support": "24/7 Support"
+    },
+    "benefits": {
+      "delivery": "Instant delivery via email",
+      "channels": "10,000+ live channels included",
+      "quality": "Full HD & 4K streams available",
+      "compatibility": "Compatible with all devices",
+      "contract": "No contract, cancel anytime"
+    },
+    "trust": {
+      "payment": "Secure Payment",
+      "activation": "Instant Activation",
+      "support": "24/7 Support"
+    },
+    "duration": {
+      "1 Month": "1 Month",
+      "3 Months": "3 Months",
+      "6 Months": "6 Months",
+      "12 Months": "12 Months",
+      "1 Year": "1 Year",
+      "2 Years": "2 Years",
+      "Lifetime": "Lifetime",
+      "One-time": "One-time"
+    }
+  },
+  "cart": {
+    "title": "Shopping Cart",
+    "empty": "Your cart is empty",
+    "emptyDesc": "Browse our IPTV subscriptions and add your favorite plans.",
+    "browse": "Browse Products",
+    "summary": "Order Summary",
+    "subtotal": "Subtotal",
+    "checkout": "Checkout via WhatsApp",
+    "checkoutDisabled": "Cart is empty",
+    "added": "Added to Cart!",
+    "addBtn": "Add to Cart",
+    "remove": "Remove",
+    "items": "items",
+    "item": "item",
+    "taxesDesc": "Shipping and taxes calculated at checkout.",
+    "processing": "Processing...",
+    "viewDetails": "View Cart Details",
+    "continueShopping": "Continue Shopping",
+    "emptyDescFull": "Looks like you haven't added any subscriptions yet.",
+    "inCart": "in cart",
+    "clearAll": "Clear All",
+    "total": "Total",
+    "includesTaxes": "Includes all plans & services",
+    "secureCheckout": "Secure & Encrypted Checkout"
+  },
+  "community": {
+    "title": "Join our Telegram & WhatsApp Community",
+    "subtitle": "Get instant server status updates and exclusive subscriber-only offers.",
+    "telegram": "Telegram",
+    "whatsapp": "WhatsApp"
+  }
+}

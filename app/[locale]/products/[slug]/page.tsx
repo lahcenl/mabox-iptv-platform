@@ -6,6 +6,7 @@ import { getProductBySlug, getProducts, getProductsByCategory } from '@/lib/data
 import ProductDetails from '@/components/product/ProductDetails';
 import ProductDescription from '@/components/product/ProductDescription';
 import ProductCard from '@/components/ui/ProductCard';
+import { locales, localizePath } from '@/lib/i18n';
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.ondexy.com';
 
@@ -32,10 +33,12 @@ function stripMarkdown(md: string | null | undefined): string {
 // This tells Next.js which slugs to pre-render at build time
 export async function generateStaticParams() {
   const products = await getProducts();
-  return products.map((p) => ({ slug: p.slug }));
+  return locales.flatMap((locale) =>
+    products.map((p) => ({ locale, slug: p.slug }))
+  );
 }
 
-export async function generateMetadata(props: PageProps<'/products/[slug]'>): Promise<Metadata> {
+export async function generateMetadata(props: any): Promise<Metadata> {
   const { slug } = await props.params;
   const product = await getProductBySlug(slug);
   if (!product) return { title: 'Product Not Found' };
@@ -77,8 +80,8 @@ export async function generateMetadata(props: PageProps<'/products/[slug]'>): Pr
   };
 }
 
-export default async function ProductPage(props: PageProps<'/products/[slug]'>) {
-  const { slug } = await props.params;
+export default async function ProductPage(props: any) {
+  const { slug, locale } = await props.params;
   const product = await getProductBySlug(slug);
 
   if (!product) {
@@ -158,11 +161,11 @@ export default async function ProductPage(props: PageProps<'/products/[slug]'>) 
 
       {/* Breadcrumb */}
       <nav className="flex items-center gap-1.5 text-sm text-gray-400 mb-8" aria-label="Breadcrumb">
-        <Link href="/" className="hover:text-violet-600 transition-colors">
+        <Link href={localizePath('/', locale)} className="hover:text-violet-600 transition-colors">
           Home
         </Link>
         <ChevronRight className="w-3.5 h-3.5" />
-        <Link href="/products" className="hover:text-violet-600 transition-colors">
+        <Link href={localizePath('/products', locale)} className="hover:text-violet-600 transition-colors">
           Products
         </Link>
         <ChevronRight className="w-3.5 h-3.5" />

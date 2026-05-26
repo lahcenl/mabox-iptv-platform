@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useCartStore } from '@/store/cartStore';
 import Link from 'next/link';
 import { processCheckout } from '@/lib/checkout';
+import { useTranslations } from '@/components/providers/I18nProvider';
 import {
   ShoppingBag,
   Trash2,
@@ -18,6 +19,7 @@ import {
 
 export default function CartPage() {
   const { items, removeFromCart, updateQuantity, subtotal, clearCart } = useCartStore();
+  const { t, localize } = useTranslations();
   const total = subtotal();
   const [isCheckingOut, setIsCheckingOut] = useState(false);
 
@@ -31,14 +33,14 @@ export default function CartPage() {
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
       <div className="flex items-center gap-4 mb-8">
         <Link
-          href="/products"
+          href={localize('/products')}
           className="flex items-center gap-2 text-sm text-gray-500 hover:text-violet-600 transition-colors"
         >
-          <ArrowLeft className="w-4 h-4" />
-          Continue Shopping
+          <ArrowLeft className="w-4 h-4 rtl:rotate-180" />
+          {t('cart.continueShopping')}
         </Link>
         <div className="flex-1 h-px bg-gray-200" />
-        <h1 className="text-2xl font-extrabold text-gray-900">Shopping Cart</h1>
+        <h1 className="text-2xl font-extrabold text-gray-900">{t('cart.title')}</h1>
       </div>
 
       {items.length === 0 ? (
@@ -46,12 +48,12 @@ export default function CartPage() {
           <div className="w-24 h-24 bg-violet-50 rounded-full flex items-center justify-center mb-6">
             <Package className="w-12 h-12 text-violet-300" />
           </div>
-          <h2 className="text-2xl font-bold text-gray-800 mb-2">Your cart is empty</h2>
+          <h2 className="text-2xl font-bold text-gray-800 mb-2">{t('cart.empty')}</h2>
           <p className="text-gray-400 mb-8 max-w-xs">
-            Looks like you haven't added any subscriptions yet.
+            {t('cart.emptyDescFull')}
           </p>
-          <Link href="/products" className="btn-primary">
-            Browse Products
+          <Link href={localize('/products')} className="btn-primary">
+            {t('cart.browse')}
           </Link>
         </div>
       ) : (
@@ -59,12 +61,14 @@ export default function CartPage() {
           {/* Cart items */}
           <div className="lg:col-span-2 space-y-4">
             <div className="flex items-center justify-between mb-2">
-              <span className="text-sm text-gray-500">{items.length} item{items.length !== 1 ? 's' : ''} in cart</span>
+              <span className="text-sm text-gray-500">
+                {items.length} {items.length === 1 ? t('cart.item') : t('cart.items')} {t('cart.inCart')}
+              </span>
               <button
                 onClick={clearCart}
                 className="text-xs text-red-400 hover:text-red-600 transition-colors font-medium"
               >
-                Clear All
+                {t('cart.clearAll')}
               </button>
             </div>
 
@@ -82,7 +86,7 @@ export default function CartPage() {
                 <div className="flex-1 min-w-0">
                   <h3 className="font-bold text-gray-900 mb-0.5">{item.name}</h3>
                   <span className="inline-block text-xs text-violet-600 font-semibold bg-violet-50 px-2 py-0.5 rounded-full mb-3">
-                    {item.duration}
+                    {t('products.duration.' + item.duration)}
                   </span>
 
                   <div className="flex items-center justify-between flex-wrap gap-3">
@@ -127,7 +131,7 @@ export default function CartPage() {
             <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 sticky top-24">
               <h2 className="text-lg font-bold text-gray-900 mb-5 flex items-center gap-2">
                 <ShoppingBag className="w-5 h-5 text-violet-600" />
-                Order Summary
+                {t('cart.summary')}
               </h2>
 
               <div className="space-y-3 mb-5">
@@ -145,12 +149,12 @@ export default function CartPage() {
 
               <div className="border-t border-gray-100 pt-4 mb-6">
                 <div className="flex justify-between items-center">
-                  <span className="font-bold text-gray-800">Total</span>
+                  <span className="font-bold text-gray-800">{t('cart.total')}</span>
                   <span className="text-2xl font-extrabold text-violet-700">
                     ${total.toFixed(2)}
                   </span>
                 </div>
-                <p className="text-xs text-gray-400 mt-1">Includes all plans &amp; services</p>
+                <p className="text-xs text-gray-400 mt-1">{t('cart.includesTaxes')}</p>
               </div>
 
               <div className="space-y-3">
@@ -163,18 +167,18 @@ export default function CartPage() {
                   {isCheckingOut ? (
                     <>
                       <Loader2 className="w-4 h-4 animate-spin" />
-                      Processing...
+                      {t('cart.processing')}
                     </>
                   ) : (
                     <>
-                      Proceed to Checkout <ArrowRight className="w-4 h-4" />
+                      {t('cart.checkout')} <ArrowRight className="w-4 h-4 rtl:rotate-180" />
                     </>
                   )}
                 </button>
               </div>
 
               <div className="mt-5 flex items-center justify-center gap-2 text-xs text-gray-400">
-                🔒 Secure &amp; Encrypted Checkout
+                🔒 {t('cart.secureCheckout')}
               </div>
             </div>
           </div>

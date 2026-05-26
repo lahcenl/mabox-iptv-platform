@@ -4,12 +4,14 @@ import { useState } from 'react';
 import { ShoppingCart, MessageCircle, Star, Check, Shield, Zap, Headphones, ChevronDown } from 'lucide-react';
 import { Product } from '@/lib/data';
 import { useCartStore } from '@/store/cartStore';
+import { useTranslations } from '@/components/providers/I18nProvider';
 
 interface ProductDetailsProps {
   product: Product;
 }
 
 function StarRating({ rating, count }: { rating: number; count: number }) {
+  const { t } = useTranslations();
   return (
     <div className="flex items-center gap-2">
       <div className="flex items-center gap-0.5">
@@ -25,16 +27,10 @@ function StarRating({ rating, count }: { rating: number; count: number }) {
         ))}
       </div>
       <span className="text-sm font-semibold text-gray-700">{rating.toFixed(1)}</span>
-      <span className="text-sm text-gray-400">({count} reviews)</span>
+      <span className="text-sm text-gray-400">{t('products.reviewsCount').replace('{count}', String(count))}</span>
     </div>
   );
 }
-
-const features = [
-  { icon: Zap, label: 'Instant Activation', color: 'text-yellow-500' },
-  { icon: Shield, label: 'Anti-freeze Technology', color: 'text-blue-500' },
-  { icon: Headphones, label: '24/7 Support', color: 'text-green-500' },
-];
 
 const categoryEmojis: Record<string, string> = {
   'IPTV Subscriptions': '📡',
@@ -44,6 +40,7 @@ const categoryEmojis: Record<string, string> = {
 };
 
 export default function ProductDetails({ product }: ProductDetailsProps) {
+  const { t, localize } = useTranslations();
   const [selectedTierIndex, setSelectedTierIndex] = useState(0);
   const [addedToCart, setAddedToCart] = useState(false);
   const { addToCart } = useCartStore();
@@ -58,8 +55,37 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
   const selectedTier = validTiers[selectedTierIndex] || { duration: 'No Plan', price: 0, months: 0 };
   const emoji = categoryEmojis[product?.category] || '📦';
 
-  const whatsappMessage = `Hi! I want to buy *${product.name}* for *${selectedTier.duration}* at $${selectedTier.price.toFixed(2)}. Please assist me.`;
-  const whatsappUrl = `https://wa.me/${product.whatsappNumber}?text=${encodeURIComponent(whatsappMessage)}`;
+  const categoryKeys: Record<string, string> = {
+    'IPTV Subscriptions': 'header.nav.iptv',
+    'Players IPTV': 'ticker.players',
+    'beIN SPORTS': 'header.nav.bein',
+    'Reseller Panels': 'common.resellerPanels'
+  };
+  const categoryKey = categoryKeys[product?.category] || '';
+  const translatedCategory = categoryKey ? t(categoryKey) : product?.category;
+
+  const translatedDuration = selectedTier ? t('products.duration.' + selectedTier.duration) : '';
+  const rawWhatsappMessage = t('products.buyWhatsappMessage');
+  const whatsappMessage = rawWhatsappMessage
+    .replace('{name}', product.name)
+    .replace('{duration}', translatedDuration)
+    .replace('{price}', selectedTier.price.toFixed(2));
+  const whatsappNumber = t('common.whatsappNumber') || product.whatsappNumber;
+  const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(whatsappMessage)}`;
+
+  const translatedFeatures = [
+    { icon: Zap, label: t('products.features.activation'), color: 'text-yellow-500' },
+    { icon: Shield, label: t('products.features.antifreeze'), color: 'text-blue-500' },
+    { icon: Headphones, label: t('products.features.support'), color: 'text-green-500' },
+  ];
+
+  const benefits = [
+    t('products.benefits.delivery'),
+    t('products.benefits.channels'),
+    t('products.benefits.quality'),
+    t('products.benefits.compatibility'),
+    t('products.benefits.contract'),
+  ];
 
   function handleAddToCart() {
     addToCart({
@@ -88,13 +114,13 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
           />
           {/* Category badge */}
           <span className="absolute top-4 left-4 bg-white/90 backdrop-blur-sm text-violet-700 text-xs font-bold px-3 py-1.5 rounded-full shadow-sm">
-            {product.category}
+            {translatedCategory}
           </span>
         </div>
 
         {/* Features */}
         <div className="grid grid-cols-3 gap-3">
-          {features.map(({ icon: Icon, label, color }) => (
+          {translatedFeatures.map(({ icon: Icon, label, color }) => (
             <div
               key={label}
               className="bg-gray-50 rounded-xl p-3 text-center border border-gray-100"
@@ -118,13 +144,13 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
 
         {/* Price display */}
         <div className="bg-violet-50 border border-violet-100 rounded-xl p-4">
-          <div className="text-sm text-gray-500 mb-1">Price</div>
+          <div className="text-sm text-gray-500 mb-1">{t('products.priceLabel')}</div>
           <div className="text-4xl font-extrabold text-violet-700">
             ${selectedTier.price.toFixed(2)}
           </div>
           {!isFlatPrice && (
             <div className="text-sm text-gray-500 mt-1">
-              for {selectedTier.duration}
+              {t('products.durationTag').replace('{duration}', t('products.duration.' + selectedTier.duration))}
             </div>
           )}
         </div>
@@ -136,7 +162,7 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
             htmlFor="duration-select"
             className="block text-sm font-bold text-gray-800 mb-2"
           >
-            Select Duration
+            {t('products.selectDuration')}
           </label>
           <div className="relative">
             <select
@@ -147,7 +173,7 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
             >
               {product.priceTiers.map((tier, index) => (
                 <option key={tier.duration} value={index}>
-                  {tier.duration} — ${tier.price.toFixed(2)}
+                  {t('products.duration.' + tier.duration)} — ${tier.price.toFixed(2)}
                 </option>
               ))}
             </select>
@@ -166,7 +192,7 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
                     : 'border-gray-200 text-gray-600 hover:border-violet-300'
                 }`}
               >
-                {tier.duration}
+                {t('products.duration.' + tier.duration)}
               </button>
             ))}
           </div>
@@ -175,13 +201,7 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
 
         {/* What's included */}
         <div className="space-y-2">
-          {[
-            'Instant delivery via email',
-            '10,000+ live channels included',
-            'Full HD & 4K streams available',
-            'Compatible with all devices',
-            'No contract, cancel anytime',
-          ].map((item) => (
+          {benefits.map((item) => (
             <div key={item} className="flex items-center gap-2.5">
               <div className="w-5 h-5 bg-green-100 rounded-full flex items-center justify-center flex-shrink-0">
                 <Check className="w-3 h-3 text-green-600" />
@@ -204,11 +224,11 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
           >
             {addedToCart ? (
               <>
-                <Check className="w-5 h-5" /> Added to Cart!
+                <Check className="w-5 h-5" /> {t('cart.added')}
               </>
             ) : (
               <>
-                <ShoppingCart className="w-5 h-5" /> Add to Cart
+                <ShoppingCart className="w-5 h-5" /> {t('cart.addBtn')}
               </>
             )}
           </button>
@@ -220,7 +240,7 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
             rel="noopener noreferrer"
             className="flex-1 flex items-center justify-center gap-2 bg-green-500 hover:bg-green-600 text-white font-bold py-4 rounded-xl transition-all duration-200 hover:shadow-xl hover:shadow-green-200 active:scale-95 text-sm"
           >
-            <MessageCircle className="w-5 h-5" /> WhatsApp Us
+            <MessageCircle className="w-5 h-5" /> {t('products.whatsappUs')}
           </a>
         </div>
 
@@ -228,15 +248,15 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
         <div className="flex items-center gap-4 pt-2 border-t border-gray-100 flex-wrap">
           <div className="flex items-center gap-1.5 text-xs text-gray-500">
             <Shield className="w-4 h-4 text-green-500" />
-            Secure Payment
+            {t('products.trust.payment')}
           </div>
           <div className="flex items-center gap-1.5 text-xs text-gray-500">
             <Zap className="w-4 h-4 text-yellow-500" />
-            Instant Activation
+            {t('products.trust.activation')}
           </div>
           <div className="flex items-center gap-1.5 text-xs text-gray-500">
             <Headphones className="w-4 h-4 text-blue-500" />
-            24/7 Support
+            {t('products.trust.support')}
           </div>
         </div>
       </div>

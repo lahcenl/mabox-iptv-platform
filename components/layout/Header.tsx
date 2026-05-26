@@ -2,43 +2,57 @@
 
 import Link from 'next/link';
 import { useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useRouter, usePathname } from 'next/navigation';
 import { Search, ShoppingCart, Menu, X, Tv, ChevronDown } from 'lucide-react';
 import { useCartStore } from '@/store/cartStore';
 import CartDrawer from '@/components/ui/CartDrawer';
-
-const navLinks = [
-  { label: 'Home', href: '/' },
-  { label: 'All Products', href: '/products' },
-  {
-    label: 'IPTV Subscriptions',
-    href: '/products?category=iptv-subscriptions',
-  },
-  { label: 'BEIN SPORTS', href: '/products?category=bein-sports' },
-  { label: 'Blog', href: '/blog' },
-];
+import { useTranslations } from '@/components/providers/I18nProvider';
+import { locales } from '@/lib/i18n';
 
 export default function Header() {
   const router = useRouter();
+  const pathname = usePathname();
   const [mobileOpen, setMobileOpen] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
+  const [langOpen, setLangOpen] = useState(false);
   const { itemCount, subtotal, toggleCart } = useCartStore();
+  const { t, locale, localize } = useTranslations();
+
+  const navLinks = [
+    { label: t('header.nav.home'), href: '/' },
+    { label: t('header.nav.allProducts'), href: '/products' },
+    { label: t('header.nav.iptv'), href: '/products?category=iptv-subscriptions' },
+    { label: t('header.nav.bein'), href: '/products?category=bein-sports' },
+    { label: t('header.nav.blog'), href: '/blog' },
+  ];
+
+  const handleLocaleChange = (newLocale: string) => {
+    const segments = pathname.split('/');
+    let base = pathname;
+    if (segments[1] === 'ar' || segments[1] === 'fr') {
+      base = '/' + segments.slice(2).join('/');
+    }
+    const prefix = newLocale === 'en' ? '' : `/${newLocale}`;
+    const newPath = `${prefix}${base}`.replace(/\/$/, '') || '/';
+    const search = window.location.search;
+    router.push(`${newPath}${search}`);
+  };
 
   const handleSearchSubmit = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim()) {
-      router.push(`/products?search=${encodeURIComponent(searchQuery.trim())}`);
+      router.push(localize(`/products?search=${encodeURIComponent(searchQuery.trim())}`));
     } else {
-      router.push('/products');
+      router.push(localize('/products'));
     }
   };
   const count = itemCount();
   const total = subtotal();
 
   const promoMessages = [
-    "🎁 Get a discount on your second purchase or recurring subscriptions",
-    "🎬 Get a free IPTV Player for the first year with an annual subscription",
-    "⏱ Enjoy a 24 to 48 hours trial before committing to any plan",
+    t('header.promos.0'),
+    t('header.promos.1'),
+    t('header.promos.2'),
   ];
   const [promoIndex, setPromoIndex] = useState(0);
 
@@ -64,7 +78,7 @@ export default function Header() {
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex items-center h-16 gap-4">
             {/* Logo */}
-            <Link href="/" className="flex items-center gap-2 flex-shrink-0 group">
+            <Link href={localize('/')} className="flex items-center gap-2 flex-shrink-0 group">
               <div className="w-9 h-9 bg-violet-600 rounded-lg flex items-center justify-center shadow-md group-hover:bg-violet-700 transition-colors">
                 <Tv className="w-5 h-5 text-white" />
               </div>
@@ -84,14 +98,14 @@ export default function Header() {
             {/* Search bar */}
             <form onSubmit={handleSearchSubmit} className="flex-1 max-w-xl relative hidden md:block">
               <div className="relative">
-                <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+                <Search className="absolute left-3 rtl:left-auto rtl:right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
                 <input
                   id="header-search"
                   type="text"
-                  placeholder="Search subscriptions, players, reseller plans..."
+                  placeholder={t('header.searchPlaceholder')}
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-400 focus:border-transparent transition-all"
+                  className="w-full pl-10 pr-4 rtl:pl-4 rtl:pr-10 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm text-gray-700 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-violet-400 focus:border-transparent transition-all"
                 />
               </div>
             </form>
@@ -101,7 +115,7 @@ export default function Header() {
               {/* Right nav */}
               <nav className="hidden lg:flex items-center gap-6 mr-2">
                 {navLinks.map((link) => (
-                  <Link key={link.href} href={link.href} className="nav-link pb-1">
+                  <Link key={link.href} href={localize(link.href)} className="nav-link pb-1">
                     {link.label}
                   </Link>
                 ))}
@@ -111,7 +125,7 @@ export default function Header() {
               <button
                 id="cart-toggle-btn"
                 onClick={toggleCart}
-                className="flex items-center gap-2 bg-violet-50 hover:bg-violet-100 border border-violet-200 text-violet-700 font-semibold px-3 py-2 rounded-xl transition-all duration-200 relative group"
+                className="flex items-center gap-2 bg-violet-50 hover:bg-violet-100 border border-violet-200 text-violet-700 font-semibold px-3 py-2 rounded-xl transition-all duration-200 relative group cursor-pointer"
                 aria-label="Toggle cart"
               >
                 <div className="relative">
@@ -127,10 +141,44 @@ export default function Header() {
                 </span>
               </button>
 
+              {/* Language Switcher */}
+              <div className="relative">
+                <button
+                  onClick={() => setLangOpen(!langOpen)}
+                  className="flex items-center gap-1 bg-gray-50 hover:bg-gray-100 border border-gray-200 text-gray-700 font-bold px-3 py-2 rounded-xl text-xs sm:text-sm transition-all cursor-pointer"
+                  aria-label="Select language"
+                >
+                  <span className="text-sm">🌐</span>
+                  <span className="uppercase">{locale}</span>
+                  <ChevronDown className="w-3 h-3 text-gray-400" />
+                </button>
+                {langOpen && (
+                  <>
+                    <div className="fixed inset-0 z-40" onClick={() => setLangOpen(false)} />
+                    <div className="absolute right-0 rtl:right-auto rtl:left-0 mt-2 w-28 bg-white border border-gray-100 rounded-xl shadow-lg py-1 z-50">
+                      {locales.map((loc) => (
+                        <button
+                          key={loc}
+                          onClick={() => {
+                            setLangOpen(false);
+                            handleLocaleChange(loc);
+                          }}
+                          className={`w-full text-left rtl:text-right px-4 py-2 text-xs font-semibold hover:bg-violet-50 hover:text-violet-600 transition-colors uppercase cursor-pointer ${
+                            loc === locale ? 'text-violet-600 bg-violet-50/50' : 'text-gray-700'
+                          }`}
+                        >
+                          {loc === 'en' ? '🇺🇸 EN' : loc === 'fr' ? '🇫🇷 FR' : '🇸🇦 AR'}
+                        </button>
+                      ))}
+                    </div>
+                  </>
+                )}
+              </div>
+
               {/* Mobile menu toggle */}
               <button
                 id="mobile-menu-toggle"
-                className="lg:hidden text-gray-600 hover:text-violet-600 transition-colors"
+                className="lg:hidden text-gray-600 hover:text-violet-600 transition-colors cursor-pointer"
                 onClick={() => setMobileOpen(!mobileOpen)}
                 aria-label="Toggle mobile menu"
               >
@@ -142,13 +190,13 @@ export default function Header() {
           {/* Mobile search */}
           <form onSubmit={handleSearchSubmit} className="md:hidden pb-3">
             <div className="relative">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
+              <Search className="absolute left-3 rtl:left-auto rtl:right-3 top-1/2 -translate-y-1/2 w-4 h-4 text-gray-400" />
               <input
                 type="text"
-                placeholder="Search products..."
+                placeholder={t('header.searchPlaceholderMobile')}
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="w-full pl-10 pr-4 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-violet-400 focus:border-transparent"
+                className="w-full pl-10 pr-4 rtl:pl-4 rtl:pr-10 py-2.5 bg-gray-50 border border-gray-200 rounded-xl text-sm focus:outline-none focus:ring-2 focus:ring-violet-400 focus:border-transparent"
               />
             </div>
           </form>
@@ -160,7 +208,7 @@ export default function Header() {
             {navLinks.map((link) => (
               <Link
                 key={link.href}
-                href={link.href}
+                href={localize(link.href)}
                 className="block py-2.5 px-4 text-gray-700 hover:bg-violet-50 hover:text-violet-600 rounded-lg font-medium transition-colors"
                 onClick={() => setMobileOpen(false)}
               >

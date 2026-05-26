@@ -1,10 +1,24 @@
 import { ShieldCheck } from 'lucide-react';
+import { getDictionary, Locale } from '@/lib/i18n';
 
-const TICKER_TEXT = '🚀 Instant Delivery via WhatsApp | 💎 Premium Anti-Buffer Servers | 🛠️ 24/7 Technical Support | 📺 Players IPTV';
+export default async function TrendingTicker({ locale }: { locale: string }) {
+  const dictionary = await getDictionary(locale as Locale);
+  
+  const t = (key: string): string => {
+    try {
+      const parts = key.split('.');
+      let result: any = dictionary;
+      for (const part of parts) {
+        result = result[part];
+      }
+      return typeof result === 'string' ? result : key;
+    } catch {
+      return key;
+    }
+  };
 
-export default function TrendingTicker() {
-  // Duplicate the text to ensure the scrolling is continuous and fills the width
-  const items = Array(8).fill(TICKER_TEXT);
+  const tickerText = `${t('ticker.delivery')} | ${t('ticker.servers')} | ${t('ticker.support')} | ${t('ticker.players')}`;
+  const items = Array(8).fill(tickerText);
 
   return (
     <div className="bg-gradient-to-r from-gray-900 via-violet-950 to-gray-900 border-t border-violet-900/40 overflow-hidden">
@@ -13,7 +27,7 @@ export default function TrendingTicker() {
         <div className="flex items-center gap-1.5 px-3 py-2.5 md:px-4 md:py-3 bg-violet-700 flex-shrink-0 z-10 shadow-[4px_0_12px_rgba(0,0,0,0.4)]">
           <ShieldCheck className="w-3.5 h-3.5 md:w-4 md:h-4 text-white" />
           <span className="text-[10px] md:text-xs font-bold text-white uppercase tracking-wider whitespace-nowrap">
-            Ondexy Promise ⭐
+            {t('ticker.promise')}
           </span>
         </div>
 

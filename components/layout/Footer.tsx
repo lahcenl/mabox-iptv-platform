@@ -2,6 +2,7 @@
 
 import Link from 'next/link';
 import { Tv, Mail, Phone, MessageCircle, ArrowRight, Clock } from 'lucide-react';
+import { useTranslations } from '@/components/providers/I18nProvider';
 
 // Inline SVG brand icons as React components
 function FacebookIcon({ className }: { className?: string }) {
@@ -43,14 +44,6 @@ type SocialLink = {
   color: string;
 };
 
-const quickLinks = [
-  { label: 'Refund Policy', href: '/refund-policy' },
-  { label: 'Privacy Policy', href: '/privacy-policy' },
-  { label: 'Terms of Service', href: '/terms' },
-  { label: 'About Us', href: '/about' },
-  { label: 'FAQ', href: '/faq' },
-];
-
 const socialLinks: SocialLink[] = [
   { label: 'Facebook', href: '/#', Icon: FacebookIcon, color: 'hover:bg-blue-600' },
   { label: 'Twitter / X', href: '/#', Icon: TwitterIcon, color: 'hover:bg-sky-500' },
@@ -59,23 +52,33 @@ const socialLinks: SocialLink[] = [
   { label: 'YouTube', href: '/#', Icon: YoutubeIcon, color: 'hover:bg-red-600' },
 ];
 
-export default function Footer() {
+export default function Footer({ locale }: { locale: string }) {
+  const { t, localize } = useTranslations();
+
+  const quickLinks = [
+    { label: t('footer.links.refund'), href: '/refund-policy' },
+    { label: t('footer.links.privacy'), href: '/privacy-policy' },
+    { label: t('footer.links.terms'), href: '/terms' },
+    { label: t('footer.links.about'), href: '/about' },
+    { label: t('footer.links.faq'), href: '/faq' },
+  ];
+
   return (
     <footer className="bg-gray-900 text-gray-300">
       {/* CTA Banner */}
       <div className="bg-gradient-to-r from-violet-700 to-violet-900 py-10 px-4">
         <div className="max-w-7xl mx-auto flex flex-col sm:flex-row items-center justify-between gap-4">
           <div>
-            <h3 className="text-white text-2xl font-bold">Start Streaming Today</h3>
+            <h3 className="text-white text-2xl font-bold">{t('footer.ctaTitle')}</h3>
             <p className="text-violet-200 text-sm mt-1">
-              24 to 48 Hours Trial on all IPTV plans. No credit card required.
+              {t('footer.ctaSubtitle')}
             </p>
           </div>
           <Link
-            href="/products"
+            href={localize('/products')}
             className="inline-flex items-center gap-2 bg-white text-violet-700 font-bold px-6 py-3 rounded-xl hover:bg-violet-50 transition-all duration-200 shadow-lg text-sm flex-shrink-0"
           >
-            Browse Plans <ArrowRight className="w-4 h-4" />
+            {t('footer.ctaButton')} <ArrowRight className="w-4 h-4 rtl:rotate-180" />
           </Link>
         </div>
       </div>
@@ -86,7 +89,7 @@ export default function Footer() {
 
           {/* Brand column */}
           <div className="lg:col-span-1">
-            <Link href="/" className="flex items-center gap-2 mb-4 group">
+            <Link href={localize('/')} className="flex items-center gap-2 mb-4 group">
               <div className="w-9 h-9 bg-violet-600 rounded-lg flex items-center justify-center">
                 <Tv className="w-5 h-5 text-white" />
               </div>
@@ -96,14 +99,14 @@ export default function Footer() {
               </div>
             </Link>
             <p className="text-sm text-gray-400 leading-relaxed mb-6">
-              Your trusted source for premium IPTV subscriptions, media players, and reseller solutions. Stream smarter.
+              {t('footer.desc')}
             </p>
             {/* Social icons */}
             <div className="flex items-center gap-2">
               {socialLinks.map((social) => (
                 <a
                   key={social.label}
-                  href={social.href}
+                  href={localize(social.href)}
                   target="_blank"
                   rel="noopener noreferrer"
                   aria-label={social.label}
@@ -117,8 +120,8 @@ export default function Footer() {
 
           {/* Contact info */}
           <div>
-            <h4 className="text-white font-semibold text-base mb-5 relative pb-3 after:absolute after:bottom-0 after:left-0 after:w-8 after:h-0.5 after:bg-violet-500">
-              Contact Us
+            <h4 className="text-white font-semibold text-base mb-5 relative pb-3 after:absolute after:bottom-0 after:left-0 rtl:after:left-auto rtl:after:right-0 after:w-8 after:h-0.5 after:bg-violet-500">
+              {t('footer.contactUs')}
             </h4>
             <ul className="space-y-4">
               <li>
@@ -130,7 +133,7 @@ export default function Footer() {
                     <Mail className="w-4 h-4 text-gray-400 group-hover:text-white" />
                   </div>
                   <div>
-                    <div className="text-xs text-gray-500 mb-0.5">Email Support</div>
+                    <div className="text-xs text-gray-500 mb-0.5">{t('footer.emailSupport')}</div>
                     <span className="text-sm text-gray-300 group-hover:text-violet-400 transition-colors">
                       support@ondexy.com
                     </span>
@@ -139,7 +142,7 @@ export default function Footer() {
               </li>
               <li>
                 <a
-                  href="https://wa.me/1234567890"
+                  href={`https://wa.me/${t('common.whatsappNumber')}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="flex items-start gap-3 group"
@@ -148,7 +151,7 @@ export default function Footer() {
                     <Phone className="w-4 h-4 text-gray-400 group-hover:text-white" />
                   </div>
                   <div>
-                    <div className="text-xs text-gray-500 mb-0.5">WhatsApp / Phone</div>
+                    <div className="text-xs text-gray-500 mb-0.5">{t('footer.whatsappPhone')}</div>
                     <span className="text-sm text-gray-300 group-hover:text-green-400 transition-colors">
                       +1 (234) 567-890
                     </span>
@@ -160,8 +163,8 @@ export default function Footer() {
                   <MessageCircle className="w-4 h-4 text-gray-400" />
                 </div>
                 <div>
-                  <div className="text-xs text-gray-500 mb-0.5">Support Hours</div>
-                  <span className="text-sm text-gray-300">24/7 Live Chat</span>
+                  <div className="text-xs text-gray-500 mb-0.5">{t('footer.supportHours')}</div>
+                  <span className="text-sm text-gray-300">{t('footer.supportHoursVal')}</span>
                 </div>
               </li>
               <li className="flex items-start gap-3">
@@ -169,8 +172,8 @@ export default function Footer() {
                   <Clock className="w-4 h-4 text-amber-400" />
                 </div>
                 <div>
-                  <div className="text-xs text-gray-500 mb-0.5">Opening Hours</div>
-                  <span className="text-sm text-gray-300 font-medium">9AM – 23:00 GMT</span>
+                  <div className="text-xs text-gray-500 mb-0.5">{t('footer.openingHours')}</div>
+                  <span className="text-sm text-gray-300 font-medium">{t('footer.openingHoursVal')}</span>
                 </div>
               </li>
             </ul>
@@ -178,17 +181,17 @@ export default function Footer() {
 
           {/* Quick links */}
           <div>
-            <h4 className="text-white font-semibold text-base mb-5 relative pb-3 after:absolute after:bottom-0 after:left-0 after:w-8 after:h-0.5 after:bg-violet-500">
-              Quick Links
+            <h4 className="text-white font-semibold text-base mb-5 relative pb-3 after:absolute after:bottom-0 after:left-0 rtl:after:left-auto rtl:after:right-0 after:w-8 after:h-0.5 after:bg-violet-500">
+              {t('footer.quickLinks')}
             </h4>
             <ul className="space-y-3">
               {quickLinks.map((link) => (
                 <li key={link.label}>
                   <Link
-                    href={link.href}
+                    href={localize(link.href)}
                     className="text-sm text-gray-400 hover:text-violet-400 transition-colors flex items-center gap-2 group"
                   >
-                    <ArrowRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity -ml-1" />
+                    <ArrowRight className="w-3 h-3 opacity-0 group-hover:opacity-100 transition-opacity -ml-1 rtl:rotate-180 rtl:ml-0 rtl:-mr-1" />
                     {link.label}
                   </Link>
                 </li>
@@ -198,23 +201,23 @@ export default function Footer() {
 
           {/* Newsletter */}
           <div>
-            <h4 className="text-white font-semibold text-base mb-5 relative pb-3 after:absolute after:bottom-0 after:left-0 after:w-8 after:h-0.5 after:bg-violet-500">
-              Stay Updated
+            <h4 className="text-white font-semibold text-base mb-5 relative pb-3 after:absolute after:bottom-0 after:left-0 rtl:after:left-auto rtl:after:right-0 after:w-8 after:h-0.5 after:bg-violet-500">
+              {t('footer.stayUpdated')}
             </h4>
             <p className="text-sm text-gray-400 mb-4 leading-relaxed">
-              Subscribe for exclusive deals, new channel packages, and streaming tips.
+              {t('footer.stayUpdatedDesc')}
             </p>
             <form className="space-y-2" onSubmit={(e) => e.preventDefault()}>
               <input
                 type="email"
-                placeholder="your@email.com"
+                placeholder={t('footer.emailPlaceholder')}
                 className="w-full bg-gray-800 border border-gray-700 text-gray-300 placeholder-gray-500 rounded-lg px-4 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all"
               />
               <button
                 type="submit"
                 className="w-full bg-violet-600 hover:bg-violet-700 text-white font-semibold py-2.5 rounded-lg text-sm transition-all duration-200 hover:shadow-lg hover:shadow-violet-900/40"
               >
-                Subscribe
+                {t('footer.subscribe')}
               </button>
             </form>
           </div>
@@ -225,17 +228,17 @@ export default function Footer() {
       <div className="border-t border-gray-800">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-5 flex flex-col sm:flex-row items-center justify-between gap-3">
           <p className="text-xs text-gray-500">
-            © {new Date().getFullYear()} Ondexy.com. All rights reserved.
+            © {new Date().getFullYear()} Ondexy.com. {t('footer.allRightsReserved')}
           </p>
           <div className="flex items-center gap-4">
-            <Link href="/terms" className="text-xs text-gray-500 hover:text-violet-400 transition-colors">
-              Terms
+            <Link href={localize('/terms')} className="text-xs text-gray-500 hover:text-violet-400 transition-colors">
+              {t('footer.links.terms')}
             </Link>
-            <Link href="/privacy-policy" className="text-xs text-gray-500 hover:text-violet-400 transition-colors">
-              Privacy
+            <Link href={localize('/privacy-policy')} className="text-xs text-gray-500 hover:text-violet-400 transition-colors">
+              {t('footer.links.privacy')}
             </Link>
-            <Link href="/refund-policy" className="text-xs text-gray-500 hover:text-violet-400 transition-colors">
-              Refund Policy
+            <Link href={localize('/refund-policy')} className="text-xs text-gray-500 hover:text-violet-400 transition-colors">
+              {t('footer.links.refund')}
             </Link>
           </div>
         </div>

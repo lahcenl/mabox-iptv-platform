@@ -1,0 +1,142 @@
+{
+  "common": {
+    "viewAll": "Voir tout",
+    "whatsappNumber": "1234567890",
+    "contactWhatsApp": "Contactez-nous sur WhatsApp",
+    "resellerPanels": "Panneaux de revendeurs"
+  },
+  "header": {
+    "searchPlaceholder": "Rechercher des abonnements, des lecteurs...",
+    "searchPlaceholderMobile": "Rechercher...",
+    "cart": "Panier",
+    "nav": {
+      "home": "Accueil",
+      "allProducts": "Tous les produits",
+      "iptv": "Abonnements IPTV",
+      "bein": "BEIN SPORTS",
+      "blog": "Blog"
+    },
+    "promos": [
+      "🎁 Obtenez une réduction sur votre deuxième achat ou abonnements récurrents",
+      "🎬 Obtenez un lecteur IPTV gratuit la première année avec un abonnement annuel",
+      "⏱ Profitez d'un essai de 24 à 48 heures avant de vous engager"
+    ]
+  },
+  "ticker": {
+    "promise": "Promesse Ondexy ⭐",
+    "delivery": "🚀 Livraison instantanée via WhatsApp",
+    "servers": "💎 Serveurs anti-tampon premium",
+    "support": "🛠️ Support technique 24/7",
+    "players": "📺 Lecteurs IPTV"
+  },
+  "hero": {
+    "title": "Abonnements Numériques Premium & Activations IPTV",
+    "subtitle": "Livraison rapide, serveurs stables et support 24/7.",
+    "ctaBrowse": "Découvrir les plans",
+    "ctaWhatsApp": "Contactez-nous sur WhatsApp"
+  },
+  "categories": {
+    "title": "Parcourir par catégorie",
+    "subtitle": "Explorez nos plans premium et licences logicielles"
+  },
+  "footer": {
+    "desc": "Votre source de confiance pour les abonnements IPTV premium, les lecteurs multimédias et les solutions de revente. Diffusez plus intelligemment.",
+    "quickLinks": "Liens rapides",
+    "support": "Support",
+    "contact": "Contact",
+    "allRightsReserved": "Tous droits réservés.",
+    "ctaTitle": "Commencez à diffuser aujourd'hui",
+    "ctaSubtitle": "Essai de 24 à 48 heures sur tous les plans IPTV. Aucune carte de crédit requise.",
+    "ctaButton": "Découvrir les plans",
+    "contactUs": "Contactez-nous",
+    "emailSupport": "Support par e-mail",
+    "whatsappPhone": "WhatsApp / Téléphone",
+    "supportHours": "Heures d'assistance",
+    "supportHoursVal": "Chat en direct 24/7",
+    "openingHours": "Heures d'ouverture",
+    "openingHoursVal": "9h00 – 23h00 GMT",
+    "stayUpdated": "Restez à jour",
+    "stayUpdatedDesc": "Abonnez-vous pour des offres exclusives, des nouveaux bouquets de chaînes et des conseils.",
+    "emailPlaceholder": "votre@email.com",
+    "subscribe": "S'abonner",
+    "links": {
+      "terms": "Conditions d'utilisation",
+      "privacy": "Politique de confidentialité",
+      "refund": "Politique de remboursement",
+      "faq": "FAQ",
+      "about": "À propos"
+    }
+  },
+  "products": {
+    "noProducts": "Aucun produit trouvé dans cette catégorie.",
+    "lowestPrice": "à partir de",
+    "selectOptions": "Choisir les options",
+    "whatsappUs": "Contactez-nous",
+    "noPlans": "Aucun plan disponible",
+    "per": "par",
+    "whatsappMessage": "Bonjour ! Je suis intéressé par {name} ({duration}). Pouvez-vous me donner plus de détails ?",
+    "buyWhatsappMessage": "Bonjour ! Je souhaite acheter *{name}* pour *{duration}* à {price}$. Veuillez m'aider.",
+    "reviewsCount": "({count} avis)",
+    "priceLabel": "Prix",
+    "durationTag": "pour {duration}",
+    "selectDuration": "Sélectionner la durée",
+    "features": {
+      "activation": "Activation instantanée",
+      "antifreeze": "Technologie anti-coupure",
+      "support": "Support 24/7"
+    },
+    "benefits": {
+      "delivery": "Livraison instantanée par e-mail",
+      "channels": "Plus de 10 000 chaînes incluses",
+      "quality": "Boutons Full HD & 4K disponibles",
+      "compatibility": "Compatible avec tous les appareils",
+      "contract": "Sans engagement, annulez à tout moment"
+    },
+    "trust": {
+      "payment": "Paiement sécurisé",
+      "activation": "Activation instantanée",
+      "support": "Support 24/7"
+    },
+    "duration": {
+      "1 Month": "1 Mois",
+      "3 Months": "3 Mois",
+      "6 Months": "6 Mois",
+      "12 Months": "12 Mois",
+      "1 Year": "1 An",
+      "2 Years": "2 Ans",
+      "Lifetime": "À vie",
+      "One-time": "Une fois"
+    }
+  },
+  "cart": {
+    "title": "Panier d'achat",
+    "empty": "Votre panier est vide",
+    "emptyDesc": "Parcourez nos abonnements IPTV et ajoutez vos plans préférés.",
+    "browse": "Parcourir les produits",
+    "summary": "Résumé de la commande",
+    "subtotal": "Sous-total",
+    "checkout": "Commander via WhatsApp",
+    "checkoutDisabled": "Panier vide",
+    "added": "Ajouté au panier !",
+    "addBtn": "Ajouter au panier",
+    "remove": "Supprimer",
+    "items": "articles",
+    "item": "article",
+    "taxesDesc": "Frais de livraison et taxes calculés lors de la commande.",
+    "processing": "Traitement en cours...",
+    "viewDetails": "Voir les détails du panier",
+    "continueShopping": "Continuer vos achats",
+    "emptyDescFull": "Il semble que vous n'avez pas encore ajouté d'abonnements.",
+    "inCart": "dans le panier",
+    "clearAll": "Tout effacer",
+    "total": "Total",
+    "includesTaxes": "Comprend tous les plans et services",
+    "secureCheckout": "Paiement sécurisé et crypté"
+  },
+  "community": {
+    "title": "Rejoignez notre communauté Telegram & WhatsApp",
+    "subtitle": "Obtenez des mises à jour instantanées sur l'état du serveur et des offres exclusives.",
+    "telegram": "Telegram",
+    "whatsapp": "WhatsApp"
+  }
+}

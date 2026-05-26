@@ -1,12 +1,14 @@
 export const dynamic = 'force-dynamic';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
-import './globals.css';
+import '../globals.css';
 import Header from '@/components/layout/Header';
 import Footer from '@/components/layout/Footer';
 import TrendingTicker from '@/components/ui/TrendingTicker';
 import WhatsAppWidget from '@/components/ui/WhatsAppWidget';
 import CommunityBanner from '@/components/layout/CommunityBanner';
+import { I18nProvider } from '@/components/providers/I18nProvider';
+import { getDictionary, Locale } from '@/lib/i18n';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -79,20 +81,29 @@ export const metadata: Metadata = {
   },
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
+  params,
 }: Readonly<{
   children: React.ReactNode;
+  params: Promise<{ locale: string }>;
 }>) {
+  const { locale } = await params;
+  const activeLocale = (locale as Locale) || 'en';
+  const dictionary = await getDictionary(activeLocale);
+  const isRtl = activeLocale === 'ar';
+
   return (
-    <html lang="en" className={`${inter.variable} h-full`}>
+    <html lang={activeLocale} dir={isRtl ? 'rtl' : 'ltr'} className={`${inter.variable} h-full`}>
       <body className="min-h-full flex flex-col bg-gray-50 antialiased font-[family-name:var(--font-inter)]">
-        <Header />
-        <main className="flex-1">{children}</main>
-        <TrendingTicker />
-        <CommunityBanner />
-        <Footer />
-        <WhatsAppWidget />
+        <I18nProvider locale={activeLocale} dictionary={dictionary}>
+          <Header />
+          <main className="flex-1">{children}</main>
+          <TrendingTicker locale={activeLocale} />
+          <CommunityBanner locale={activeLocale} />
+          <Footer locale={activeLocale} />
+          <WhatsAppWidget />
+        </I18nProvider>
       </body>
     </html>
   );

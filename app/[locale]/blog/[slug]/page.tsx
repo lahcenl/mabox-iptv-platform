@@ -3,11 +3,12 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { getArticleBySlug, readArticles } from '@/lib/articles';
 import { Calendar, ArrowLeft, User } from 'lucide-react';
+import { locales, localizePath } from '@/lib/i18n';
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.ondexy.com';
 
 interface Props {
-  params: Promise<{ slug: string }>;
+  params: Promise<{ slug: string; locale: string }>;
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -55,7 +56,9 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export async function generateStaticParams() {
   const articles = await readArticles();
-  return articles.map((a) => ({ slug: a.slug }));
+  return locales.flatMap((locale) =>
+    articles.map((a) => ({ locale, slug: a.slug }))
+  );
 }
 
 /** Lightweight Markdown → HTML renderer (no dependencies) */
@@ -96,7 +99,7 @@ function formatDate(iso: string): string {
 export const dynamic = 'force-dynamic';
 
 export default async function ArticlePage({ params }: Props) {
-  const { slug } = await params;
+  const { slug, locale } = await params;
   const article = await getArticleBySlug(slug);
   if (!article) notFound();
 
@@ -146,10 +149,10 @@ export default async function ArticlePage({ params }: Props) {
       {/* Back link */}
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
         <Link
-          href="/blog"
+          href={localizePath('/blog', locale)}
           className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-violet-600 transition-colors font-medium"
         >
-          <ArrowLeft className="w-4 h-4" />
+          <ArrowLeft className="w-4 h-4 rtl:rotate-180" />
           Back to Blog
         </Link>
       </div>
@@ -200,7 +203,7 @@ export default async function ArticlePage({ params }: Props) {
             Browse our premium IPTV plans with instant activation.
           </p>
           <Link
-            href="/products"
+            href={localizePath('/products', locale)}
             className="inline-flex items-center gap-2 bg-white text-violet-700 font-semibold px-6 py-3 rounded-xl hover:bg-violet-50 transition-colors shadow-sm"
           >
             Browse Plans

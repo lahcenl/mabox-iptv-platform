@@ -1,17 +1,21 @@
 'use client';
 
+import { useTranslations } from '@/components/providers/I18nProvider';
+
 export default function WhatsAppWidget() {
+  const { t } = useTranslations();
+
   return (
     <a
-      href="https://wa.me/1234567890"
+      href={`https://wa.me/${t('common.whatsappNumber')}`}
       target="_blank"
       rel="noopener noreferrer"
-      className="fixed bottom-6 right-6 z-50 bg-green-500 hover:bg-green-600 text-white p-3.5 rounded-full shadow-2xl flex items-center justify-center hover:scale-110 active:scale-95 transition-all duration-300 group"
-      aria-label="Contact support on WhatsApp"
+      className="fixed bottom-6 right-6 rtl:right-auto rtl:left-6 z-50 bg-green-500 hover:bg-green-600 text-white p-3.5 rounded-full shadow-2xl flex items-center justify-center hover:scale-110 active:scale-95 transition-all duration-300 group"
+      aria-label={t('common.contactWhatsApp')}
     >
       {/* Tooltip */}
-      <span className="absolute right-full mr-3 bg-gray-900 text-white text-xs font-semibold px-3 py-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none whitespace-nowrap shadow-md">
-        Need Help? Chat with us! 💬
+      <span className="absolute right-full mr-3 rtl:right-auto rtl:left-full rtl:mr-0 rtl:ml-3 bg-gray-900 text-white text-xs font-semibold px-3 py-1.5 rounded-lg opacity-0 group-hover:opacity-100 transition-opacity duration-300 pointer-events-none whitespace-nowrap shadow-md">
+        {t('common.contactWhatsApp')} 💬
       </span>
 
       {/* Official WhatsApp SVG Logo */}

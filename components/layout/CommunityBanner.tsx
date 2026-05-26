@@ -1,8 +1,11 @@
 'use client';
 
 import { Send, MessageCircle } from 'lucide-react';
+import { useTranslations } from '@/components/providers/I18nProvider';
 
-export default function CommunityBanner() {
+export default function CommunityBanner({ locale }: { locale: string }) {
+  const { t } = useTranslations();
+
   return (
     <section className="bg-gray-100 border-t border-b border-gray-200/50 py-6 px-4">
       <div className="max-w-7xl mx-auto flex flex-col md:flex-row items-center justify-between gap-4">
@@ -12,10 +15,10 @@ export default function CommunityBanner() {
           </div>
           <div>
             <p className="text-gray-900 font-semibold text-sm sm:text-base">
-              Join our Telegram & WhatsApp Community
+              {t('community.title')}
             </p>
             <p className="text-gray-500 text-xs sm:text-sm mt-0.5">
-              Get instant server status updates and exclusive subscriber-only offers.
+              {t('community.subtitle')}
             </p>
           </div>
         </div>
@@ -26,15 +29,15 @@ export default function CommunityBanner() {
             rel="noopener noreferrer"
             className="flex-1 md:flex-initial inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-lg bg-sky-500 hover:bg-sky-600 text-white font-medium text-xs sm:text-sm transition-all duration-200 shadow-sm"
           >
-            <Send className="w-3.5 h-3.5" /> Telegram
+            <Send className="w-3.5 h-3.5" /> {t('community.telegram')}
           </a>
           <a
-            href="https://wa.me/1234567890"
+            href={`https://wa.me/${t('common.whatsappNumber')}`}
             target="_blank"
             rel="noopener noreferrer"
             className="flex-1 md:flex-initial inline-flex items-center justify-center gap-1.5 px-4 py-2 rounded-lg bg-green-500 hover:bg-green-600 text-white font-medium text-xs sm:text-sm transition-all duration-200 shadow-sm"
           >
-            <MessageCircle className="w-3.5 h-3.5" /> WhatsApp
+            <MessageCircle className="w-3.5 h-3.5" /> {t('community.whatsapp')}
           </a>
         </div>
       </div>
