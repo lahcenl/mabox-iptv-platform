@@ -142,20 +142,22 @@ export default function Header() {
               </button>
 
               {/* Language Switcher */}
-              <div className="relative">
+              <div className="relative z-50">
                 <button
                   onClick={() => setLangOpen(!langOpen)}
-                  className="flex items-center gap-1 bg-gray-50 hover:bg-gray-100 border border-gray-200 text-gray-700 font-bold px-3 py-2 rounded-xl text-xs sm:text-sm transition-all cursor-pointer"
+                  className="flex items-center gap-1.5 bg-violet-50 hover:bg-violet-100 border border-violet-200 text-violet-700 font-extrabold px-3 py-2 rounded-xl text-xs sm:text-sm transition-all duration-200 shadow-sm cursor-pointer"
                   aria-label="Select language"
                 >
-                  <span className="text-sm">🌐</span>
-                  <span className="uppercase">{locale}</span>
-                  <ChevronDown className="w-3 h-3 text-gray-400" />
+                  <span className="text-sm">
+                    {locale === 'en' ? '🇬🇧' : locale === 'fr' ? '🇫🇷' : '🇲🇦'}
+                  </span>
+                  <span className="uppercase tracking-wider">{locale}</span>
+                  <ChevronDown className="w-3.5 h-3.5 text-violet-500/70" />
                 </button>
                 {langOpen && (
                   <>
                     <div className="fixed inset-0 z-40" onClick={() => setLangOpen(false)} />
-                    <div className="absolute right-0 rtl:right-auto rtl:left-0 mt-2 w-28 bg-white border border-gray-100 rounded-xl shadow-lg py-1 z-50">
+                    <div className="absolute right-0 rtl:right-auto rtl:left-0 mt-2 w-32 bg-white border border-gray-100 rounded-xl shadow-xl py-1.5 z-50">
                       {locales.map((loc) => (
                         <button
                           key={loc}
@@ -163,11 +165,16 @@ export default function Header() {
                             setLangOpen(false);
                             handleLocaleChange(loc);
                           }}
-                          className={`w-full text-left rtl:text-right px-4 py-2 text-xs font-semibold hover:bg-violet-50 hover:text-violet-600 transition-colors uppercase cursor-pointer ${
+                          className={`w-full text-left rtl:text-right px-4 py-2.5 text-xs font-bold hover:bg-violet-50 hover:text-violet-600 transition-colors uppercase cursor-pointer flex items-center gap-2 ${
                             loc === locale ? 'text-violet-600 bg-violet-50/50' : 'text-gray-700'
                           }`}
                         >
-                          {loc === 'en' ? '🇺🇸 EN' : loc === 'fr' ? '🇫🇷 FR' : '🇸🇦 AR'}
+                          <span>
+                            {loc === 'en' ? '🇬🇧' : loc === 'fr' ? '🇫🇷' : '🇲🇦'}
+                          </span>
+                          <span>
+                            {loc === 'en' ? 'EN' : loc === 'fr' ? 'FR' : 'AR'}
+                          </span>
                         </button>
                       ))}
                     </div>
@@ -204,17 +211,45 @@ export default function Header() {
 
         {/* Mobile nav menu */}
         {mobileOpen && (
-          <div className="lg:hidden border-t border-gray-100 bg-white px-4 py-3 space-y-1 shadow-lg">
-            {navLinks.map((link) => (
-              <Link
-                key={link.href}
-                href={localize(link.href)}
-                className="block py-2.5 px-4 text-gray-700 hover:bg-violet-50 hover:text-violet-600 rounded-lg font-medium transition-colors"
-                onClick={() => setMobileOpen(false)}
-              >
-                {link.label}
-              </Link>
-            ))}
+          <div className="lg:hidden border-t border-gray-100 bg-white px-4 py-3 space-y-3 shadow-lg">
+            <div className="space-y-1">
+              {navLinks.map((link) => (
+                <Link
+                  key={link.href}
+                  href={localize(link.href)}
+                  className="block py-2.5 px-4 text-gray-700 hover:bg-violet-50 hover:text-violet-600 rounded-lg font-medium transition-colors"
+                  onClick={() => setMobileOpen(false)}
+                >
+                  {link.label}
+                </Link>
+              ))}
+            </div>
+
+            {/* Inline Language selector inside mobile menu */}
+            <div className="pt-4 border-t border-gray-100 px-4">
+              <div className="text-[10px] font-bold text-gray-400 uppercase tracking-wider mb-2.5">
+                Language / Langue / اللغة
+              </div>
+              <div className="flex gap-2">
+                {locales.map((loc) => (
+                  <button
+                    key={loc}
+                    onClick={() => {
+                      setMobileOpen(false);
+                      handleLocaleChange(loc);
+                    }}
+                    className={`flex-1 flex items-center justify-center gap-1.5 px-3 py-2 rounded-xl border text-xs font-bold transition-all cursor-pointer ${
+                      loc === locale
+                        ? 'border-violet-600 bg-violet-600 text-white shadow-sm'
+                        : 'border-gray-200 bg-gray-50 text-gray-700 hover:bg-gray-100'
+                    }`}
+                  >
+                    <span>{loc === 'en' ? '🇬🇧' : loc === 'fr' ? '🇫🇷' : '🇲🇦'}</span>
+                    <span className="uppercase">{loc}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
           </div>
         )}
       </header>
