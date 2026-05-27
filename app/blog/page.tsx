@@ -3,51 +3,73 @@ import Link from 'next/link';
 import { readArticles } from '@/lib/articles';
 import { BookOpen, Calendar, ArrowRight, Rss } from 'lucide-react';
 import { cookies } from 'next/headers';
-import { getLocalizedField } from '@/components/context/LanguageContext';
 
 export async function generateMetadata(): Promise<Metadata> {
-  const cookieStore = await cookies();
-  const locale = cookieStore.get('language')?.value || 'en';
+  try {
+    const cookieStore = await cookies();
+    const locale = cookieStore.get('language')?.value || 'en';
 
-  const titles = {
-    en: 'Blog – IPTV Guides, Tips & News',
-    ar: 'المدونة – أدلة ونصائح وأخبار IPTV',
-    fr: 'Blog – Guides, astuces et actualités IPTV',
-  };
-  const descriptions = {
-    en: 'Expert articles on IPTV setup, streaming tips, device guides, and the latest news from Ondexy.',
-    ar: 'مقالات الخبراء حول إعداد IPTV، ونصائح البث، وأدلة الأجهزة، وأحدث الأخبار من أندكسي.',
-    fr: 'Articles d\'experts sur la configuration de l\'IPTV, conseils de streaming, guides d\'appareils et dernières actualités d\'Ondexy.',
-  };
+    const titles = {
+      en: 'Blog – IPTV Guides, Tips & News',
+      ar: 'المدونة – أدلة ونصائح وأخبار IPTV',
+      fr: 'Blog – Guides, astuces et actualités IPTV',
+    };
+    const descriptions = {
+      en: 'Expert articles on IPTV setup, streaming tips, device guides, and the latest news from Ondexy.',
+      ar: 'مقالات الخبراء حول إعداد IPTV، ونصائح البث، وأدلة الأجهزة، وأحدث الأخبار من أندكسي.',
+      fr: 'Articles d\'experts sur la configuration de l\'IPTV, conseils de streaming, guides d\'appareils et dernières actualités d\'Ondexy.',
+    };
 
-  const title = titles[locale as keyof typeof titles] || titles.en;
-  const description = descriptions[locale as keyof typeof descriptions] || descriptions.en;
+    const title = titles[locale as keyof typeof titles] || titles.en;
+    const description = descriptions[locale as keyof typeof descriptions] || descriptions.en;
 
-  return {
-    title,
-    description,
-    openGraph: {
+    return {
       title,
       description,
-      type: 'website',
-    },
-  };
+      openGraph: {
+        title,
+        description,
+        type: 'website',
+      },
+    };
+  } catch (err) {
+    console.error("Metadata Generation Error (Blog list):", err);
+    return { title: 'Ondexy Blog' };
+  }
 }
 
 export const dynamic = 'force-dynamic';
 
 function formatDate(iso: string): string {
-  return new Date(iso).toLocaleDateString('en-GB', {
-    day: 'numeric',
-    month: 'long',
-    year: 'numeric',
-  });
+  if (!iso) return '';
+  try {
+    return new Date(iso).toLocaleDateString('en-GB', {
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric',
+    });
+  } catch {
+    return '';
+  }
 }
 
 export default async function BlogPage() {
-  const cookieStore = await cookies();
-  const locale = cookieStore.get('language')?.value || 'en';
-  const articles = await readArticles();
+  let locale = 'en';
+  let articles: any[] = [];
+  
+  try {
+    const cookieStore = await cookies();
+    locale = cookieStore.get('language')?.value || 'en';
+    articles = await readArticles();
+    
+    console.log("Fetched Articles List:", {
+      count: articles.length,
+      locale,
+      articles
+    });
+  } catch (err) {
+    console.error("Page Load Error (BlogPage data fetch):", err);
+  }
 
   // Static texts translation
   const text = {
@@ -101,8 +123,9 @@ export default async function BlogPage() {
         {articles.length > 0 && (
           <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
             {articles.map((article) => {
-              const localizedTitle = getLocalizedField(article, 'title', locale) || article.title;
-              const localizedExcerpt = getLocalizedField(article, 'excerpt', locale) || article.excerpt;
+              // Strict dynamic fallback checks to ensure zero runtime crashes:
+              const localizedTitle = (article as any)[`title_${locale}`] || article.title_en || article.title || '';
+              const localizedExcerpt = article.excerpt || '';
 
               return (
                 <Link

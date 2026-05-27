@@ -7,7 +7,6 @@ import ProductDetails from '@/components/product/ProductDetails';
 import ProductDescription from '@/components/product/ProductDescription';
 import ProductCard from '@/components/ui/ProductCard';
 import { cookies } from 'next/headers';
-import { getLocalizedField } from '@/components/context/LanguageContext';
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.ondexy.com';
 
@@ -33,201 +32,223 @@ function stripMarkdown(md: string | null | undefined): string {
 
 // This tells Next.js which slugs to pre-render at build time
 export async function generateStaticParams() {
-  const products = await getProducts();
-  return products.map((p) => ({ slug: p.slug }));
+  try {
+    const products = await getProducts();
+    return products.map((p) => ({ slug: p.slug }));
+  } catch (err) {
+    console.error("Error in generateStaticParams (Products):", err);
+    return [];
+  }
 }
 
 export async function generateMetadata(props: any): Promise<Metadata> {
-  const { slug } = await props.params;
-  const product = await getProductBySlug(slug);
-  if (!product) return { title: 'Product Not Found' };
+  try {
+    const { slug } = await props.params;
+    const product = await getProductBySlug(slug);
+    if (!product) return { title: 'Product Not Found' };
 
-  // Read language cookie for metadata translation
-  const cookieStore = await cookies();
-  const locale = cookieStore.get('language')?.value || 'en';
+    const cookieStore = await cookies();
+    const locale = cookieStore.get('language')?.value || 'en';
 
-  const name = getLocalizedField(product, 'name', locale) || product.name;
-  const plainDescription = stripMarkdown(getLocalizedField(product, 'description', locale) || product.description || '');
+    const name = (product as any)[`name_${locale}`] || product.name_en || product.name || '';
+    const plainDescription = stripMarkdown((product as any)[`description_${locale}`] || product.description_en || product.description || '');
 
-  const metaTitle = product.metaTitle || name;
-  const metaDescription = product.metaDescription || plainDescription;
-  const keywords = product.seoKeywords
-    ? product.seoKeywords.split(',').map((k: string) => k.trim())
-    : [name, product.category, 'IPTV', 'buy IPTV', 'streaming'];
+    const metaTitle = product.metaTitle || name;
+    const metaDescription = product.metaDescription || plainDescription;
+    const keywords = product.seoKeywords
+      ? product.seoKeywords.split(',').map((k: string) => k.trim())
+      : [name, product.category, 'IPTV', 'buy IPTV', 'streaming'];
 
-  const imageUrl = product.image
-    ? `${BASE_URL}${product.image}`
-    : `${BASE_URL}/og-default.png`;
+    const imageUrl = product.image
+      ? `${BASE_URL}${product.image}`
+      : `${BASE_URL}/og-default.png`;
 
-  return {
-    title: metaTitle,
-    description: metaDescription,
-    keywords: keywords,
-    alternates: {
-      canonical: `${BASE_URL}/products/${product.slug}`,
-    },
-    openGraph: {
-      title: `${metaTitle} | Ondexy`,
+    return {
+      title: metaTitle,
       description: metaDescription,
-      type: 'website',
-      url: `${BASE_URL}/products/${product.slug}`,
-      images: [
-        {
-          url: imageUrl,
-          width: 1200,
-          height: 630,
-          alt: name,
-        },
-      ],
-    },
-    twitter: {
-      card: 'summary_large_image',
-      title: `${metaTitle} | Ondexy`,
-      description: metaDescription,
-      images: [imageUrl],
-    },
-  };
+      keywords: keywords,
+      alternates: {
+        canonical: `${BASE_URL}/products/${product.slug}`,
+      },
+      openGraph: {
+        title: `${metaTitle} | Ondexy`,
+        description: metaDescription,
+        type: 'website',
+        url: `${BASE_URL}/products/${product.slug}`,
+        images: [
+          {
+            url: imageUrl,
+            width: 1200,
+            height: 630,
+            alt: name,
+          },
+        ],
+      },
+      twitter: {
+        card: 'summary_large_image',
+        title: `${metaTitle} | Ondexy`,
+        description: metaDescription,
+        images: [imageUrl],
+      },
+    };
+  } catch (err) {
+    console.error("Metadata Generation Error (Product):", err);
+    return { title: 'Ondexy' };
+  }
 }
 
 export default async function ProductPage(props: any) {
-  const { slug } = await props.params;
-  const product = await getProductBySlug(slug);
+  try {
+    const { slug } = await props.params;
+    const product = await getProductBySlug(slug);
 
-  if (!product) {
-    notFound();
-  }
+    if (!product) {
+      notFound();
+    }
 
-  // Read language cookie to localize server elements
-  const cookieStore = await cookies();
-  const locale = cookieStore.get('language')?.value || 'en';
+    // Read language cookie to localize server elements
+    const cookieStore = await cookies();
+    const locale = cookieStore.get('language')?.value || 'en';
 
-  const name = getLocalizedField(product, 'name', locale) || product.name;
-  const description = getLocalizedField(product, 'description', locale) || product.description;
+    // Strict dynamic fallback checks to ensure zero runtime crashes:
+    const name = (product as any)[`name_${locale}`] || product.name_en || product.name || '';
+    const description = (product as any)[`description_${locale}`] || product.description_en || product.description || '';
 
-  // Related products (same category, exclude current)
-  const products = await getProducts();
-  const related = products
-    .filter((p) => p.category === product.category && p.id !== product.id)
-    .slice(0, 4);
+    console.log("Fetched Product Data for Slug:", slug, {
+      name,
+      description,
+      locale,
+      product
+    });
 
-  // Cross-selling: pick a complementary category
-  const crossCategory =
-    product.category === 'IPTV Subscriptions'
-      ? 'Players IPTV'
-      : product.category === 'Players IPTV'
-      ? 'IPTV Subscriptions'
-      : products.find((p) => p.category !== product.category)?.category ?? null;
+    // Related products (same category, exclude current)
+    const products = await getProducts();
+    const related = products
+      .filter((p) => p.category === product.category && p.id !== product.id)
+      .slice(0, 4);
 
-  const crossSell = crossCategory
-    ? (await getProductsByCategory(crossCategory))
-        .filter((p) => p.id !== product.id)
-        .slice(0, 4)
-    : [];
+    // Cross-selling: pick a complementary category
+    const crossCategory =
+      product.category === 'IPTV Subscriptions'
+        ? 'Players IPTV'
+        : product.category === 'Players IPTV'
+        ? 'IPTV Subscriptions'
+        : products.find((p) => p.category !== product.category)?.category ?? null;
 
-  // Lowest price tier for schema
-  const tiers = product.priceTiers || (product as any).price_tiers || [];
-  const lowestPrice = tiers.length > 0 ? Math.min(...tiers.map((t: any) => t.price)) : 0;
-  const imageUrl = product.image
-    ? `${BASE_URL}${product.image}`
-    : `${BASE_URL}/og-default.png`;
+    const crossSell = crossCategory
+      ? (await getProductsByCategory(crossCategory))
+          .filter((p) => p.id !== product.id)
+          .slice(0, 4)
+      : [];
 
-  // JSON-LD Product schema
-  const plainDesc = stripMarkdown(description || '');
-  const productSchema = {
-    '@context': 'https://schema.org',
-    '@type': 'Product',
-    name: name,
-    description: plainDesc,
-    image: imageUrl,
-    sku: product.id,
-    brand: {
-      '@type': 'Brand',
-      name: 'Ondexy',
-    },
-    offers: {
-      '@type': 'Offer',
-      url: `${BASE_URL}/products/${product.slug}`,
-      priceCurrency: 'USD',
-      price: lowestPrice.toFixed(2),
-      priceValidUntil: new Date(new Date().setFullYear(new Date().getFullYear() + 1))
-        .toISOString()
-        .split('T')[0],
-      availability: 'https://schema.org/InStock',
-      seller: {
-        '@type': 'Organization',
+    // Lowest price tier for schema
+    const tiers = product.priceTiers || (product as any).price_tiers || [];
+    const lowestPrice = tiers.length > 0 ? Math.min(...tiers.map((t: any) => t.price)) : 0;
+    const imageUrl = product.image
+      ? `${BASE_URL}${product.image}`
+      : `${BASE_URL}/og-default.png`;
+
+    // JSON-LD Product schema
+    const plainDesc = stripMarkdown(description || '');
+    const productSchema = {
+      '@context': 'https://schema.org',
+      '@type': 'Product',
+      name: name,
+      description: plainDesc,
+      image: imageUrl,
+      sku: product.id,
+      brand: {
+        '@type': 'Brand',
         name: 'Ondexy',
       },
-    },
-    aggregateRating: {
-      '@type': 'AggregateRating',
-      ratingValue: product.rating.toFixed(1),
-      reviewCount: product.reviewCount,
-      bestRating: '5',
-      worstRating: '1',
-    },
-  };
+      offers: {
+        '@type': 'Offer',
+        url: `${BASE_URL}/products/${product.slug}`,
+        priceCurrency: 'USD',
+        price: lowestPrice.toFixed(2),
+        priceValidUntil: new Date(new Date().setFullYear(new Date().getFullYear() + 1))
+          .toISOString()
+          .split('T')[0],
+        availability: 'https://schema.org/InStock',
+        seller: {
+          '@type': 'Organization',
+          name: 'Ondexy',
+        },
+      },
+      aggregateRating: {
+        '@type': 'AggregateRating',
+        ratingValue: product.rating.toFixed(1),
+        reviewCount: product.reviewCount,
+        bestRating: '5',
+        worstRating: '1',
+      },
+    };
 
-  return (
-    <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-      {/* JSON-LD Structured Data */}
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(productSchema) }}
-      />
+    return (
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
+        {/* JSON-LD Structured Data */}
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(productSchema) }}
+        />
 
-      {/* Breadcrumb */}
-      <nav className="flex items-center gap-1.5 text-sm text-gray-400 mb-8" aria-label="Breadcrumb">
-        <Link href="/" className="hover:text-violet-600 transition-colors">
-          Home
-        </Link>
-        <ChevronRight className="w-3.5 h-3.5" />
-        <Link href="/products" className="hover:text-violet-600 transition-colors">
-          Products
-        </Link>
-        <ChevronRight className="w-3.5 h-3.5" />
-        <span className="text-gray-700 font-medium truncate max-w-[200px]">{name}</span>
-      </nav>
+        {/* Breadcrumb */}
+        <nav className="flex items-center gap-1.5 text-sm text-gray-400 mb-8" aria-label="Breadcrumb">
+          <Link href="/" className="hover:text-violet-600 transition-colors">
+            Home
+          </Link>
+          <ChevronRight className="w-3.5 h-3.5" />
+          <Link href="/products" className="hover:text-violet-600 transition-colors">
+            Products
+          </Link>
+          <ChevronRight className="w-3.5 h-3.5" />
+          <span className="text-gray-700 font-medium truncate max-w-[200px]">{name}</span>
+        </nav>
 
-      {/* Product detail (image + pricing + CTA) */}
-      <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 sm:p-10">
-        <ProductDetails product={product} />
-      </div>
+        {/* Product detail (image + pricing + CTA) */}
+        <div className="bg-white rounded-2xl border border-gray-100 shadow-sm p-6 sm:p-10">
+          <ProductDetails product={product} />
+        </div>
 
-      {/* Description — full-width, rendered BELOW images / pricing / cart buttons */}
-      <ProductDescription description={description} />
+        {/* Description — full-width, rendered BELOW images / pricing / cart buttons */}
+        <ProductDescription description={description} />
 
-      {/* Related products */}
-      {related.length > 0 && (
-        <section className="mt-10">
-          <h2 className="text-2xl font-extrabold text-gray-900 mb-6">
-            Related Products
-          </h2>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6">
-            {related.map((p) => (
-              <ProductCard key={p.id} product={p} />
-            ))}
-          </div>
-        </section>
-      )}
-
-      {/* Cross-selling: Customers who bought this also bought */}
-      {crossSell.length > 0 && (
-        <section className="mt-12">
-          <div className="mb-6">
-            <h2 className="text-2xl font-extrabold text-gray-900">
-              Customers who bought this also bought
+        {/* Related products */}
+        {related.length > 0 && (
+          <section className="mt-10">
+            <h2 className="text-2xl font-extrabold text-gray-900 mb-6">
+              Related Products
             </h2>
-            <p className="text-sm text-gray-400 mt-1">
-              From the <span className="font-semibold text-violet-600">{crossCategory}</span> category
-            </p>
-          </div>
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6">
-            {crossSell.map((p) => (
-              <ProductCard key={p.id} product={p} />
-            ))}
-          </div>
-        </section>
-      )}
-    </div>
-  );
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6">
+              {related.map((p) => (
+                <ProductCard key={p.id} product={p} />
+              ))}
+            </div>
+          </section>
+        )}
+
+        {/* Cross-selling: Customers who bought this also bought */}
+        {crossSell.length > 0 && (
+          <section className="mt-12">
+            <div className="mb-6">
+              <h2 className="text-2xl font-extrabold text-gray-900">
+                Customers who bought this also bought
+              </h2>
+              <p className="text-sm text-gray-400 mt-1">
+                From the <span className="font-semibold text-violet-600">{crossCategory}</span> category
+              </p>
+            </div>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-4 md:gap-6">
+              {crossSell.map((p) => (
+                <ProductCard key={p.id} product={p} />
+              ))}
+            </div>
+          </section>
+        )}
+      </div>
+    );
+  } catch (err) {
+    console.error("Page Load Error (ProductPage):", err);
+    notFound();
+  }
 }
