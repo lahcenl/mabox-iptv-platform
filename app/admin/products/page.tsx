@@ -39,6 +39,19 @@ interface Product {
   priceTiers: PriceTier[];
   whatsappNumber: string;
   featured: boolean;
+  
+  // Localized fields
+  name_en?: string;
+  name_ar?: string;
+  name_fr?: string;
+  description_en?: string;
+  description_ar?: string;
+  description_fr?: string;
+  
+  // SEO fields
+  metaTitle?: string;
+  metaDescription?: string;
+  seoKeywords?: string;
 }
 
 interface ProductForm {
@@ -48,6 +61,19 @@ interface ProductForm {
   category: string;
   pricingMode: 'subscription' | 'flat';
   priceTiers: { duration: string; price: string }[];
+  
+  // Localized fields
+  name_en: string;
+  name_ar: string;
+  name_fr: string;
+  description_en: string;
+  description_ar: string;
+  description_fr: string;
+  
+  // SEO fields
+  metaTitle: string;
+  metaDescription: string;
+  seoKeywords: string;
 }
 
 const EMPTY_TIER = { duration: '', price: '' };
@@ -59,6 +85,15 @@ const EMPTY_FORM: ProductForm = {
   category: 'IPTV Subscriptions',
   pricingMode: 'subscription',
   priceTiers: [{ ...EMPTY_TIER }],
+  name_en: '',
+  name_ar: '',
+  name_fr: '',
+  description_en: '',
+  description_ar: '',
+  description_fr: '',
+  metaTitle: '',
+  metaDescription: '',
+  seoKeywords: '',
 };
 
 const CATEGORIES = ['IPTV Subscriptions', 'Players IPTV', 'beIN SPORTS'];
@@ -198,10 +233,36 @@ function ProductFormFields({
   onSubmit: () => void;
   submitLabel: string;
 }) {
+  const [activeTab, setActiveTab] = useState<'en' | 'ar' | 'fr'>('en');
+  const [seoOpen, setSeoOpen] = useState(false);
+
   const tiersValid =
     form.priceTiers.length > 0 &&
     form.priceTiers.every((t) => t.duration.trim() !== '' && Number(t.price) > 0);
-  const canSubmit = !!form.name && !!form.category && tiersValid;
+  const canSubmit = !!(form.name_en || form.name) && !!form.category && tiersValid;
+
+  const handleNameChange = (val: string) => {
+    if (activeTab === 'en') {
+      onChange({ ...form, name_en: val, name: val });
+    } else if (activeTab === 'ar') {
+      onChange({ ...form, name_ar: val });
+    } else {
+      onChange({ ...form, name_fr: val });
+    }
+  };
+
+  const handleDescChange = (val: string) => {
+    if (activeTab === 'en') {
+      onChange({ ...form, description_en: val, description: val });
+    } else if (activeTab === 'ar') {
+      onChange({ ...form, description_ar: val });
+    } else {
+      onChange({ ...form, description_fr: val });
+    }
+  };
+
+  const currentName = activeTab === 'en' ? form.name_en : activeTab === 'ar' ? form.name_ar : form.name_fr;
+  const currentDesc = activeTab === 'en' ? form.description_en : activeTab === 'ar' ? form.description_ar : form.description_fr;
 
   const field = (
     id: string,
@@ -238,20 +299,43 @@ function ProductFormFields({
 
   return (
     <div className="space-y-4">
-      {field('pf-name', 'Product Name', form.name, (v) => onChange({ ...form, name: v }), {
-        placeholder: 'e.g. Premium IPTV – 4K Package',
+      {/* Tab Switcher */}
+      <div className="flex border-b border-gray-100 mb-4 bg-gray-50/50 p-1.5 rounded-xl gap-1">
+        {(['en', 'ar', 'fr'] as const).map((lang) => (
+          <button
+            key={lang}
+            type="button"
+            onClick={() => setActiveTab(lang)}
+            className={`flex-1 py-2 text-center text-xs font-extrabold rounded-lg transition-all cursor-pointer ${
+              activeTab === lang
+                ? 'bg-white text-violet-700 shadow-sm border border-gray-100'
+                : 'text-gray-400 hover:text-gray-600 hover:bg-gray-100/50'
+            }`}
+          >
+            {lang === 'en' ? '🇬🇧 EN' : lang === 'ar' ? '🇲🇦 AR' : '🇫🇷 FR'}
+          </button>
+        ))}
+      </div>
+
+      {field('pf-name', `Product Name (${activeTab.toUpperCase()})`, currentName, handleNameChange, {
+        placeholder: activeTab === 'en'
+          ? 'e.g. Premium IPTV – 4K Package'
+          : activeTab === 'ar'
+          ? 'مثال: اشتراك IPTV ممتاز - باقة 4K'
+          : 'ex: IPTV Premium - Pack 4K',
+        required: activeTab === 'en',
       })}
 
       {/* Rich Text / Markdown Editor for Description */}
       <div>
         <label htmlFor="pf-desc" className="block text-sm font-medium text-gray-700 mb-1.5">
-          Description <span className="text-gray-400 font-normal">(supports Markdown — H2, bold, lists…)</span>
+          Description ({activeTab.toUpperCase()}) <span className="text-gray-400 font-normal">(supports Markdown)</span>
         </label>
         <div data-color-mode="light" id="pf-desc">
           <MDEditor
-            value={form.description}
-            onChange={(v) => onChange({ ...form, description: v ?? '' })}
-            height={240}
+            value={currentDesc}
+            onChange={(v) => handleDescChange(v ?? '')}
+            height={200}
             preview="edit"
             visibleDragbar={false}
             textareaProps={{ placeholder: 'Describe what the customer gets… Use ## for headings, **bold**, - for bullets' }}
@@ -259,8 +343,7 @@ function ProductFormFields({
         </div>
         <p className="mt-1.5 text-xs text-gray-400 flex items-center gap-1">
           <Info className="w-3.5 h-3.5 text-violet-400 flex-shrink-0" />
-          Use <code className="bg-gray-100 px-1 rounded">##</code> for H2, <code className="bg-gray-100 px-1 rounded">###</code> for H3,
-          <code className="bg-gray-100 px-1 rounded">**bold**</code>, <code className="bg-gray-100 px-1 rounded">- item</code> for bullets.
+          Use <code className="bg-gray-100 px-1 rounded">##</code> for H2, <code className="bg-gray-100 px-1 rounded">**bold**</code>.
         </p>
       </div>
 
@@ -279,28 +362,6 @@ function ProductFormFields({
             placeholder="https://i.postimg.cc/..."
             className="w-full border border-gray-200 rounded-xl pl-9 pr-3.5 py-2.5 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-violet-400 focus:border-transparent"
           />
-        </div>
-        <div className="flex items-start gap-1.5 mt-2 text-xs text-gray-400">
-          <Info className="w-3.5 h-3.5 mt-0.5 flex-shrink-0 text-violet-400" />
-          Upload your image to{' '}
-          <a
-            href="https://postimages.org"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-violet-500 hover:underline"
-          >
-            PostImages
-          </a>{' '}
-          or{' '}
-          <a
-            href="https://cloudinary.com"
-            target="_blank"
-            rel="noopener noreferrer"
-            className="text-violet-500 hover:underline"
-          >
-            Cloudinary
-          </a>
-          , then paste the direct link here.
         </div>
       </div>
 
@@ -349,7 +410,6 @@ function ProductFormFields({
               className="accent-violet-600"
             />
             <span className="text-sm font-semibold">Subscription</span>
-            <span className="text-xs text-gray-400 hidden sm:inline">Multiple durations</span>
           </label>
           <label
             className={`flex-1 flex items-center gap-2.5 p-3 rounded-xl border-2 cursor-pointer transition-colors ${
@@ -372,8 +432,7 @@ function ProductFormFields({
               }
               className="accent-violet-600"
             />
-            <span className="text-sm font-semibold">One-time / Flat Price</span>
-            <span className="text-xs text-gray-400 hidden sm:inline">Single price</span>
+            <span className="text-sm font-semibold">One-time / Flat</span>
           </label>
         </div>
       </div>
@@ -381,7 +440,6 @@ function ProductFormFields({
       {/* Dynamic Pricing Tiers */}
       <div className="border border-gray-100 rounded-xl p-4 bg-gray-50/60">
         {form.pricingMode === 'flat' ? (
-          /* Flat price: single price input, duration auto-locked to One-time */
           <div>
             <label className="block text-sm font-medium text-gray-700 mb-2">
               Flat Price <span className="text-red-400">*</span>
@@ -404,23 +462,43 @@ function ProductFormFields({
                 className="w-full border border-gray-200 rounded-xl pl-7 pr-2.5 py-2.5 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-violet-400 focus:border-transparent"
               />
             </div>
-            <p className="mt-2 text-xs text-gray-400 flex items-center gap-1">
-              <Info className="w-3.5 h-3.5 text-violet-400 flex-shrink-0" />
-              Will be saved as a single &quot;One-time&quot; price tier.
-            </p>
           </div>
         ) : (
-          /* Subscription: full tier builder */
           <>
             <PricingTierBuilder
               tiers={form.priceTiers}
               onChange={(tiers) => onChange({ ...form, priceTiers: tiers })}
             />
-            <div className="mt-2.5 flex items-start gap-1.5 text-xs text-gray-400">
-              <Info className="w-3.5 h-3.5 mt-0.5 flex-shrink-0 text-violet-400" />
-              Use any duration label: &quot;1 Month&quot;, &quot;6 Months&quot;, &quot;1 Year&quot;, &quot;Lifetime&quot;, etc.
-            </div>
           </>
+        )}
+      </div>
+
+      {/* Collapsible SEO Section */}
+      <div className="border border-gray-200 rounded-xl overflow-hidden shadow-sm">
+        <button
+          type="button"
+          onClick={() => setSeoOpen(!seoOpen)}
+          className="w-full flex items-center justify-between px-4 py-3 bg-gray-50 hover:bg-gray-100/80 transition-colors text-sm font-bold text-gray-700 cursor-pointer"
+        >
+          <span className="flex items-center gap-1.5">🔍 SEO & Metadata Settings (Hidden from Product Page)</span>
+          <span className="text-gray-400">{seoOpen ? '▲ Hide' : '▼ Expand'}</span>
+        </button>
+        {seoOpen && (
+          <div className="p-4 space-y-4 bg-white border-t border-gray-100">
+            {field('pf-meta-title', 'Meta Title', form.metaTitle, (v) => onChange({ ...form, metaTitle: v }), {
+              required: false,
+              placeholder: 'e.g. Premium IPTV 4K Subscription | Ondexy',
+            })}
+            {field('pf-meta-desc', 'Meta Description', form.metaDescription, (v) => onChange({ ...form, metaDescription: v }), {
+              required: false,
+              textarea: true,
+              placeholder: 'Get instant activation on premium IPTV servers with 10k+ live channels in Full HD & 4K...',
+            })}
+            {field('pf-seo-keywords', 'SEO Keywords (comma-separated)', form.seoKeywords, (v) => onChange({ ...form, seoKeywords: v }), {
+              required: false,
+              placeholder: 'iptv, buy iptv, 4k iptv, premium channels',
+            })}
+          </div>
         )}
       </div>
 
@@ -428,7 +506,7 @@ function ProductFormFields({
         id="product-form-submit"
         onClick={onSubmit}
         disabled={saving || !canSubmit}
-        className="w-full bg-violet-600 hover:bg-violet-700 disabled:bg-violet-300 disabled:cursor-not-allowed text-white font-semibold py-3 rounded-xl transition-all flex items-center justify-center gap-2 mt-2"
+        className="w-full bg-violet-600 hover:bg-violet-700 disabled:bg-violet-300 disabled:cursor-not-allowed text-white font-semibold py-3 rounded-xl transition-all flex items-center justify-center gap-2 mt-2 cursor-pointer"
       >
         {saving ? (
           <><RefreshCw className="w-4 h-4 animate-spin" /> Saving…</>
@@ -486,6 +564,15 @@ export default function AdminProductsPage() {
         duration: t.duration,
         price: String(t.price),
       })),
+      name_en: p.name_en || '',
+      name_ar: p.name_ar || '',
+      name_fr: p.name_fr || '',
+      description_en: p.description_en || '',
+      description_ar: p.description_ar || '',
+      description_fr: p.description_fr || '',
+      metaTitle: p.metaTitle || '',
+      metaDescription: p.metaDescription || '',
+      seoKeywords: p.seoKeywords || '',
     });
     setEditProduct(p);
   }
@@ -510,6 +597,15 @@ export default function AdminProductsPage() {
           image: form.image,
           category: form.category,
           priceTiers: parseTiers(form.priceTiers),
+          name_en: form.name_en,
+          name_ar: form.name_ar,
+          name_fr: form.name_fr,
+          description_en: form.description_en,
+          description_ar: form.description_ar,
+          description_fr: form.description_fr,
+          metaTitle: form.metaTitle,
+          metaDescription: form.metaDescription,
+          seoKeywords: form.seoKeywords,
         }),
       });
       if (!res.ok) throw new Error('Failed to add product');
@@ -536,6 +632,15 @@ export default function AdminProductsPage() {
           image: form.image,
           category: form.category,
           priceTiers: parseTiers(form.priceTiers),
+          name_en: form.name_en,
+          name_ar: form.name_ar,
+          name_fr: form.name_fr,
+          description_en: form.description_en,
+          description_ar: form.description_ar,
+          description_fr: form.description_fr,
+          metaTitle: form.metaTitle,
+          metaDescription: form.metaDescription,
+          seoKeywords: form.seoKeywords,
         }),
       });
       if (!res.ok) throw new Error('Failed to update product');

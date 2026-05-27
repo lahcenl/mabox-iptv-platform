@@ -6,7 +6,8 @@ import { getProductBySlug, getProducts, getProductsByCategory } from '@/lib/data
 import ProductDetails from '@/components/product/ProductDetails';
 import ProductDescription from '@/components/product/ProductDescription';
 import ProductCard from '@/components/ui/ProductCard';
-// No locales/localizePath import needed
+import { cookies } from 'next/headers';
+import { getLocalizedField } from '@/components/context/LanguageContext';
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.ondexy.com';
 
@@ -41,23 +42,33 @@ export async function generateMetadata(props: any): Promise<Metadata> {
   const product = await getProductBySlug(slug);
   if (!product) return { title: 'Product Not Found' };
 
-  const plainDescription = stripMarkdown(product?.description || '');
-  const tiers = product.priceTiers || (product as any).price_tiers || [];
-  const lowestPrice = tiers.length > 0 ? Math.min(...tiers.map((t: any) => t.price)) : 0;
+  // Read language cookie for metadata translation
+  const cookieStore = await cookies();
+  const locale = cookieStore.get('language')?.value || 'en';
+
+  const name = getLocalizedField(product, 'name', locale) || product.name;
+  const plainDescription = stripMarkdown(getLocalizedField(product, 'description', locale) || product.description || '');
+
+  const metaTitle = product.metaTitle || name;
+  const metaDescription = product.metaDescription || plainDescription;
+  const keywords = product.seoKeywords
+    ? product.seoKeywords.split(',').map((k: string) => k.trim())
+    : [name, product.category, 'IPTV', 'buy IPTV', 'streaming'];
+
   const imageUrl = product.image
     ? `${BASE_URL}${product.image}`
     : `${BASE_URL}/og-default.png`;
 
   return {
-    title: product.name,
-    description: plainDescription,
-    keywords: [product.name, product.category, 'IPTV', 'buy IPTV', 'streaming'],
+    title: metaTitle,
+    description: metaDescription,
+    keywords: keywords,
     alternates: {
       canonical: `${BASE_URL}/products/${product.slug}`,
     },
     openGraph: {
-      title: `${product.name} | Ondexy`,
-      description: plainDescription,
+      title: `${metaTitle} | Ondexy`,
+      description: metaDescription,
       type: 'website',
       url: `${BASE_URL}/products/${product.slug}`,
       images: [
@@ -65,14 +76,14 @@ export async function generateMetadata(props: any): Promise<Metadata> {
           url: imageUrl,
           width: 1200,
           height: 630,
-          alt: product.name,
+          alt: name,
         },
       ],
     },
     twitter: {
       card: 'summary_large_image',
-      title: `${product.name} | Ondexy`,
-      description: plainDescription,
+      title: `${metaTitle} | Ondexy`,
+      description: metaDescription,
       images: [imageUrl],
     },
   };
@@ -85,6 +96,13 @@ export default async function ProductPage(props: any) {
   if (!product) {
     notFound();
   }
+
+  // Read language cookie to localize server elements
+  const cookieStore = await cookies();
+  const locale = cookieStore.get('language')?.value || 'en';
+
+  const name = getLocalizedField(product, 'name', locale) || product.name;
+  const description = getLocalizedField(product, 'description', locale) || product.description;
 
   // Related products (same category, exclude current)
   const products = await getProducts();
@@ -114,11 +132,11 @@ export default async function ProductPage(props: any) {
     : `${BASE_URL}/og-default.png`;
 
   // JSON-LD Product schema
-  const plainDesc = stripMarkdown(product?.description || '');
+  const plainDesc = stripMarkdown(description || '');
   const productSchema = {
     '@context': 'https://schema.org',
     '@type': 'Product',
-    name: product.name,
+    name: name,
     description: plainDesc,
     image: imageUrl,
     sku: product.id,
@@ -167,7 +185,7 @@ export default async function ProductPage(props: any) {
           Products
         </Link>
         <ChevronRight className="w-3.5 h-3.5" />
-        <span className="text-gray-700 font-medium truncate max-w-[200px]">{product.name}</span>
+        <span className="text-gray-700 font-medium truncate max-w-[200px]">{name}</span>
       </nav>
 
       {/* Product detail (image + pricing + CTA) */}
@@ -176,7 +194,7 @@ export default async function ProductPage(props: any) {
       </div>
 
       {/* Description — full-width, rendered BELOW images / pricing / cart buttons */}
-      <ProductDescription description={product.description} />
+      <ProductDescription description={description} />
 
       {/* Related products */}
       {related.length > 0 && (

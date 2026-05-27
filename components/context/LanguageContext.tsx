@@ -8,9 +8,17 @@ interface LanguageContextProps {
   setLocale: (locale: Locale) => void;
   t: (key: string) => string;
   localize: (path: string) => string;
+  getLocalizedValue: (item: any, field: string) => string;
 }
 
 const LanguageContext = createContext<LanguageContextProps | null>(null);
+
+export function getLocalizedField(item: any, field: string, currentLocale: string): string {
+  if (!item) return '';
+  const localizedKey = `${field}_${currentLocale}`;
+  const englishKey = `${field}_en`;
+  return item[localizedKey] || item[englishKey] || item[field] || '';
+}
 
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
   const [locale, setLocaleState] = useState<Locale>('en');
@@ -21,12 +29,16 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
     const storedLocale = localStorage.getItem('language') as Locale;
     if (storedLocale && ['en', 'ar', 'fr'].includes(storedLocale)) {
       setLocaleState(storedLocale);
+      document.cookie = `language=${storedLocale}; path=/; max-age=31536000`;
+    } else {
+      document.cookie = `language=en; path=/; max-age=31536000`;
     }
   }, []);
 
   const setLocale = (newLocale: Locale) => {
     setLocaleState(newLocale);
     localStorage.setItem('language', newLocale);
+    document.cookie = `language=${newLocale}; path=/; max-age=31536000`;
   };
 
   const t = (key: string): string => {
@@ -48,8 +60,12 @@ export function LanguageProvider({ children }: { children: React.ReactNode }) {
 
   const localize = (path: string) => path;
 
+  const getLocalizedValue = (item: any, field: string): string => {
+    return getLocalizedField(item, field, locale);
+  };
+
   return (
-    <LanguageContext.Provider value={{ locale, setLocale, t, localize }}>
+    <LanguageContext.Provider value={{ locale, setLocale, t, localize, getLocalizedValue }}>
       {children}
     </LanguageContext.Provider>
   );

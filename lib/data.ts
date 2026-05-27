@@ -21,6 +21,19 @@ export interface Product {
   priceTiers: PriceTier[];
   createdAt?: string;
   updatedAt?: string;
+  
+  // Localized fields
+  name_en?: string;
+  name_ar?: string;
+  name_fr?: string;
+  description_en?: string;
+  description_ar?: string;
+  description_fr?: string;
+  
+  // SEO fields
+  metaTitle?: string;
+  metaDescription?: string;
+  seoKeywords?: string;
 }
 
 export interface Category {
@@ -85,6 +98,19 @@ function toProduct(row: any): Product {
     })),
     createdAt: row.created_at,
     updatedAt: row.updated_at,
+    
+    // Localized fields
+    name_en: row.name_en,
+    name_ar: row.name_ar,
+    name_fr: row.name_fr,
+    description_en: row.description_en,
+    description_ar: row.description_ar,
+    description_fr: row.description_fr,
+    
+    // SEO fields
+    metaTitle: row.meta_title,
+    metaDescription: row.meta_description,
+    seoKeywords: row.seo_keywords,
   };
 }
 

@@ -58,6 +58,15 @@ export async function POST(request: Request) {
         category: body.category,
         image: body.image || '/images/placeholder.png',
         description: body.description || '',
+        name_en: body.name_en,
+        name_ar: body.name_ar,
+        name_fr: body.name_fr,
+        description_en: body.description_en,
+        description_ar: body.description_ar,
+        description_fr: body.description_fr,
+        meta_title: body.metaTitle,
+        meta_description: body.metaDescription,
+        seo_keywords: body.seoKeywords,
       }])
       .select()
       .single();
@@ -93,8 +102,24 @@ export async function POST(request: Request) {
 export async function PUT(request: Request) {
   try {
     const body = await request.json();
-    const { id, priceTiers, ...updates } = body;
+    const { id, priceTiers, name, category, image, description, name_en, name_ar, name_fr, description_en, description_ar, description_fr, metaTitle, metaDescription, seoKeywords } = body;
     if (!id) return NextResponse.json({ error: 'Missing product id' }, { status: 400 });
+
+    const updates = {
+      name,
+      category,
+      image,
+      description,
+      name_en,
+      name_ar,
+      name_fr,
+      description_en,
+      description_ar,
+      description_fr,
+      meta_title: metaTitle,
+      meta_description: metaDescription,
+      seo_keywords: seoKeywords,
+    };
 
     const { error } = await supabase.from('products').update(updates).eq('id', id);
     if (error) throw error;

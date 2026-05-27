@@ -37,7 +37,7 @@ const categoryEmojis: Record<string, string> = {
 };
 
 export default function ProductCard({ product }: ProductCardProps) {
-  const { t, localize } = useTranslations();
+  const { t, localize, getLocalizedValue } = useTranslations();
   const validTiers = product?.priceTiers || [];
   const isFlatPrice =
     validTiers.length === 1 &&
@@ -53,10 +53,12 @@ export default function ProductCard({ product }: ProductCardProps) {
   const categoryKey = categoryKeys[product.category] || '';
   const translatedCategory = categoryKey ? t(categoryKey) : product.category;
 
+  const localizedName = getLocalizedValue(product, 'name') || product.name;
+
   const translatedDuration = selectedTier ? t('products.duration.' + selectedTier.duration) : '';
   const rawWhatsappMessage = t('products.whatsappMessage');
   const whatsappMessage = rawWhatsappMessage
-    .replace('{name}', product.name)
+    .replace('{name}', localizedName)
     .replace('{duration}', translatedDuration);
   const whatsappNumber = t('common.whatsappNumber') || product.whatsappNumber;
   const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(whatsappMessage)}`;
@@ -68,7 +70,7 @@ export default function ProductCard({ product }: ProductCardProps) {
         <div className="relative h-48 bg-gray-100 flex items-center justify-center overflow-hidden border-b border-gray-100">
           <img 
             src={product.image || '/images/placeholder.png'} 
-            alt={product.name} 
+            alt={localizedName} 
             className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
           />
           {/* Category badge */}
@@ -82,7 +84,7 @@ export default function ProductCard({ product }: ProductCardProps) {
       <div className="p-4 flex flex-col flex-1">
         <Link href={localize(`/products/${product.slug}`)}>
           <h3 className="text-sm font-bold text-gray-900 mb-1 hover:text-violet-600 transition-colors line-clamp-2">
-            {product.name}
+            {localizedName}
           </h3>
         </Link>
 

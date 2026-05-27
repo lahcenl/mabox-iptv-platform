@@ -3,6 +3,8 @@
 import { Component, type ErrorInfo, type ReactNode } from 'react';
 import MarkdownPreview from '@uiw/react-markdown-preview';
 
+import { useTranslations } from '@/components/context/LanguageContext';
+
 interface ProductDescriptionProps {
   description?: string | null;
 }
@@ -44,8 +46,11 @@ class MarkdownErrorBoundary extends Component<
  * Wrapped in an ErrorBoundary so invalid Markdown syntax never crashes the page.
  */
 export default function ProductDescription({ description }: ProductDescriptionProps) {
+  const { locale } = useTranslations();
   const safeDesc = description?.trim() || '';
   if (!safeDesc) return null;
+
+  const headingText = locale === 'ar' ? 'حول هذا المنتج' : locale === 'fr' ? 'À propos de ce produit' : 'About This Product';
 
   return (
     <section
@@ -57,7 +62,7 @@ export default function ProductDescription({ description }: ProductDescriptionPr
           className="inline-block w-1 h-6 rounded-full bg-violet-600"
           aria-hidden="true"
         />
-        About This Product
+        {headingText}
       </h2>
 
       {/* data-color-mode="light" forces the preview to always use light theme */}

@@ -40,7 +40,7 @@ const categoryEmojis: Record<string, string> = {
 };
 
 export default function ProductDetails({ product }: ProductDetailsProps) {
-  const { t, localize } = useTranslations();
+  const { t, localize, getLocalizedValue } = useTranslations();
   const [selectedTierIndex, setSelectedTierIndex] = useState(0);
   const [addedToCart, setAddedToCart] = useState(false);
   const { addToCart } = useCartStore();
@@ -64,10 +64,12 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
   const categoryKey = categoryKeys[product?.category] || '';
   const translatedCategory = categoryKey ? t(categoryKey) : product?.category;
 
+  const localizedName = getLocalizedValue(product, 'name') || product?.name || '';
+
   const translatedDuration = selectedTier ? t('products.duration.' + selectedTier.duration) : '';
   const rawWhatsappMessage = t('products.buyWhatsappMessage');
   const whatsappMessage = rawWhatsappMessage
-    .replace('{name}', product.name)
+    .replace('{name}', localizedName)
     .replace('{duration}', translatedDuration)
     .replace('{price}', selectedTier.price.toFixed(2));
   const whatsappNumber = t('common.whatsappNumber') || product.whatsappNumber;
@@ -91,7 +93,7 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
     addToCart({
       id: product.id,
       slug: product.slug,
-      name: product.name,
+      name: localizedName,
       image: product.image,
       duration: selectedTier.duration,
       months: selectedTier.months ?? 0,
@@ -109,7 +111,7 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
         <div className="relative rounded-2xl overflow-hidden bg-gray-100 aspect-square flex items-center justify-center shadow-lg border border-gray-100">
           <img 
             src={product.image || '/images/placeholder.png'} 
-            alt={product.name} 
+            alt={localizedName} 
             className="w-full h-full object-cover"
           />
           {/* Category badge */}
@@ -117,7 +119,6 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
             {translatedCategory}
           </span>
         </div>
-
         {/* Features */}
         <div className="grid grid-cols-3 gap-3">
           {translatedFeatures.map(({ icon: Icon, label, color }) => (
@@ -137,7 +138,7 @@ export default function ProductDetails({ product }: ProductDetailsProps) {
         {/* Title & rating */}
         <div>
           <h1 className="text-2xl sm:text-3xl font-extrabold text-gray-900 leading-tight mb-3">
-            {product.name}
+            {localizedName}
           </h1>
           <StarRating rating={product.rating} count={product.reviewCount} />
         </div>

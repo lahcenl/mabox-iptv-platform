@@ -24,6 +24,19 @@ interface Article {
   excerpt: string;
   date: string;
   author: string;
+  
+  // Localized fields
+  title_en?: string;
+  title_ar?: string;
+  title_fr?: string;
+  content_en?: string;
+  content_ar?: string;
+  content_fr?: string;
+  
+  // SEO fields
+  metaTitle?: string;
+  metaDescription?: string;
+  seoKeywords?: string;
 }
 
 interface ArticleForm {
@@ -31,9 +44,36 @@ interface ArticleForm {
   content: string;
   coverImage: string;
   author: string;
+  
+  // Localized fields
+  title_en: string;
+  title_ar: string;
+  title_fr: string;
+  content_en: string;
+  content_ar: string;
+  content_fr: string;
+  
+  // SEO fields
+  metaTitle: string;
+  metaDescription: string;
+  seoKeywords: string;
 }
 
-const EMPTY_FORM: ArticleForm = { title: '', content: '', coverImage: '', author: 'Admin' };
+const EMPTY_FORM: ArticleForm = {
+  title: '',
+  content: '',
+  coverImage: '',
+  author: 'Admin',
+  title_en: '',
+  title_ar: '',
+  title_fr: '',
+  content_en: '',
+  content_ar: '',
+  content_fr: '',
+  metaTitle: '',
+  metaDescription: '',
+  seoKeywords: '',
+};
 
 function Modal({
   title,
@@ -73,22 +113,95 @@ function ArticleFormFields({
   onSubmit: () => void;
   submitLabel: string;
 }) {
+  const [activeTab, setActiveTab] = useState<'en' | 'ar' | 'fr'>('en');
+  const [seoOpen, setSeoOpen] = useState(false);
+
+  const canSubmit = !!(form.title_en || form.title) && !!(form.content_en || form.content);
+
+  const handleTitleChange = (val: string) => {
+    if (activeTab === 'en') {
+      onChange({ ...form, title_en: val, title: val });
+    } else if (activeTab === 'ar') {
+      onChange({ ...form, title_ar: val });
+    } else {
+      onChange({ ...form, title_fr: val });
+    }
+  };
+
+  const handleContentChange = (val: string) => {
+    if (activeTab === 'en') {
+      onChange({ ...form, content_en: val, content: val });
+    } else if (activeTab === 'ar') {
+      onChange({ ...form, content_ar: val });
+    } else {
+      onChange({ ...form, content_fr: val });
+    }
+  };
+
+  const currentTitle = activeTab === 'en' ? form.title_en : activeTab === 'ar' ? form.title_ar : form.title_fr;
+  const currentContent = activeTab === 'en' ? form.content_en : activeTab === 'ar' ? form.content_ar : form.content_fr;
+
+  const field = (
+    id: string,
+    label: string,
+    value: string,
+    setter: (v: string) => void,
+    opts?: { type?: string; placeholder?: string; textarea?: boolean; required?: boolean },
+  ) => (
+    <div>
+      <label htmlFor={id} className="block text-sm font-medium text-gray-700 mb-1.5">
+        {label} {opts?.required !== false && <span className="text-red-400">*</span>}
+      </label>
+      {opts?.textarea ? (
+        <textarea
+          id={id}
+          value={value}
+          onChange={(e) => setter(e.target.value)}
+          rows={5}
+          placeholder={opts.placeholder}
+          className="w-full border border-gray-200 rounded-xl px-3.5 py-2.5 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-violet-400 focus:border-transparent resize-y"
+        />
+      ) : (
+        <input
+          id={id}
+          type={opts?.type ?? 'text'}
+          value={value}
+          onChange={(e) => setter(e.target.value)}
+          placeholder={opts?.placeholder}
+          className="w-full border border-gray-200 rounded-xl px-3.5 py-2.5 text-sm text-gray-900 focus:outline-none focus:ring-2 focus:ring-violet-400 focus:border-transparent"
+        />
+      )}
+    </div>
+  );
+
   return (
     <div className="space-y-4">
-      {/* Title */}
-      <div>
-        <label htmlFor="af-title" className="block text-sm font-medium text-gray-700 mb-1.5">
-          Title <span className="text-red-400">*</span>
-        </label>
-        <input
-          id="af-title"
-          type="text"
-          value={form.title}
-          onChange={(e) => onChange({ ...form, title: e.target.value })}
-          placeholder="e.g. How to set up IPTV on your Smart TV"
-          className="w-full border border-gray-200 rounded-xl px-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-violet-400 focus:border-transparent"
-        />
+      {/* Tab Switcher */}
+      <div className="flex border-b border-gray-100 mb-4 bg-gray-50/50 p-1.5 rounded-xl gap-1">
+        {(['en', 'ar', 'fr'] as const).map((lang) => (
+          <button
+            key={lang}
+            type="button"
+            onClick={() => setActiveTab(lang)}
+            className={`flex-1 py-2 text-center text-xs font-extrabold rounded-lg transition-all cursor-pointer ${
+              activeTab === lang
+                ? 'bg-white text-violet-700 shadow-sm border border-gray-100'
+                : 'text-gray-400 hover:text-gray-600 hover:bg-gray-100/50'
+            }`}
+          >
+            {lang === 'en' ? '🇬🇧 EN' : lang === 'ar' ? '🇲🇦 AR' : '🇫🇷 FR'}
+          </button>
+        ))}
       </div>
+
+      {field('af-title', `Title (${activeTab.toUpperCase()})`, currentTitle, handleTitleChange, {
+        placeholder: activeTab === 'en'
+          ? 'e.g. How to set up IPTV on your Smart TV'
+          : activeTab === 'ar'
+          ? 'مثال: كيفية إعداد IPTV على تلفزيونك الذكي'
+          : 'ex: Comment configurer l\'IPTV sur votre Smart TV',
+        required: activeTab === 'en',
+      })}
 
       {/* Cover Image */}
       <div>
@@ -105,18 +218,6 @@ function ArticleFormFields({
             placeholder="https://i.postimg.cc/..."
             className="w-full border border-gray-200 rounded-xl pl-9 pr-3.5 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-violet-400 focus:border-transparent"
           />
-        </div>
-        <div className="flex items-start gap-1.5 mt-1.5 text-xs text-gray-400">
-          <Info className="w-3.5 h-3.5 mt-0.5 flex-shrink-0 text-violet-400" />
-          Upload to{' '}
-          <a href="https://postimages.org" target="_blank" rel="noopener noreferrer" className="text-violet-500 hover:underline">
-            PostImages
-          </a>{' '}
-          or{' '}
-          <a href="https://cloudinary.com" target="_blank" rel="noopener noreferrer" className="text-violet-500 hover:underline">
-            Cloudinary
-          </a>
-          , then paste the direct link.
         </div>
       </div>
 
@@ -135,30 +236,56 @@ function ArticleFormFields({
         />
       </div>
 
-      {/* Content */}
+      {/* Content Markdown Textarea */}
       <div>
         <label htmlFor="af-content" className="block text-sm font-medium text-gray-700 mb-1.5">
-          Content <span className="text-red-400">*</span>
+          Content ({activeTab.toUpperCase()}) <span className="text-red-400">*</span>
           <span className="text-gray-400 font-normal ml-1">(Markdown supported)</span>
         </label>
         <textarea
           id="af-content"
-          value={form.content}
-          onChange={(e) => onChange({ ...form, content: e.target.value })}
-          rows={12}
-          placeholder={`## Introduction\n\nWrite your article here. Markdown is supported:\n\n- **Bold text** with double asterisks\n- *Italic* with single asterisks\n- ## Headings with hash symbols\n- [Links](https://example.com)\n\n## Section 2\n\nAdd more sections as needed…`}
+          value={currentContent}
+          onChange={(e) => handleContentChange(e.target.value)}
+          rows={8}
+          placeholder={`## Section heading\n\nWrite your ${activeTab} content here...`}
           className="w-full border border-gray-200 rounded-xl px-3.5 py-2.5 text-sm font-mono focus:outline-none focus:ring-2 focus:ring-violet-400 focus:border-transparent resize-y"
         />
-        <p className="text-xs text-gray-400 mt-1">
-          Supports: **bold**, *italic*, ## headings, `code`, [links](url), - lists, &gt; blockquotes
-        </p>
+      </div>
+
+      {/* Collapsible SEO Section */}
+      <div className="border border-gray-200 rounded-xl overflow-hidden shadow-sm">
+        <button
+          type="button"
+          onClick={() => setSeoOpen(!seoOpen)}
+          className="w-full flex items-center justify-between px-4 py-3 bg-gray-50 hover:bg-gray-100/80 transition-colors text-sm font-bold text-gray-700 cursor-pointer"
+        >
+          <span className="flex items-center gap-1.5">🔍 SEO & Metadata Settings (Hidden from Product Page)</span>
+          <span className="text-gray-400">{seoOpen ? '▲ Hide' : '▼ Expand'}</span>
+        </button>
+        {seoOpen && (
+          <div className="p-4 space-y-4 bg-white border-t border-gray-100">
+            {field('af-meta-title', 'Meta Title', form.metaTitle, (v) => onChange({ ...form, metaTitle: v }), {
+              required: false,
+              placeholder: 'e.g. Setting Up IPTV Guide | Ondexy',
+            })}
+            {field('af-meta-desc', 'Meta Description', form.metaDescription, (v) => onChange({ ...form, metaDescription: v }), {
+              required: false,
+              textarea: true,
+              placeholder: 'Learn how to configure premium IPTV servers on any device with this detailed guide...',
+            })}
+            {field('af-seo-keywords', 'SEO Keywords (comma-separated)', form.seoKeywords, (v) => onChange({ ...form, seoKeywords: v }), {
+              required: false,
+              placeholder: 'iptv guides, setup iptv, how to config smart tv',
+            })}
+          </div>
+        )}
       </div>
 
       <button
         id="article-form-submit"
         onClick={onSubmit}
-        disabled={saving || !form.title || !form.content}
-        className="w-full bg-violet-600 hover:bg-violet-700 disabled:bg-violet-300 disabled:cursor-not-allowed text-white font-semibold py-3 rounded-xl transition-all flex items-center justify-center gap-2 mt-2"
+        disabled={saving || !canSubmit}
+        className="w-full bg-violet-600 hover:bg-violet-700 disabled:bg-violet-300 disabled:cursor-not-allowed text-white font-semibold py-3 rounded-xl transition-all flex items-center justify-center gap-2 mt-2 cursor-pointer"
       >
         {saving ? (
           <><RefreshCw className="w-4 h-4 animate-spin" /> Saving…</>
@@ -210,7 +337,21 @@ export default function AdminBlogPage() {
   }
 
   function openEdit(a: Article) {
-    setForm({ title: a.title, content: a.content, coverImage: a.coverImage, author: a.author });
+    setForm({
+      title: a.title,
+      content: a.content,
+      coverImage: a.coverImage,
+      author: a.author,
+      title_en: a.title_en || '',
+      title_ar: a.title_ar || '',
+      title_fr: a.title_fr || '',
+      content_en: a.content_en || '',
+      content_ar: a.content_ar || '',
+      content_fr: a.content_fr || '',
+      metaTitle: a.metaTitle || '',
+      metaDescription: a.metaDescription || '',
+      seoKeywords: a.seoKeywords || '',
+    });
     setEditArticle(a);
   }
 

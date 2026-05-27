@@ -1,0 +1,21 @@
+-- Alter products table to support localized texts and SEO
+ALTER TABLE products ADD COLUMN IF NOT EXISTS name_en TEXT;
+ALTER TABLE products ADD COLUMN IF NOT EXISTS name_ar TEXT;
+ALTER TABLE products ADD COLUMN IF NOT EXISTS name_fr TEXT;
+ALTER TABLE products ADD COLUMN IF NOT EXISTS description_en TEXT;
+ALTER TABLE products ADD COLUMN IF NOT EXISTS description_ar TEXT;
+ALTER TABLE products ADD COLUMN IF NOT EXISTS description_fr TEXT;
+ALTER TABLE products ADD COLUMN IF NOT EXISTS meta_title TEXT;
+ALTER TABLE products ADD COLUMN IF NOT EXISTS meta_description TEXT;
+ALTER TABLE products ADD COLUMN IF NOT EXISTS seo_keywords TEXT;
+
+-- Alter articles table to support localized texts and SEO
+ALTER TABLE articles ADD COLUMN IF NOT EXISTS title_en TEXT;
+ALTER TABLE articles ADD COLUMN IF NOT EXISTS title_ar TEXT;
+ALTER TABLE articles ADD COLUMN IF NOT EXISTS title_fr TEXT;
+ALTER TABLE articles ADD COLUMN IF NOT EXISTS content_en TEXT;
+ALTER TABLE articles ADD COLUMN IF NOT EXISTS content_ar TEXT;
+ALTER TABLE articles ADD COLUMN IF NOT EXISTS content_fr TEXT;
+ALTER TABLE articles ADD COLUMN IF NOT EXISTS meta_title TEXT;
+ALTER TABLE articles ADD COLUMN IF NOT EXISTS meta_description TEXT;
+ALTER TABLE articles ADD COLUMN IF NOT EXISTS seo_keywords TEXT;
