@@ -82,9 +82,9 @@ function toProduct(row: any): Product {
   return {
     id: row.id,
     slug: row.slug,
-    name: row.name,
-    category: category,
-    image: row.image,
+    name: row.name ?? '',
+    category: category ?? '',
+    image: row.image ?? '',
     description: row.description ?? '',
     rating: row.rating ?? 5.0,
     reviewCount: row.review_count ?? 0,
@@ -100,17 +100,17 @@ function toProduct(row: any): Product {
     updatedAt: row.updated_at,
     
     // Localized fields
-    name_en: row.name_en,
-    name_ar: row.name_ar,
-    name_fr: row.name_fr,
-    description_en: row.description_en,
-    description_ar: row.description_ar,
-    description_fr: row.description_fr,
+    name_en: row.name_en ?? '',
+    name_ar: row.name_ar ?? '',
+    name_fr: row.name_fr ?? '',
+    description_en: row.description_en ?? '',
+    description_ar: row.description_ar ?? '',
+    description_fr: row.description_fr ?? '',
     
     // SEO fields
-    metaTitle: row.meta_title,
-    metaDescription: row.meta_description,
-    seoKeywords: row.seo_keywords,
+    metaTitle: row.meta_title ?? '',
+    metaDescription: row.meta_description ?? '',
+    seoKeywords: row.seo_keywords ?? '',
   };
 }
 

@@ -17,7 +17,23 @@ export function getLocalizedField(item: any, field: string, currentLocale: strin
   if (!item) return '';
   const localizedKey = `${field}_${currentLocale}`;
   const englishKey = `${field}_en`;
-  return item[localizedKey] || item[englishKey] || item[field] || '';
+  
+  const val = item[localizedKey];
+  if (val !== undefined && val !== null && String(val).trim() !== '') {
+    return String(val);
+  }
+  
+  const enVal = item[englishKey];
+  if (enVal !== undefined && enVal !== null && String(enVal).trim() !== '') {
+    return String(enVal);
+  }
+  
+  const legacyVal = item[field];
+  if (legacyVal !== undefined && legacyVal !== null) {
+    return String(legacyVal);
+  }
+  
+  return '';
 }
 
 export function LanguageProvider({ children }: { children: React.ReactNode }) {
