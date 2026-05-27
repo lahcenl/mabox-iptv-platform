@@ -1,6 +1,6 @@
 'use client';
 
-import { useTranslations } from '@/components/providers/I18nProvider';
+import { useTranslations } from '@/components/context/LanguageContext';
 
 export default function WhatsAppWidget() {
   const { t } = useTranslations();

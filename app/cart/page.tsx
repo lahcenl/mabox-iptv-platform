@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useCartStore } from '@/store/cartStore';
 import Link from 'next/link';
 import { processCheckout } from '@/lib/checkout';
-import { useTranslations } from '@/components/providers/I18nProvider';
+import { useTranslations } from '@/components/context/LanguageContext';
 import {
   ShoppingBag,
   Trash2,

@@ -6,8 +6,7 @@ import { useRouter, usePathname } from 'next/navigation';
 import { Search, ShoppingCart, Menu, X, Tv, ChevronDown } from 'lucide-react';
 import { useCartStore } from '@/store/cartStore';
 import CartDrawer from '@/components/ui/CartDrawer';
-import { useTranslations } from '@/components/providers/I18nProvider';
-import { locales } from '@/lib/i18n';
+import { useTranslations } from '@/components/context/LanguageContext';
 
 export default function Header() {
   const router = useRouter();
@@ -16,7 +15,7 @@ export default function Header() {
   const [searchQuery, setSearchQuery] = useState('');
   const [langOpen, setLangOpen] = useState(false);
   const { itemCount, subtotal, toggleCart } = useCartStore();
-  const { t, locale, localize } = useTranslations();
+  const { t, locale, setLocale, localize } = useTranslations();
 
   const navLinks = [
     { label: t('header.nav.home'), href: '/' },
@@ -27,15 +26,7 @@ export default function Header() {
   ];
 
   const handleLocaleChange = (newLocale: string) => {
-    const segments = pathname.split('/');
-    let base = pathname;
-    if (segments[1] === 'ar' || segments[1] === 'fr') {
-      base = '/' + segments.slice(2).join('/');
-    }
-    const prefix = newLocale === 'en' ? '' : `/${newLocale}`;
-    const newPath = `${prefix}${base}`.replace(/\/$/, '') || '/';
-    const search = window.location.search;
-    router.push(`${newPath}${search}`);
+    setLocale(newLocale as any);
   };
 
   const handleSearchSubmit = (e: React.FormEvent) => {
@@ -142,44 +133,17 @@ export default function Header() {
               </button>
 
               {/* Language Switcher */}
-              <div className="relative z-50">
-                <button
-                  onClick={() => setLangOpen(!langOpen)}
-                  className="flex items-center gap-1.5 bg-violet-50 hover:bg-violet-100 border border-violet-200 text-violet-700 font-extrabold px-3 py-2 rounded-xl text-xs sm:text-sm transition-all duration-200 shadow-sm cursor-pointer"
+              <div className="relative flex items-center">
+                <select
+                  value={locale}
+                  onChange={(e) => handleLocaleChange(e.target.value)}
+                  className="bg-violet-50 hover:bg-violet-100 border border-violet-200 text-violet-700 font-extrabold px-3 py-2 rounded-xl text-xs sm:text-sm transition-all duration-200 shadow-sm cursor-pointer focus:outline-none focus:ring-2 focus:ring-violet-400"
                   aria-label="Select language"
                 >
-                  <span className="text-sm">
-                    {locale === 'en' ? '🇬🇧' : locale === 'fr' ? '🇫🇷' : '🇲🇦'}
-                  </span>
-                  <span className="uppercase tracking-wider">{locale}</span>
-                  <ChevronDown className="w-3.5 h-3.5 text-violet-500/70" />
-                </button>
-                {langOpen && (
-                  <>
-                    <div className="fixed inset-0 z-40" onClick={() => setLangOpen(false)} />
-                    <div className="absolute right-0 rtl:right-auto rtl:left-0 mt-2 w-32 bg-white border border-gray-100 rounded-xl shadow-xl py-1.5 z-50">
-                      {locales.map((loc) => (
-                        <button
-                          key={loc}
-                          onClick={() => {
-                            setLangOpen(false);
-                            handleLocaleChange(loc);
-                          }}
-                          className={`w-full text-left rtl:text-right px-4 py-2.5 text-xs font-bold hover:bg-violet-50 hover:text-violet-600 transition-colors uppercase cursor-pointer flex items-center gap-2 ${
-                            loc === locale ? 'text-violet-600 bg-violet-50/50' : 'text-gray-700'
-                          }`}
-                        >
-                          <span>
-                            {loc === 'en' ? '🇬🇧' : loc === 'fr' ? '🇫🇷' : '🇲🇦'}
-                          </span>
-                          <span>
-                            {loc === 'en' ? 'EN' : loc === 'fr' ? 'FR' : 'AR'}
-                          </span>
-                        </button>
-                      ))}
-                    </div>
-                  </>
-                )}
+                  <option value="en">🇬🇧 EN</option>
+                  <option value="ar">🇲🇦 AR</option>
+                  <option value="fr">🇫🇷 FR</option>
+                </select>
               </div>
 
               {/* Mobile menu toggle */}
@@ -231,7 +195,7 @@ export default function Header() {
                 Language / Langue / اللغة
               </div>
               <div className="flex gap-2">
-                {locales.map((loc) => (
+                {(['en', 'ar', 'fr'] as const).map((loc) => (
                   <button
                     key={loc}
                     onClick={() => {

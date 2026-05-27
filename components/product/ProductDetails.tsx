@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { ShoppingCart, MessageCircle, Star, Check, Shield, Zap, Headphones, ChevronDown } from 'lucide-react';
 import { Product } from '@/lib/data';
 import { useCartStore } from '@/store/cartStore';
-import { useTranslations } from '@/components/providers/I18nProvider';
+import { useTranslations } from '@/components/context/LanguageContext';
 
 interface ProductDetailsProps {
   product: Product;

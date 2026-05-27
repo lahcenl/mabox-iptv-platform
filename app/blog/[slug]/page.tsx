@@ -3,12 +3,12 @@ import { notFound } from 'next/navigation';
 import Link from 'next/link';
 import { getArticleBySlug, readArticles } from '@/lib/articles';
 import { Calendar, ArrowLeft, User } from 'lucide-react';
-import { locales, localizePath } from '@/lib/i18n';
+// No locales/localizePath import needed
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.ondexy.com';
 
 interface Props {
-  params: Promise<{ slug: string; locale: string }>;
+  params: Promise<{ slug: string }>;
 }
 
 export async function generateMetadata({ params }: Props): Promise<Metadata> {
@@ -56,9 +56,7 @@ export async function generateMetadata({ params }: Props): Promise<Metadata> {
 
 export async function generateStaticParams() {
   const articles = await readArticles();
-  return locales.flatMap((locale) =>
-    articles.map((a) => ({ locale, slug: a.slug }))
-  );
+  return articles.map((a) => ({ slug: a.slug }));
 }
 
 /** Lightweight Markdown → HTML renderer (no dependencies) */
@@ -99,7 +97,7 @@ function formatDate(iso: string): string {
 export const dynamic = 'force-dynamic';
 
 export default async function ArticlePage({ params }: Props) {
-  const { slug, locale } = await params;
+  const { slug } = await params;
   const article = await getArticleBySlug(slug);
   if (!article) notFound();
 
@@ -149,7 +147,7 @@ export default async function ArticlePage({ params }: Props) {
       {/* Back link */}
       <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 pt-8">
         <Link
-          href={localizePath('/blog', locale)}
+          href="/blog"
           className="inline-flex items-center gap-2 text-sm text-gray-500 hover:text-violet-600 transition-colors font-medium"
         >
           <ArrowLeft className="w-4 h-4 rtl:rotate-180" />
@@ -203,7 +201,7 @@ export default async function ArticlePage({ params }: Props) {
             Browse our premium IPTV plans with instant activation.
           </p>
           <Link
-            href={localizePath('/products', locale)}
+            href="/products"
             className="inline-flex items-center gap-2 bg-white text-violet-700 font-semibold px-6 py-3 rounded-xl hover:bg-violet-50 transition-colors shadow-sm"
           >
             Browse Plans

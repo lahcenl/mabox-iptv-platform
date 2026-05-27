@@ -1,14 +1,9 @@
 export const dynamic = 'force-dynamic';
 import type { Metadata } from 'next';
 import { Inter } from 'next/font/google';
-import '../globals.css';
-import Header from '@/components/layout/Header';
-import Footer from '@/components/layout/Footer';
-import TrendingTicker from '@/components/ui/TrendingTicker';
-import WhatsAppWidget from '@/components/ui/WhatsAppWidget';
-import CommunityBanner from '@/components/layout/CommunityBanner';
-import { I18nProvider } from '@/components/providers/I18nProvider';
-import { getDictionary, Locale } from '@/lib/i18n';
+import './globals.css';
+import { LanguageProvider } from '@/components/context/LanguageContext';
+import { LayoutBody } from '@/components/layout/LayoutBody';
 
 const inter = Inter({
   subsets: ['latin'],
@@ -64,7 +59,7 @@ export const metadata: Metadata = {
       {
         url: '/og-default.png',
         width: 1200,
-        height: 630,
+         height: 630,
         alt: 'Ondexy – Premium IPTV Subscriptions',
       },
     ],
@@ -81,29 +76,17 @@ export const metadata: Metadata = {
   },
 };
 
-export default async function RootLayout({
+export default function RootLayout({
   children,
-  params,
 }: Readonly<{
   children: React.ReactNode;
-  params: Promise<{ locale: string }>;
 }>) {
-  const { locale } = await params;
-  const activeLocale = (locale as Locale) || 'en';
-  const dictionary = await getDictionary(activeLocale);
-  const isRtl = activeLocale === 'ar';
-
   return (
-    <html lang={activeLocale} dir={isRtl ? 'rtl' : 'ltr'} className={`${inter.variable} h-full`}>
-      <body className="min-h-full flex flex-col bg-gray-50 antialiased font-[family-name:var(--font-inter)]">
-        <I18nProvider locale={activeLocale} dictionary={dictionary}>
-          <Header />
-          <main className="flex-1">{children}</main>
-          <TrendingTicker locale={activeLocale} />
-          <CommunityBanner locale={activeLocale} />
-          <Footer locale={activeLocale} />
-          <WhatsAppWidget />
-        </I18nProvider>
+    <html lang="en" className={`${inter.variable} h-full`}>
+      <body className="min-h-full bg-gray-50">
+        <LanguageProvider>
+          <LayoutBody>{children}</LayoutBody>
+        </LanguageProvider>
       </body>
     </html>
   );

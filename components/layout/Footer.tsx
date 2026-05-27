@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { Tv, Mail, Phone, MessageCircle, ArrowRight, Clock } from 'lucide-react';
-import { useTranslations } from '@/components/providers/I18nProvider';
+import { useTranslations } from '@/components/context/LanguageContext';
 
 // Inline SVG brand icons as React components
 function FacebookIcon({ className }: { className?: string }) {

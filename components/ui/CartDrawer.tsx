@@ -5,7 +5,7 @@ import { X, Trash2, Plus, Minus, ShoppingBag, ArrowRight, Package, Loader2 } fro
 import Image from 'next/image';
 import Link from 'next/link';
 import { processCheckout } from '@/lib/checkout';
-import { useTranslations } from '@/components/providers/I18nProvider';
+import { useTranslations } from '@/components/context/LanguageContext';
 
 export default function CartDrawer() {
   const { items, isOpen, closeCart, removeFromCart, updateQuantity, subtotal, itemCount, clearCart } =

@@ -6,7 +6,7 @@ import { getProductBySlug, getProducts, getProductsByCategory } from '@/lib/data
 import ProductDetails from '@/components/product/ProductDetails';
 import ProductDescription from '@/components/product/ProductDescription';
 import ProductCard from '@/components/ui/ProductCard';
-import { locales, localizePath } from '@/lib/i18n';
+// No locales/localizePath import needed
 
 const BASE_URL = process.env.NEXT_PUBLIC_SITE_URL ?? 'https://www.ondexy.com';
 
@@ -33,9 +33,7 @@ function stripMarkdown(md: string | null | undefined): string {
 // This tells Next.js which slugs to pre-render at build time
 export async function generateStaticParams() {
   const products = await getProducts();
-  return locales.flatMap((locale) =>
-    products.map((p) => ({ locale, slug: p.slug }))
-  );
+  return products.map((p) => ({ slug: p.slug }));
 }
 
 export async function generateMetadata(props: any): Promise<Metadata> {
@@ -81,7 +79,7 @@ export async function generateMetadata(props: any): Promise<Metadata> {
 }
 
 export default async function ProductPage(props: any) {
-  const { slug, locale } = await props.params;
+  const { slug } = await props.params;
   const product = await getProductBySlug(slug);
 
   if (!product) {
@@ -161,11 +159,11 @@ export default async function ProductPage(props: any) {
 
       {/* Breadcrumb */}
       <nav className="flex items-center gap-1.5 text-sm text-gray-400 mb-8" aria-label="Breadcrumb">
-        <Link href={localizePath('/', locale)} className="hover:text-violet-600 transition-colors">
+        <Link href="/" className="hover:text-violet-600 transition-colors">
           Home
         </Link>
         <ChevronRight className="w-3.5 h-3.5" />
-        <Link href={localizePath('/products', locale)} className="hover:text-violet-600 transition-colors">
+        <Link href="/products" className="hover:text-violet-600 transition-colors">
           Products
         </Link>
         <ChevronRight className="w-3.5 h-3.5" />

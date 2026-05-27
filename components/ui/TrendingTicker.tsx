@@ -1,21 +1,10 @@
-import { ShieldCheck } from 'lucide-react';
-import { getDictionary, Locale } from '@/lib/i18n';
+'use client';
 
-export default async function TrendingTicker({ locale }: { locale: string }) {
-  const dictionary = await getDictionary(locale as Locale);
-  
-  const t = (key: string): string => {
-    try {
-      const parts = key.split('.');
-      let result: any = dictionary;
-      for (const part of parts) {
-        result = result[part];
-      }
-      return typeof result === 'string' ? result : key;
-    } catch {
-      return key;
-    }
-  };
+import { ShieldCheck } from 'lucide-react';
+import { useTranslations } from '@/components/context/LanguageContext';
+
+export default function TrendingTicker() {
+  const { t } = useTranslations();
 
   const tickerText = `${t('ticker.delivery')} | ${t('ticker.servers')} | ${t('ticker.support')} | ${t('ticker.players')}`;
   const items = Array(8).fill(tickerText);

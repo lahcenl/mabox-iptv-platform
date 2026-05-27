@@ -4,7 +4,7 @@ import Link from 'next/link';
 import { useState } from 'react';
 import { Star, MessageCircle, Settings2 } from 'lucide-react';
 import { Product } from '@/lib/data';
-import { useTranslations } from '@/components/providers/I18nProvider';
+import { useTranslations } from '@/components/context/LanguageContext';
 
 interface ProductCardProps {
   product: Product;
