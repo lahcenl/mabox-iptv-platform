@@ -79,10 +79,9 @@ export default function BlogClient({ initialArticles }: { initialArticles: Artic
               const localizedExcerpt = article.excerpt || '';
 
               return (
-                <Link
+                <div
                   key={article.id}
-                  href={`/blog/${article.slug}`}
-                  className="group bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 overflow-hidden flex flex-col"
+                  className="group bg-white rounded-2xl border border-gray-100 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 overflow-hidden flex flex-col relative"
                 >
                   {/* Cover Image */}
                   {article.coverImage ? (
@@ -119,7 +118,14 @@ export default function BlogClient({ initialArticles }: { initialArticles: Artic
                       {text.readMore} <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
                     </div>
                   </div>
-                </Link>
+
+                  {/* Absolute link covering the entire card */}
+                  <Link
+                    href={`/blog/${article.slug}`}
+                    className="absolute inset-0 z-10"
+                    aria-label={localizedTitle}
+                  />
+                </div>
               );
             })}
           </div>

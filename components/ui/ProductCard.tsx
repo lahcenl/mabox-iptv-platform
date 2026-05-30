@@ -2,9 +2,10 @@
 
 import Link from 'next/link';
 import { useState } from 'react';
-import { Star, MessageCircle, Settings2 } from 'lucide-react';
+import { Star, MessageCircle, Settings2, ShoppingCart } from 'lucide-react';
 import { Product } from '@/lib/data';
 import { useTranslations } from '@/components/context/LanguageContext';
+import { useCartStore } from '@/store/cartStore';
 
 interface ProductCardProps {
   product: Product;
@@ -38,6 +39,7 @@ const categoryEmojis: Record<string, string> = {
 
 export default function ProductCard({ product }: ProductCardProps) {
   const { t, localize, getLocalizedValue } = useTranslations();
+  const { addToCart } = useCartStore();
   const validTiers = product?.priceTiers || [];
   const isFlatPrice =
     validTiers.length === 1 &&
@@ -63,22 +65,52 @@ export default function ProductCard({ product }: ProductCardProps) {
   const whatsappNumber = t('common.whatsappNumber') || product.whatsappNumber;
   const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(whatsappMessage)}`;
 
+  const handleQuickAddToCart = () => {
+    if (!selectedTier) return;
+    addToCart({
+      id: product.id,
+      slug: product.slug,
+      name: localizedName,
+      image: product.image,
+      duration: selectedTier.duration,
+      months: selectedTier.months ?? 0,
+      price: selectedTier.price,
+    });
+  };
+
   return (
     <div className="bg-white rounded-2xl border border-gray-100 shadow-md hover:shadow-lg hover:-translate-y-0.5 transition-all duration-300 flex flex-col overflow-hidden group">
       {/* Image area */}
-      <Link href={localize(`/products/${product.slug}`)} className="block relative">
-        <div className="relative h-48 bg-gray-100 flex items-center justify-center overflow-hidden border-b border-gray-100">
-          <img 
-            src={product.image || '/images/placeholder.png'} 
-            alt={localizedName} 
-            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-          />
-          {/* Category badge */}
-          <span className="absolute top-3 left-3 bg-white/90 backdrop-blur-sm text-violet-700 text-[10px] font-bold px-2 py-1 rounded-full shadow-sm border border-gray-200">
-            {translatedCategory}
-          </span>
-        </div>
-      </Link>
+      <div className="relative">
+        <Link href={localize(`/products/${product.slug}`)} className="block">
+          <div className="relative h-48 bg-gray-100 flex items-center justify-center overflow-hidden border-b border-gray-100">
+            <img 
+              src={product.image || '/images/placeholder.png'} 
+              alt={localizedName} 
+              className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            />
+            {/* Category badge */}
+            <span className="absolute top-3 left-3 bg-white/90 backdrop-blur-sm text-violet-700 text-[10px] font-bold px-2 py-1 rounded-full shadow-sm border border-gray-200">
+              {translatedCategory}
+            </span>
+          </div>
+        </Link>
+        {/* Floating Quick Add to Cart button */}
+        {selectedTier && (
+          <button
+            onClick={(e) => {
+              e.preventDefault();
+              e.stopPropagation();
+              handleQuickAddToCart();
+            }}
+            className="absolute top-3 right-3 z-10 w-8 h-8 rounded-full bg-white hover:bg-violet-50 text-violet-700 flex items-center justify-center shadow-md hover:shadow-lg transition-all duration-200 active:scale-90 border border-gray-100"
+            title={t('cart.addBtn') || 'Add to Cart'}
+            aria-label="Quick Add to Cart"
+          >
+            <ShoppingCart className="w-4 h-4" />
+          </button>
+        )}
+      </div>
 
       {/* Content */}
       <div className="p-4 flex flex-col flex-1">
