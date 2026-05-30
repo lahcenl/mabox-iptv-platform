@@ -16,11 +16,21 @@ export default async function ProductsPage({
 }) {
   const { category, search } = await searchParams;
   let products = await getProducts();
+  let headerTitle = 'All Products';
 
   if (category) {
     const matchedCategory = categories.find((c) => c.slug === category);
     if (matchedCategory) {
       products = products.filter((p) => p.category === matchedCategory.name);
+      if (matchedCategory.slug === 'bein-sports') {
+        headerTitle = 'beIN SPORTS Plans';
+      } else if (matchedCategory.slug === 'media-players') {
+        headerTitle = 'Players IPTV Packages';
+      } else if (matchedCategory.slug === 'iptv-subscriptions') {
+        headerTitle = 'IPTV Subscriptions Plans';
+      } else {
+        headerTitle = `${matchedCategory.name} Plans`;
+      }
     }
   }
 
@@ -39,7 +49,7 @@ export default async function ProductsPage({
       {/* Page header */}
       <div className="mb-8">
         <h1 className="text-3xl sm:text-4xl font-extrabold text-gray-900 mb-2">
-          All Products
+          {headerTitle}
         </h1>
         <p className="text-gray-500">
           Showing {products.length} subscription plans & services
