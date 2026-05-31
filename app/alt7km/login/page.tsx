@@ -8,7 +8,7 @@ import { Suspense } from 'react';
 function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const from = searchParams.get('from') ?? '/admin';
+  const from = searchParams.get('from') ?? '/alt7km';
 
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
@@ -22,7 +22,7 @@ function LoginForm() {
     setLoading(true);
 
     try {
-      const res = await fetch('/api/admin/auth', {
+      const res = await fetch('/api/alt7km/auth', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ username, password }),

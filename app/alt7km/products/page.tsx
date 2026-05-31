@@ -532,7 +532,7 @@ export default function AdminProductsPage() {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch('/api/admin/products');
+      const res = await fetch('/api/alt7km/products');
       const data = await res.json();
       setProducts(data.products ?? []);
     } catch {
@@ -588,7 +588,7 @@ export default function AdminProductsPage() {
   async function handleAdd() {
     setSaving(true);
     try {
-      const res = await fetch('/api/admin/products', {
+      const res = await fetch('/api/alt7km/products', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -622,7 +622,7 @@ export default function AdminProductsPage() {
     if (!editProduct) return;
     setSaving(true);
     try {
-      const res = await fetch('/api/admin/products', {
+      const res = await fetch('/api/alt7km/products', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -657,7 +657,7 @@ export default function AdminProductsPage() {
     if (!confirm('Delete this product? This cannot be undone.')) return;
     setDeletingId(id);
     try {
-      await fetch('/api/admin/products', {
+      await fetch('/api/alt7km/products', {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id }),

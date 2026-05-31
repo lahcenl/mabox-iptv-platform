@@ -1,5 +1,5 @@
 import type { Metadata } from 'next';
-import AdminShell from '@/components/admin/AdminShell';
+import AdminShell from '@/components/alt7km/AdminShell';
 
 export const metadata: Metadata = {
   title: 'Admin Dashboard | Ondexy',

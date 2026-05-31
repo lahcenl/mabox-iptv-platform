@@ -52,7 +52,7 @@ export default function TrendingTicker() {
           width: max-content;
         }
         .ticker-track {
-          animation: ticker-scroll 35s linear infinite;
+          animation: ticker-scroll 60s linear infinite;
           will-change: transform;
         }
         @keyframes ticker-scroll {

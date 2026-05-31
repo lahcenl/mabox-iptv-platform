@@ -79,7 +79,7 @@ export default function AdminOrdersPage() {
     else setRefreshing(true);
     setError(null);
     try {
-      const res = await fetch('/api/admin/orders', { cache: 'no-store' });
+      const res = await fetch('/api/alt7km/orders', { cache: 'no-store' });
       if (!res.ok) throw new Error('Failed to load orders');
       const data = await res.json();
       setOrders(data.orders ?? []);
@@ -96,7 +96,7 @@ export default function AdminOrdersPage() {
   const handleMarkCompleted = async (orderId: string) => {
     setCompleting(orderId);
     try {
-      const res = await fetch('/api/admin/orders', {
+      const res = await fetch('/api/alt7km/orders', {
         method: 'PATCH',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ orderId, status: 'Completed' }),

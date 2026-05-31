@@ -29,7 +29,7 @@ export default async function Home() {
       </section>
 
       {/* ── CATEGORIZED ROWS ── */}
-      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16 space-y-16">
+      <section className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-3 my-2 md:py-10 space-y-8 md:space-y-16">
         
         {/* Row 1: IPTV Subscriptions */}
         <div>

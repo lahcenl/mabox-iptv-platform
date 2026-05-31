@@ -319,7 +319,7 @@ export default function AdminBlogPage() {
     setLoading(true);
     setError(null);
     try {
-      const res = await fetch('/api/admin/articles');
+      const res = await fetch('/api/alt7km/articles');
       const data = await res.json();
       setArticles(data.articles ?? []);
     } catch {
@@ -358,7 +358,7 @@ export default function AdminBlogPage() {
   async function handleAdd() {
     setSaving(true);
     try {
-      const res = await fetch('/api/admin/articles', {
+      const res = await fetch('/api/alt7km/articles', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(form),
@@ -377,7 +377,7 @@ export default function AdminBlogPage() {
     if (!editArticle) return;
     setSaving(true);
     try {
-      const res = await fetch('/api/admin/articles', {
+      const res = await fetch('/api/alt7km/articles', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id: editArticle.id, ...form }),
@@ -396,7 +396,7 @@ export default function AdminBlogPage() {
     if (!confirm('Delete this article? This cannot be undone.')) return;
     setDeletingId(id);
     try {
-      await fetch('/api/admin/articles', {
+      await fetch('/api/alt7km/articles', {
         method: 'DELETE',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id }),

@@ -5,9 +5,9 @@ import Link from 'next/link';
 import { ShoppingBag, Package, BookOpen, LogOut, ShieldCheck } from 'lucide-react';
 
 const TABS = [
-  { href: '/admin', label: 'Orders', icon: ShoppingBag },
-  { href: '/admin/products', label: 'Products', icon: Package },
-  { href: '/admin/blog', label: 'Blog', icon: BookOpen },
+  { href: '/alt7km', label: 'Orders', icon: ShoppingBag },
+  { href: '/alt7km/products', label: 'Products', icon: Package },
+  { href: '/alt7km/blog', label: 'Blog', icon: BookOpen },
 ];
 
 export default function AdminShell({ children }: { children: React.ReactNode }) {
@@ -15,11 +15,11 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
   const pathname = usePathname();
 
   // Don't render shell on login page
-  if (pathname === '/admin/login') return <>{children}</>;
+  if (pathname === '/alt7km/login') return <>{children}</>;
 
   async function handleLogout() {
-    await fetch('/api/admin/auth', { method: 'DELETE' });
-    router.push('/admin/login');
+    await fetch('/api/alt7km/auth', { method: 'DELETE' });
+    router.push('/alt7km/login');
     router.refresh();
   }
 
@@ -43,7 +43,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
             <nav className="hidden sm:flex items-center gap-1">
               {TABS.map(({ href, label, icon: Icon }) => {
                 const isActive =
-                  href === '/admin' ? pathname === '/admin' : pathname.startsWith(href);
+                  href === '/alt7km' ? pathname === '/alt7km' : pathname.startsWith(href);
                 return (
                   <Link
                     key={href}
@@ -76,7 +76,7 @@ export default function AdminShell({ children }: { children: React.ReactNode }) 
           <div className="flex sm:hidden gap-1 pb-2 overflow-x-auto">
             {TABS.map(({ href, label, icon: Icon }) => {
               const isActive =
-                href === '/admin' ? pathname === '/admin' : pathname.startsWith(href);
+                href === '/alt7km' ? pathname === '/alt7km' : pathname.startsWith(href);
               return (
                 <Link
                   key={href}
