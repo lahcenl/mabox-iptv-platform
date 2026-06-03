@@ -9,6 +9,7 @@ import {
   RefreshCw,
   Package,
   AlertCircle,
+  Trash2,
 } from 'lucide-react';
 
 interface OrderItem {
@@ -72,6 +73,7 @@ export default function AdminOrdersPage() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const [completing, setCompleting] = useState<string | null>(null);
+  const [deleting, setDeleting] = useState<string | null>(null);
   const [refreshing, setRefreshing] = useState(false);
 
   const fetchOrders = useCallback(async (silent = false) => {
@@ -109,6 +111,22 @@ export default function AdminOrdersPage() {
       setError('Failed to update order status. Please try again.');
     } finally {
       setCompleting(null);
+    }
+  };
+
+  const handleDeleteOrder = async (orderId: string) => {
+    if (!confirm('Are you sure you want to delete this order? This action cannot be undone.')) return;
+    setDeleting(orderId);
+    try {
+      const res = await fetch(`/api/alt7km/orders?orderId=${orderId}`, {
+        method: 'DELETE',
+      });
+      if (!res.ok) throw new Error('Failed to delete order');
+      setOrders((prev) => prev.filter((o) => o.orderId !== orderId));
+    } catch {
+      setError('Failed to delete order. Please try again.');
+    } finally {
+      setDeleting(null);
     }
   };
 
@@ -239,22 +257,35 @@ export default function AdminOrdersPage() {
                         <StatusBadge status={order.status} />
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">
-                        {order.status === 'Pending' ? (
+                        <div className="flex items-center gap-2">
+                          {order.status === 'Pending' && (
+                            <button
+                              id={`complete-order-${order.orderId.slice(0, 8)}`}
+                              onClick={() => handleMarkCompleted(order.orderId)}
+                              disabled={completing === order.orderId || deleting === order.orderId}
+                              className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold transition-all active:scale-95 disabled:opacity-60 shadow-sm"
+                            >
+                              {completing === order.orderId ? (
+                                <><RefreshCw className="w-3 h-3 animate-spin" /> Saving…</>
+                              ) : (
+                                <><CheckCircle2 className="w-3.5 h-3.5" /> Mark Completed</>
+                              )}
+                            </button>
+                          )}
                           <button
-                            id={`complete-order-${order.orderId.slice(0, 8)}`}
-                            onClick={() => handleMarkCompleted(order.orderId)}
-                            disabled={completing === order.orderId}
-                            className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg bg-emerald-600 hover:bg-emerald-700 text-white text-xs font-semibold transition-all active:scale-95 disabled:opacity-60 shadow-sm"
+                            id={`delete-order-${order.orderId.slice(0, 8)}`}
+                            onClick={() => handleDeleteOrder(order.orderId)}
+                            disabled={completing === order.orderId || deleting === order.orderId}
+                            className="inline-flex items-center justify-center p-2 rounded-lg bg-red-50 hover:bg-red-100 text-red-600 hover:text-red-700 transition-all active:scale-95 disabled:opacity-60 border border-red-200/50"
+                            title="Delete Order"
                           >
-                            {completing === order.orderId ? (
-                              <><RefreshCw className="w-3 h-3 animate-spin" /> Saving…</>
+                            {deleting === order.orderId ? (
+                              <RefreshCw className="w-3.5 h-3.5 animate-spin" />
                             ) : (
-                              <><CheckCircle2 className="w-3.5 h-3.5" /> Mark Completed</>
+                              <Trash2 className="w-3.5 h-3.5" />
                             )}
                           </button>
-                        ) : (
-                          <span className="text-xs text-gray-400 italic">—</span>
-                        )}
+                        </div>
                       </td>
                     </tr>
                   );

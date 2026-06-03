@@ -2,7 +2,7 @@ export const runtime = 'edge';
 export const dynamic = 'force-dynamic';
 
 import { NextResponse } from 'next/server';
-import { readOrders, updateOrderStatus } from '@/lib/orders';
+import { readOrders, updateOrderStatus, deleteOrder } from '@/lib/orders';
 
 export async function GET(request: Request) {
   if (process.env.CI) return NextResponse.json({ orders: [] }); // Bypass Vercel build
@@ -39,5 +39,23 @@ export async function PATCH(request: Request) {
   } catch (error) {
     console.error('Error updating order:', error);
     return NextResponse.json({ error: 'Failed to update order' }, { status: 500 });
+  }
+}
+
+export async function DELETE(request: Request) {
+  if (process.env.CI) return NextResponse.json({ success: true }); // Bypass Vercel build
+  try {
+    const { searchParams } = new URL(request.url);
+    const orderId = searchParams.get('orderId');
+
+    if (!orderId) {
+      return NextResponse.json({ error: 'Missing orderId' }, { status: 400 });
+    }
+
+    await deleteOrder(orderId);
+    return NextResponse.json({ success: true });
+  } catch (error) {
+    console.error('Error deleting order:', error);
+    return NextResponse.json({ error: 'Failed to delete order' }, { status: 500 });
   }
 }

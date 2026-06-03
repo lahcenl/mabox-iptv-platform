@@ -70,3 +70,12 @@ export async function updateOrderStatus(
   if (error) return null;
   return toSerializable(data);
 }
+
+export async function deleteOrder(orderId: string): Promise<boolean> {
+  const { error } = await supabase
+    .from('orders')
+    .delete()
+    .eq('id', orderId);
+  if (error) throw error;
+  return true;
+}

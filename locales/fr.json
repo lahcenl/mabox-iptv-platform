@@ -138,5 +138,14 @@
     "subtitle": "Obtenez des mises à jour instantanées sur l'état du serveur et des offres exclusives.",
     "telegram": "Telegram",
     "whatsapp": "WhatsApp"
+  },
+  "checkoutModal": {
+    "title": "Confirmer votre commande",
+    "description": "Vous allez être redirigé vers WhatsApp pour envoyer les détails de votre commande. Votre commande sera enregistrée et notre agent d'assistance vous aidera pour l'activation et le paiement.",
+    "items": "Articles à commander",
+    "total": "Montant total",
+    "send": "Envoyer sur WhatsApp",
+    "cancel": "Annuler",
+    "processing": "Traitement..."
   }
 }

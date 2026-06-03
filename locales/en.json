@@ -138,5 +138,14 @@
     "subtitle": "Get instant server status updates and exclusive subscriber-only offers.",
     "telegram": "Telegram",
     "whatsapp": "WhatsApp"
+  },
+  "checkoutModal": {
+    "title": "Confirm Your Order",
+    "description": "You are about to be redirected to WhatsApp to send your order details. Your order will be registered, and our support agent will assist you with activation and payment.",
+    "items": "Items to Order",
+    "total": "Total Amount",
+    "send": "Send to WhatsApp",
+    "cancel": "Cancel",
+    "processing": "Processing..."
   }
 }

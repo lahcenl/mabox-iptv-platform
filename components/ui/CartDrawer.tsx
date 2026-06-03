@@ -6,6 +6,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import { processCheckout } from '@/lib/checkout';
 import { useTranslations } from '@/components/context/LanguageContext';
+import CheckoutConfirmationModal from '@/components/ui/CheckoutConfirmationModal';
 
 export default function CartDrawer() {
   const { items, isOpen, closeCart, removeFromCart, updateQuantity, subtotal, itemCount, clearCart } =
@@ -13,11 +14,17 @@ export default function CartDrawer() {
   const { t, localize, locale } = useTranslations();
   const total = subtotal();
   const count = itemCount();
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
   const [isCheckingOut, setIsCheckingOut] = useState(false);
 
-  const handleCheckout = async () => {
+  const handleCheckout = () => {
+    setIsConfirmModalOpen(true);
+  };
+
+  const handleConfirmCheckout = async () => {
     setIsCheckingOut(true);
     await processCheckout(items, total, clearCart);
+    setIsConfirmModalOpen(false);
     setIsCheckingOut(false);
   };
 
@@ -181,6 +188,15 @@ export default function CartDrawer() {
           </div>
         )}
       </aside>
+
+      <CheckoutConfirmationModal
+        isOpen={isConfirmModalOpen}
+        onClose={() => setIsConfirmModalOpen(false)}
+        onConfirm={handleConfirmCheckout}
+        items={items}
+        total={total}
+        isProcessing={isCheckingOut}
+      />
     </>
   );
 }

@@ -16,16 +16,23 @@ import {
   ArrowLeft,
   Loader2,
 } from 'lucide-react';
+import CheckoutConfirmationModal from '@/components/ui/CheckoutConfirmationModal';
 
 export default function CartPage() {
   const { items, removeFromCart, updateQuantity, subtotal, clearCart } = useCartStore();
   const { t, localize } = useTranslations();
   const total = subtotal();
   const [isCheckingOut, setIsCheckingOut] = useState(false);
+  const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
 
-  const handleCheckout = async () => {
+  const handleCheckout = () => {
+    setIsConfirmModalOpen(true);
+  };
+
+  const handleConfirmCheckout = async () => {
     setIsCheckingOut(true);
     await processCheckout(items, total, clearCart);
+    setIsConfirmModalOpen(false);
     setIsCheckingOut(false);
   };
 
@@ -184,6 +191,15 @@ export default function CartPage() {
           </div>
         </div>
       )}
+
+      <CheckoutConfirmationModal
+        isOpen={isConfirmModalOpen}
+        onClose={() => setIsConfirmModalOpen(false)}
+        onConfirm={handleConfirmCheckout}
+        items={items}
+        total={total}
+        isProcessing={isCheckingOut}
+      />
     </div>
   );
 }
