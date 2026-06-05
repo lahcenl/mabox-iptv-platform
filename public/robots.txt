@@ -1,0 +1,5 @@
+User-agent: *
+Allow: /
+Disallow: /alt7km/
+
+Sitemap: https://www.ondexy.com/sitemap.xml
