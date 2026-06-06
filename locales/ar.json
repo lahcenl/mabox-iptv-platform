@@ -1,7 +1,7 @@
 {
   "common": {
     "viewAll": "عرض الكل",
-    "whatsappNumber": "1234567890",
+    "whatsappNumber": "212665096579",
     "contactWhatsApp": "تواصل معنا عبر واتساب",
     "resellerPanels": "لوحات الموزعين"
   },
@@ -50,6 +50,7 @@
     "ctaButton": "تصفح الخطط",
     "contactUs": "اتصل بنا",
     "emailSupport": "الدعم عبر البريد الإلكتروني",
+    "emailComingSoon": "قريباً",
     "whatsappPhone": "واتساب / الهاتف",
     "supportHours": "ساعات الدعم",
     "supportHoursVal": "دردشة حية 24/7",

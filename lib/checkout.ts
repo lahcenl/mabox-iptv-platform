@@ -27,7 +27,7 @@ export const processCheckout = async (items: any[], total: number, clearCart: ()
       2
     )}\n⚡ Please provide my activation details.`;
 
-    const whatsappNumber = '1234567890'; // Assuming this is the global number
+    const whatsappNumber = '212665096579'; // Assuming this is the global number
     const whatsappUrl = `https://wa.me/${whatsappNumber}?text=${encodeURIComponent(
       whatsappMessage
     )}`;

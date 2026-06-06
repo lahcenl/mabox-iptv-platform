@@ -88,7 +88,7 @@ function toProduct(row: any): Product {
     description: row.description ?? '',
     rating: row.rating ?? 5.0,
     reviewCount: row.review_count ?? 0,
-    whatsappNumber: row.whatsapp_number ?? '1234567890',
+    whatsappNumber: row.whatsapp_number ?? '212665096579',
     featured: row.featured ?? false,
     priceTiers: (row.price_tiers || []).map((t: any) => ({
       id: t.id,

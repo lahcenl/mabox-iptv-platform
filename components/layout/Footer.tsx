@@ -104,16 +104,13 @@ export default function Footer({ locale }: { locale: string }) {
             {/* Social icons */}
             <div className="flex items-center gap-2">
               {socialLinks.map((social) => (
-                <a
+                <div
                   key={social.label}
-                  href={localize(social.href)}
-                  target="_blank"
-                  rel="noopener noreferrer"
                   aria-label={social.label}
-                  className={`w-9 h-9 bg-gray-800 ${social.color} rounded-lg flex items-center justify-center transition-all duration-200 hover:scale-110`}
+                  className={`w-9 h-9 bg-gray-800 ${social.color} rounded-lg flex items-center justify-center transition-all duration-200 hover:scale-110 cursor-default`}
                 >
                   <social.Icon className="w-4 h-4 text-white" />
-                </a>
+                </div>
               ))}
             </div>
           </div>
@@ -125,20 +122,17 @@ export default function Footer({ locale }: { locale: string }) {
             </h4>
             <ul className="space-y-4">
               <li>
-                <a
-                  href="mailto:support@ondexy.com"
-                  className="flex items-start gap-3 group"
-                >
-                  <div className="w-8 h-8 bg-gray-800 group-hover:bg-violet-600 rounded-lg flex items-center justify-center flex-shrink-0 transition-colors">
-                    <Mail className="w-4 h-4 text-gray-400 group-hover:text-white" />
+                <div className="flex items-start gap-3">
+                  <div className="w-8 h-8 bg-gray-800 rounded-lg flex items-center justify-center flex-shrink-0">
+                    <Mail className="w-4 h-4 text-gray-400" />
                   </div>
                   <div>
                     <div className="text-xs text-gray-500 mb-0.5">{t('footer.emailSupport')}</div>
-                    <span className="text-sm text-gray-300 group-hover:text-violet-400 transition-colors">
-                      support@ondexy.com
+                    <span className="text-sm font-semibold text-violet-400">
+                      {t('footer.emailComingSoon')}
                     </span>
                   </div>
-                </a>
+                </div>
               </li>
               <li>
                 <a
@@ -153,7 +147,7 @@ export default function Footer({ locale }: { locale: string }) {
                   <div>
                     <div className="text-xs text-gray-500 mb-0.5">{t('footer.whatsappPhone')}</div>
                     <span className="text-sm text-gray-300 group-hover:text-green-400 transition-colors">
-                      +1 (234) 567-890
+                      +212 665 09 65 79
                     </span>
                   </div>
                 </a>

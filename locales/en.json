@@ -1,7 +1,7 @@
 {
   "common": {
     "viewAll": "View All",
-    "whatsappNumber": "1234567890",
+    "whatsappNumber": "212665096579",
     "contactWhatsApp": "Contact on WhatsApp",
     "resellerPanels": "Reseller Panels"
   },
@@ -50,6 +50,7 @@
     "ctaButton": "Browse Plans",
     "contactUs": "Contact Us",
     "emailSupport": "Email Support",
+    "emailComingSoon": "Coming Soon",
     "whatsappPhone": "WhatsApp / Phone",
     "supportHours": "Support Hours",
     "supportHoursVal": "24/7 Live Chat",

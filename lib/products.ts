@@ -48,7 +48,7 @@ export async function addProduct(input: NewProductInput): Promise<Product> {
     rating: 5.0,
     reviewCount: 0,
     priceTiers: input.priceTiers,
-    whatsappNumber: input.whatsappNumber ?? '1234567890',
+    whatsappNumber: input.whatsappNumber ?? '212665096579',
     featured: false,
   };
 
